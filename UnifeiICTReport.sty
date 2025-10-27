@@ -94,7 +94,7 @@
 % Finalmente passa as opções calculadas para babel e carrega o pacote
 \PassOptionsToPackage{\UnifeiICTReport@babelopts}{babel}
 \RequirePackage{babel}
-\RequirePackage{libertinus} % Fonte Libertinus como padrão
+\RequirePackage{heuristica}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{geometry}
 \geometry{%
@@ -158,26 +158,51 @@
     {\unifeifont\addfontfeatures{Letters=SmallCaps}\MakeUppercase{#1}}%
 }
 
-% --- Configure Libertine como fonte principal quando possível (fontspec) ---
-% Tenta usar a família de sistema "Libertinus Serif" quando disponível.
-\IfFontExistsTF{Libertinus Serif}{%
-    \setmainfont{Libertinus Serif}[Ligatures=TeX,Scale=MatchLowercase]
+% --- Configure main font: prefer Heuristica; carregue também fontes matemáticas via unicode-math ---
+% fontspec já foi requerido antes; agora garantimos unicode-math disponível.
+\RequirePackage{unicode-math}
+
+% Prefer Heuristica como fonte principal quando disponível. Caso não exista, tenta fallbacks.
+\IfFontExistsTF{Heuristica}{%
+    \setmainfont{Heuristica}[Ligatures=TeX,Scale=MatchLowercase]
 }{%
-    % Se não existir no sistema, deixamos o pacote `libertinus` providenciar as fontes e avisamos
-    \PackageWarning{UnifeiICTReport}{Main system font "Libertinus Serif" not found; using package libertinus fallback.}
+    \PackageWarning{UnifeiICTReport}{Main system font "Heuristica" not found; attempting fallbacks (Libertinus Serif, TeX Gyre Termes).}
+    \IfFontExistsTF{Libertinus Serif}{%
+        \setmainfont{Libertinus Serif}[Ligatures=TeX,Scale=MatchLowercase]
+    }{%
+        \IfFontExistsTF{TeX Gyre Termes}{%
+            \setmainfont{TeX Gyre Termes}[Ligatures=TeX,Scale=MatchLowercase]
+        }{%
+            % leave default if none found; issue a warning
+            \PackageWarning{UnifeiICTReport}{No preferred main fonts (Heuristica/Libertinus/TeX Gyre Termes) found; leaving default font.}
+        }
+    }
+}
+
+% Escolha de fonte matemática (prioridade): Heuristica Math -> Libertinus Math -> TeX Gyre Pagella Math -> Latin Modern Math -> Asana Math
+\IfFontExistsTF{Heuristica Math}{%
+    \setmathfont{Heuristica Math}
+}{%
+    \IfFontExistsTF{Libertinus Math}{%
+        \setmathfont{Libertinus Math}
+    }{%
+        \IfFontExistsTF{TeX Gyre Pagella Math}{%
+            \setmathfont{TeX Gyre Pagella Math}
+        }{%
+            \IfFontExistsTF{Latin Modern Math}{%
+                \setmathfont{Latin Modern Math}
+            }{%
+                % último recurso
+                \setmathfont{Asana Math}
+            }
+        }
+    }
 }
 
 % --- Formatação de títulos com titlesec: usar Exo2 (\unifeifont) nos títulos ---
 % Removemos o uso direto de \pretocmd (que aplicava \unifeifont globalmente) e
 % configuramos titlesec para aplicar \unifeifont apenas aos rótulos/títulos.
 \RequirePackage{titlesec}
-% Capítulo: "Número~NomeCapítulo" no mesmo parágrafo
-\titleformat{\chapter}[hang]{\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase}{\thechapter}{0.5em}{}
-\titlespacing*{\chapter}{0pt}{20pt}{10pt}
-% Seções/subseções também usam a fonte institucional nos rótulos
-\titleformat{\section}[hang]{\unifeifont\color{unifeiblue}\large\bfseries}{\thesection}{0.5em}{}
-\titleformat{\subsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsubsection}{1em}{}
 
 % --- Header / page number handling: place page number at outer top and
 % start counting on the cover but show numbers only from the first chapter ---
@@ -463,6 +488,46 @@
     \fi
 }
 
+% Capítulo: "Número~NomeCapítulo" no mesmo parágrafo
+\titleformat{\chapter}[hang]{\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase}{\thechapter}{0.5em}{}
+\titlespacing*{\chapter}{0pt}{20pt}{10pt}
+% Seções/subseções também usam a fonte institucional nos rótulos
+\titleformat{\section}[hang]{\unifeifont\color{unifeiblue}\large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% Redefine table of contents title to match chapter title styling
+\renewcommand{\tableofcontents}{%
+    \cleardoublepage
+        	\thispagestyle{plain}% use plain pagestyle (page number placement)
+    % Title styled like chapter titles: institutional font, color and uppercase
+    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\contentsname}\par}
+    \vspace{1em}% small gap before the contents
+    \@starttoc{toc}% actual TOC
+    \if@openright\cleardoublepage\else\clearpage\fi
+}
+
+% Apply same styling to List of Figures
+\renewcommand{\listoffigures}{%
+    \cleardoublepage
+    \thispagestyle{plain}
+    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listfigurename}\par}
+    \vspace{1em}
+    \@starttoc{lof}
+    \if@openright\cleardoublepage\else\clearpage\fi
+}
+
+% Apply same styling to List of Tables
+\renewcommand{\listoftables}{%
+    \cleardoublepage
+    \thispagestyle{plain}
+    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listtablename}\par}
+    \vspace{1em}
+    \@starttoc{lot}
+    \if@openright\cleardoublepage\else\clearpage\fi
+}
+
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
+
 \endinput
