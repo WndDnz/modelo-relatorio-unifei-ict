@@ -1,0 +1,468 @@
+% UnifeiICTReport.sty -- formatação para relatórios técnicos-científicos do Instituto de Ciências
+% Tecnológicas (ICT) da Universidade Federal de Itajujbá (Unifei) Campus Itabira
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{UnifeiICTReport}[2025/10/25 v0.2]
+\DeclareOption{neverindent}{\@neverindenttrue}
+
+% --- Lógica para família de fontes ---
+\newif\if@roman
+\DeclareOption{roman}{\@romantrue}
+\DeclareOption{sans}{\@romanfalse}
+
+% Accumula opções fornecidas ao pacote para processamento posterior
+\def\UnifeiICTReport@rawopts{}
+\DeclareOption*{%
+    % concatena, separado por vírgula
+    \ifx\UnifeiICTReport@rawopts\@empty
+        \edef\UnifeiICTReport@rawopts{\CurrentOption}%
+    \else
+        \edef\UnifeiICTReport@rawopts{\UnifeiICTReport@rawopts,\CurrentOption}%
+    \fi
+}
+
+% Defaults: roman font family (mantido) e brazilian como comportamento padrão
+\ExecuteOptions{roman}
+\ProcessOptions\relax
+
+% --- Lógica para decidir quais opções de língua passar ao babel ---
+% Regras implementadas:
+% - Se o usuário não fornecer nenhuma língua, usamos por padrão "english,brazilian"
+%   (brazilian como principal — pois vem por último)
+% - Se o usuário fornecer alguma opção de língua contendo "english" ou "brazilian",
+%   essas são detectadas e a prioridade é: se "english" estiver presente -> main=english;
+%   senão, se "brazilian" estiver presente -> main=brazilian.
+% - Se o usuário não fornecer explicitamente english/brazilian mas fornecer outra língua X,
+%   essa língua será usada como main e english será secundária.
+% - Em todos os casos a lista passada ao babel é: <secondary>,<main> (main vem por último).
+
+% inicializa variáveis auxiliares
+\def\UnifeiICTReport@mainlang{}
+\def\UnifeiICTReport@seclang{}
+\def\UnifeiICTReport@lasttok{}
+
+% percorre opções coletadas e detecta tokens de língua,
+% ignorando opções conhecidas do pacote (roman, sans, neverindent)
+\@for\@opt:=\UnifeiICTReport@rawopts\do{%
+    \edef\@tempa{\@opt}% normaliza token para comparação direta
+    % ignore empty tokens
+    \ifx\@tempa\@empty\else
+        % detecta english/brazilian explicitamente
+        \edef\@langE{english}\edef\@langB{brazilian}\edef\@optcmp{\@tempa}%
+        \ifx\@optcmp\@langE
+            \def\UnifeiICTReport@mainlang{english}%
+        \else\ifx\@optcmp\@langB
+                \ifx\UnifeiICTReport@mainlang\@empty
+                    \def\UnifeiICTReport@mainlang{brazilian}%
+                \fi
+            \fi\fi
+        % memorize last token seen (candidate language if none of the above)
+        % but skip known non-language options
+        \edef\@skipA{roman}\edef\@skipB{sans}\edef\@skipC{neverindent}%
+        \ifx\@optcmp\@skipA\else\ifx\@optcmp\@skipB\else\ifx\@optcmp\@skipC\else
+                    \edef\UnifeiICTReport@lasttok{\@tempa}%
+                \fi\fi\fi
+    \fi
+}
+
+% Decide main language
+\ifx\UnifeiICTReport@mainlang\@empty
+    % não detectamos explicitamente english/brazilian: se havia um token qualquer use-o
+    \ifx\UnifeiICTReport@lasttok\@empty
+        \def\UnifeiICTReport@mainlang{brazilian}% default
+    \else
+        \edef\UnifeiICTReport@mainlang{\UnifeiICTReport@lasttok}%
+    \fi
+\fi
+
+% Decide secondary language segundo as regras
+\edef\@langB{brazilian}\edef\@langE{english}
+\ifx\UnifeiICTReport@mainlang\@langB
+    \def\UnifeiICTReport@seclang{english}% if main=brazilian -> english secondary
+\else\ifx\UnifeiICTReport@mainlang\@langE
+        \def\UnifeiICTReport@seclang{brazilian}% if main=english -> brazilian secondary
+    \else
+        \def\UnifeiICTReport@seclang{english}% any other main -> english secondary
+    \fi\fi
+
+% Evita duplicação: se secondary == main, passa apenas main
+\ifx\UnifeiICTReport@seclang\UnifeiICTReport@mainlang
+    \edef\UnifeiICTReport@babelopts{\UnifeiICTReport@mainlang}
+\else
+    \edef\UnifeiICTReport@babelopts{\UnifeiICTReport@seclang,\UnifeiICTReport@mainlang}
+\fi
+
+% Finalmente passa as opções calculadas para babel e carrega o pacote
+\PassOptionsToPackage{\UnifeiICTReport@babelopts}{babel}
+\RequirePackage{babel}
+\RequirePackage{libertinus} % Fonte Libertinus como padrão
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{geometry}
+\geometry{%
+    top=3cm,
+    bottom=2cm,
+    left=3cm,
+    right=2cm,
+    headheight=15pt
+}
+\RequirePackage{tikz}
+\usetikzlibrary{matrix, positioning, calc}
+\RequirePackage{graphicx}
+\RequirePackage{setspace}
+\RequirePackage{etoolbox}
+\RequirePackage{xstring}
+\RequirePackage{indentfirst}
+
+% --- Carregamento da fonte Exo2 a partir do subdiretório "Fontes/Exo2" ---
+% Define \ExoTwo como família de fonte local se os arquivos estiverem presentes.
+\RequirePackage{fontspec}
+\newif\ifExoTwoAvailable
+\ExoTwoAvailablefalse
+% Tenta arquivos .ttf primeiro, depois .otf; usa padrões *-Regular/*-Bold/*-Italic/*-BoldItalic
+\IfFileExists{Fontes/Exo2/Exo2-Regular.ttf}{%
+    \newfontfamily\ExoTwo[
+        Path=Fontes/Exo2/,
+        UprightFont = Exo2-Regular.ttf,
+        BoldFont    = Exo2-Bold.ttf,
+        ItalicFont  = Exo2-Italic.ttf,
+        BoldItalicFont = Exo2-BoldItalic.ttf
+    ]{Exo2-Regular.ttf}%
+    \ExoTwoAvailabletrue
+}{%
+    \IfFileExists{Fontes/Exo2/Exo2-Regular.otf}{%
+        \newfontfamily\ExoTwo[
+            Path=Fontes/Exo2/,
+            UprightFont = Exo2-Regular.otf,
+            BoldFont    = Exo2-Bold.otf,
+            ItalicFont  = Exo2-Italic.otf,
+            BoldItalicFont = Exo2-BoldItalic.otf
+        ]{Exo2-Regular.otf}%
+        \ExoTwoAvailabletrue
+    }{%
+        % Aviso leve se não encontrar as fontes locais
+        \PackageWarning{UnifeiICTReport}{Exo2 fonts not found in "Fontes/Exo2/"; skipping local load.}%
+    }%
+}
+
+% --- Define comando utilitário para aplicar a fonte institucional (Exo2) quando disponível
+% Uso: {\unifeifont Texto} ou apenas \unifeifont antes de um grupo.
+\providecommand{\unifeifont}{}%
+\renewcommand{\unifeifont}{%
+    \ifExoTwoAvailable
+        \ExoTwo
+    \else
+        % fallback: não altera (a fonte principal é Libertine)
+    \fi
+}
+
+\newcommand{\unifeismallcaps}[1]{%
+    {\unifeifont\addfontfeatures{Letters=SmallCaps}\MakeUppercase{#1}}%
+}
+
+% --- Configure Libertine como fonte principal quando possível (fontspec) ---
+% Tenta usar a família de sistema "Libertinus Serif" quando disponível.
+\IfFontExistsTF{Libertinus Serif}{%
+    \setmainfont{Libertinus Serif}[Ligatures=TeX,Scale=MatchLowercase]
+}{%
+    % Se não existir no sistema, deixamos o pacote `libertinus` providenciar as fontes e avisamos
+    \PackageWarning{UnifeiICTReport}{Main system font "Libertinus Serif" not found; using package libertinus fallback.}
+}
+
+% --- Formatação de títulos com titlesec: usar Exo2 (\unifeifont) nos títulos ---
+% Removemos o uso direto de \pretocmd (que aplicava \unifeifont globalmente) e
+% configuramos titlesec para aplicar \unifeifont apenas aos rótulos/títulos.
+\RequirePackage{titlesec}
+% Capítulo: "Número~NomeCapítulo" no mesmo parágrafo
+\titleformat{\chapter}[hang]{\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase}{\thechapter}{0.5em}{}
+\titlespacing*{\chapter}{0pt}{20pt}{10pt}
+% Seções/subseções também usam a fonte institucional nos rótulos
+\titleformat{\section}[hang]{\unifeifont\color{unifeiblue}\large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% --- Header / page number handling: place page number at outer top and
+% start counting on the cover but show numbers only from the first chapter ---
+\RequirePackage{fancyhdr}
+
+\fancypagestyle{plain}{
+    \addtolength{\footskip}{0.6cm}
+    \fancyhf{}
+    \renewcommand{\headrulewidth}{0pt}
+
+
+    \if@twoside
+        \fancyhead[LE, RO]{\thepage}
+    \else
+        \fancyhead[R]{\thepage}
+    \fi
+}
+
+\pagestyle{fancy}
+\addtolength{\footskip}{0.6cm}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+
+\if@twoside
+    \fancyhead[LE, RO]{\thepage}
+\else
+    \fancyhead[R]{\thepage}
+\fi
+
+\newcommand{\conditionalvspace}[2]{%
+    \if\relax\detokenize{#1}\relax
+        % Do nothing if the argument is empty
+    \else
+        {#1}\vspace{#2}%
+    \fi
+}
+
+% --- Defaults ---
+\newcommand{\@subtitle}{}
+\providecommand{\subtitle}[1]{\renewcommand{\@subtitle}{#1}}
+\newcommand{\@institution}{Universidade Federal de Itajubá}
+\providecommand{\institution}[1]{\renewcommand{\@institution}{#1}}
+\newcommand{\@faculty}{Instituto de Ciências Tecnológicas}
+\providecommand{\faculty}[1]{\renewcommand{\@faculty}{#1}}
+\newcommand{\@course}{Engenharia de Computação}
+\providecommand{\course}[1]{\renewcommand{\@course}{#1}}
+\newcommand{\@location}{Itabira}
+\providecommand{\location}[1]{\renewcommand{\@location}{#1}}
+\newcommand{\@state}{Minas Gerais}
+\providecommand{\state}[1]{\renewcommand{\@state}{#1}}
+\newcommand{\@stateacronym}{MG}
+\providecommand{\stateacronym}[1]{\renewcommand{\@stateacronym}{#1}}
+
+% Metadados do documento (compatíveis com book)
+\newcommand{\@subject}{}
+\providecommand{\subject}[1]{\renewcommand{\@subject}{#1}}
+\newcommand{\@supervisor}{}
+% flag indicating whether a supervisor name was provided (non-empty)
+\newif\if@supervisorpresent\@supervisorpresentfalse
+\providecommand{\supervisor}[1]{\renewcommand{\@supervisor}{#1}%
+    \ifblank{#1}{\@supervisorpresentfalse}{\@supervisorpresenttrue}%
+}
+\newcommand{\@cosupervisor}{}
+% flag indicating whether a co-supervisor name was provided (non-empty)
+\newif\if@cosupervisorpresent\@cosupervisorpresentfalse
+\providecommand{\cosupervisor}[1]{\renewcommand{\@cosupervisor}{#1}%
+    \ifblank{#1}{\@cosupervisorpresentfalse}{\@cosupervisorpresenttrue}%
+}
+
+\newcommand{\@abstract}{}
+\providecommand{\abstract}[1]{\renewcommand{\@abstract}{#1}}
+\newcommand{\@abstractseclang}{}
+\providecommand{\abstractseclang}[1]{\renewcommand{\@abstractseclang}{#1}}
+\newcommand{\@keywords}{}
+\providecommand{\keywords}[1]{\renewcommand{\@keywords}{#1}}
+\newcommand{\@keywordsseclang}{}
+\providecommand{\keywordsseclang}[1]{\renewcommand{\@keywordsseclang}{#1}}
+
+% Cores institucionais
+\definecolor{unifeiblue}{cmyk}{1, 0.7, 0.1, 0.45}
+\definecolor{unifeired}{cmyk}{0, 0.95, 1, 0}
+\definecolor{unifeimedgrey}{cmyk}{0.2, 0.1, 0.1, 0.25}
+\definecolor{unifeilightgrey}{cmyk}{0.05, 0.03, 0.03, 0.05}
+
+% Linha horizontal utilitária
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+% \newcommand{\hrule}{\rule{\linewidth}{0.2mm}}
+
+\renewcommand{\baselinestretch}{1.5}
+
+\providecommand{\refcomp}[2]{\hyperref[#2]{\textcolor{unifeiblue}{\textbf{#1~\ref*{#2} - \nameref*{#2}}}}}
+
+%-------------------------------------------------
+% CAPA E FOLHA DE ROSTO
+%-------------------------------------------------
+\renewcommand{\maketitle}{%
+    \pagenumbering{gobble}
+    %----------------------------
+    %   Capa
+    %----------------------------
+    \clearpage\thispagestyle{empty}
+    {
+        \setstretch{1.0}
+        \begin{tikzpicture}[remember picture,overlay]
+            \fill[unifeired] (current page.north west) rectangle ($(current page.south west) + (0.3cm, 0)$);
+            \fill[unifeimedgrey] ($(current page.north west) + (0.3cm, 0)$) rectangle ($(current page.south west) + (0.9cm, 0)$);
+            \fill[unifeiblue] ($(current page.north west) + (0.9cm, 0)$) rectangle ($(current page.south west) + (1.2cm, 0)$);
+            \node[yslant=0.7, opacity=0.25] at ($(current page.center) + (5cm, -3cm)$) {\includegraphics[width=25cm]{Logos/simbolo_PANTONE}};
+        \end{tikzpicture}
+        \centering
+        % Logo da instituição
+        {\noindent\includegraphics[width=3cm]{Logos/simbolo_PANTONE}\par}
+        \bigskip
+        % Universidade
+        {\color{unifeiblue}\unifeismallcaps{\LARGE\bfseries\@institution}\par}
+        \vspace{1cm}
+        {\large\@author\par}
+        \vfill
+        \begin{minipage}{\textwidth}
+            \centering
+            {\unifeifont\color{unifeiblue}\Huge\bfseries\@title\par}
+            \ifcsdef{@subtitle}{%
+                \ifdefempty{\@subtitle}{}%
+                {%
+                    {\setstretch{1.0}\par\vspace{1cm}\LARGE\unifeifont\@subtitle}%
+                }
+            }{}
+        \end{minipage}
+        \vfill\vfill
+        {\unifeifont\large\parbox{\textwidth}{\centering\MakeUppercase{\@location}\par\the\year}\par}
+    }
+    \if@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
+    %-------------
+    % Folha de rosto
+    %-------------
+    \begin{titlepage}
+        \thispagestyle{empty}
+        \setcounter{page}{1}%
+        \centering % Centre everything on the page
+        \setstretch{1.0}
+        %------------------------------------------------
+        %	Logos no topo
+        %------------------------------------------------
+        \begin{minipage}{0.45\textwidth}
+            \begin{flushleft} \includegraphics[width=0.8\textwidth]{Logos/assin_hor_PANTONE_pos}
+            \end{flushleft}
+        \end{minipage}
+        \begin{minipage}{0.45\textwidth}
+
+            \begin{flushright} \includegraphics[width=0.7\textwidth]{Logos/assin_hor_ICT}
+            \end{flushright}
+        \end{minipage}\\[.5 cm]
+        %------------------------------------------------
+        %	Cabeçalhos
+        %------------------------------------------------
+        % Universidade
+        {\color{unifeiblue}\unifeismallcaps{\Large\@institution}\\}\smallskip
+        % Faculdade
+        {\unifeifont\large{\@faculty}\\}\smallskip
+        % Curso
+        {\unifeifont\@course\\}\vspace{1cm}
+        \vfill
+        %------------------------------------------------
+        %	Título e subtítulo
+        %------------------------------------------------
+        \begin{minipage}{\textwidth}
+            \centering
+            % Réguas
+            {\color{unifeiblue}\hrule width \hsize height 2pt \kern 0.5mm \color{unifeired}\hrule width \hsize}
+            \vspace{5mm}
+            % Título
+            {\setstretch{1.0}\LARGE\bfseries\color{unifeiblue}\unifeifont\@title\par}
+            % Subtítulo (opcional)
+            \ifcsdef{@subtitle}{%
+                \ifdefempty{\@subtitle}{%
+                    \vspace{5mm}
+                }{%
+                    {\setstretch{1.0}\par\vspace{5mm}\Large\unifeifont\@subtitle\vspace{5mm}}%
+                }
+            }{}
+            % Réguas
+            {\color{unifeired}\hrule width \hsize \kern 0.5mm \color{unifeiblue}\hrule width \hsize height 2pt}
+            \vspace{1cm}
+
+            %------------------------------------------------
+            %	Autor(es) e orientador(es)
+            %------------------------------------------------
+
+            \parbox{\textwidth}{
+                \begin{minipage}[t]{0.40\textwidth}
+                    \setstretch{1.0}
+                    \begin{flushleft}
+                        \large
+                        % Determine whether to use 'Autor' or 'Autores'
+                        \begingroup
+                        \edef\UnifeiICTReport@authdetok{\detokenize\expandafter{\@author}}%
+                        \IfSubStr{\UnifeiICTReport@authdetok}{\string\\}{\textsc{\color{unifeiblue}\unifeifont\Large Autores}}{\textsc{\color{unifeiblue}\unifeifont\Large Autor}}\\
+                        \vspace{0.25\baselineskip}
+                        % print the provided author(s)
+                        \large\@author
+                        \endgroup
+                    \end{flushleft}
+                \end{minipage}
+                ~
+                % Supervisor box: only print if a supervisor name was provided.
+                % We rely on the boolean \if@supervisorpresent set when \supervisor{...}
+                % is invoked; this avoids false positives if \@supervisor gets populated
+                % with invisible tokens by other processing.
+                \if@supervisorpresent
+                    \hfill%
+                    \begin{minipage}[t]{0.40\textwidth}
+                        \setstretch{1.0}
+                        \begin{flushright}
+                            \textsc{\color{unifeiblue}\unifeifont\Large Orientador}\\
+                            \vspace{0.25\baselineskip}
+                            \large\@supervisor
+                            \if@cosupervisorpresent
+                                \par\vspace{0.5em}\textsc{\color{unifeiblue}\unifeifont\Large Coorientador}\\
+                                \vspace{0.25\baselineskip}
+                                \large\@cosupervisor
+                            \fi
+                        \end{flushright}
+                    \end{minipage}
+                \fi
+            }%
+        \end{minipage}
+        \vfill\vfill%
+        \hfill%
+        \begin{parbox}{0.5\textwidth}{
+                \setstretch{1.0}
+                \normalsize
+                Relatório apresentado ao professor da disciplina de \@subject, como requisito parcial para aprovação no semestre.
+            }
+        \end{parbox}
+        \vfill\vfill\vfill%
+        {\large\parbox{\textwidth}{\centering\@location,~\@state,~\today}\par} % Data da compilação
+    \end{titlepage}
+    \if@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
+}
+
+%----------------------------
+%   IMPRIMIR OS RESUMOS
+%----------------------------
+\providecommand{\makeabstracts}{%
+    \thispagestyle{empty}
+    % Resumo title: center properly (usar mesma aparência dos títulos)
+    {\centering\large\bfseries\unifeifont\color{unifeiblue}\MakeUppercase{Resumo}\par}
+    \vspace{1.5cm}
+    % abstract body (normal paragraph formatting)
+    {\par\normalsize\setstretch{1.5}\@abstract\par}
+    \vspace{0.5\baselineskip}
+    {\par\noindent\textbf{Palavras-chave:} \@keywords\par}
+    \vfill
+    \if@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
+    %----------------------------
+    %   ABSTRACT (SECOND LANGUAGE)
+    %----------------------------
+    \thispagestyle{empty}
+    % Abstract title: center properly (usar mesma aparência dos títulos)
+    {\centering\large\bfseries\unifeifont\color{unifeiblue}\MakeUppercase{Abstract}\par}
+    \vspace{1.5cm}
+    % abstract body (normal paragraph formatting)
+    {\par\normalsize\setstretch{1.5}\@abstractseclang\par}
+    \vspace{0.5\baselineskip}
+    {\par\noindent\textbf{Keywords:} \@keywordsseclang\par}
+    \vfill
+    \if@openright
+        \cleardoublepage
+    \else
+        \clearpage
+    \fi
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\endinput

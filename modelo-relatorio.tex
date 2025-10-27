@@ -1,0 +1,123 @@
+\documentclass[12pt,a4paper,oneside]{book}
+\usepackage{UnifeiICTReport}
+%\usepackage[utf8]{inputenc} % Removido pois XeLaTeX usa UTF-8 nativo
+\usepackage{csquotes}
+\usepackage{fontspec}
+\usepackage{import}
+\usepackage{lipsum} % Para gerar texto placeholder
+\usepackage[style=abnt]{biblatex}
+\usepackage{fancyvrb} % Para formatação avançada de verbatim
+\usepackage{showframe}
+\usepackage{lua-visual-debug}
+ 
+\bibliography{referencias.bib}
+
+%--------------------------------------
+% Informações de dados para CAPA e FOLHA DE ROSTO
+%--------------------------------------
+% Título, subtítulo e autores (compatibilidade com unifeiICT.sty)
+\title{Modelo de Relatório Técnico-Científico para os cursos do ICT}
+
+% Comente ou remova a linha abaixo se não houver subtítulo
+\subtitle{Incluindo instruções de uso}
+
+% Se houver mais de um autor, separe os nomes com \\ (quebra de linha)
+\author{Autor do Relatório\\Outro autor do Relatório\\Mais um autor do Relatório}
+% Se o relatório for orientado por um professor, descomente a linha abaixo e preencha o nome.
+% Geralmente, o orientador é o professor da disciplina para a qual o relatório está sendo elaborado.
+\supervisor{Prof. Dr. Orientador Exemplar}
+% Descomente a linha abaixo e preencha o nome se houver coorientador
+% \cosupervisor{Prof. Dra. Coorientadora Exemplar}
+
+% Disciplina que o relatório atende
+\subject{Nome da Disciplina}
+
+% Resumo na língua principal
+\abstract{%
+    Este é um modelo de resumo para o relatório técnico-científico. O resumo deve apresentar de forma
+    concisa os objetivos, a metodologia, os resultados e as conclusões do trabalho. Deve ser escrito em
+    um único parágrafo, com no máximo 250 palavras, e deve ser claro e objetivo, permitindo ao leitor
+    compreender rapidamente o conteúdo do relatório. O resumo principal deve ser escrito na língua
+    principal do relatório.
+}
+% Palavras-chave do resumo principal
+\keywords{relatório técnico-científico; modelo; Unifei ICT; LaTeX.}
+
+% Resumo na língua secundária, geralmente inglês.
+\abstractseclang{%
+    This is a model abstract for the technical-scientific report. The abstract should
+    concisely present the objectives, methodology, results, and conclusions of the work. It should be
+    written in a single paragraph, with a maximum of 250 words, and should be clear and objective,
+    allowing the reader to quickly understand the content of the report. The secondary abstract should
+    be written in English. If the report is written in English, the primary abstract should be in Portuguese.
+}
+% Palavras-chave do resumo secundário
+\keywordsseclang{technical-scientific report; model; Unifei ICT; LaTeX.}
+
+% ---
+% Configurações de pacotes
+% ---
+
+\begin{document}
+
+% Preâmbulo do documento (elementos pré-textuais)
+\frontmatter
+
+% ---
+% Impressão da capa e folha de rosto
+% ---
+
+\maketitle
+
+% ---
+% Resumos
+% ---
+\makeabstracts
+
+%----
+%  Listas de figuras, tabelas, abreviaturas e símbolos
+%  -- Estes elementos são opcionais e podem ser incluídos conforme a necessidade do relatório.
+%  -- Para inclui-los, descomente as linhas abaixo.
+
+\listoffigures
+
+\listoftables
+
+%subimport{Preambulo/}{lista-abreviaturas-simbolos.tex}
+
+% ---
+% Sumário
+% ---
+\tableofcontents
+
+\mainmatter
+
+% ---
+% Introdução
+% ---
+\subimport{Capitulos/cap1/}{cap1.tex}
+
+% ---
+% Desenvolvimento
+% ---
+\chapter{Desenvolvimento}\label{cap:desenvolvimento}
+\lipsum[1-5]
+\begin{figure}[!htb]
+    \centering
+    \caption{Exemplo de figura}
+    \includegraphics[width=0.6\textwidth]{example-image}
+    \label{fig:exemplo}
+\end{figure}
+
+% ---
+% Conclusão
+% ---
+\chapter{Conclusão}\label{cap:conclusao}
+\lipsum[6-7]
+
+% ---
+% Referências bibliográficas
+% ---
+\printbibliography
+
+\end{document}
