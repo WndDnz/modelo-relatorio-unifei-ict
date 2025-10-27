@@ -25,6 +25,7 @@
 %--------------------------------------
 % Informações de dados para CAPA e FOLHA DE ROSTO
 %--------------------------------------
+
 % Título, subtítulo e autores (compatibilidade com unifeiICT.sty)
 \title{Modelo de Relatório Técnico-Científico para os cursos do ICT}
 
@@ -33,9 +34,11 @@
 
 % Se houver mais de um autor, separe os nomes com \\ (quebra de linha)
 \author{Autor do Relatório\\Outro autor do Relatório\\Mais um autor do Relatório}
+
 % Se o relatório for orientado por um professor, descomente a linha abaixo e preencha o nome.
 % Geralmente, o orientador é o professor da disciplina para a qual o relatório está sendo elaborado.
 \supervisor{Prof. Dr. Orientador Exemplar}
+
 % Descomente a linha abaixo e preencha o nome se houver coorientador
 % \cosupervisor{Prof. Dra. Coorientadora Exemplar}
 
@@ -44,22 +47,16 @@
 
 % Resumo na língua principal
 \abstract{%
-    Este é um modelo de resumo para o relatório técnico-científico. O resumo deve apresentar de forma
-    concisa os objetivos, a metodologia, os resultados e as conclusões do trabalho. Deve ser escrito em
-    um único parágrafo, com no máximo 250 palavras, e deve ser claro e objetivo, permitindo ao leitor
-    compreender rapidamente o conteúdo do relatório. O resumo principal deve ser escrito na língua
-    principal do relatório.
+    Este é um modelo de resumo para o relatório técnico-científico. O resumo deve apresentar de forma  concisa os objetivos, a metodologia, os resultados e as conclusões do trabalho. Deve ser escrito em um único parágrafo, com no máximo 250 palavras, e deve ser claro e objetivo, permitindo ao leitor compreender rapidamente o conteúdo do relatório. O resumo principal deve ser escrito na língua principal do relatório.
 }
 % Palavras-chave do resumo principal
 \keywords{relatório técnico-científico; modelo; Unifei ICT; LaTeX.}
 
 % Resumo na língua secundária, geralmente inglês.
 \abstractseclang{%
-    This is a model abstract for the technical-scientific report. The abstract should
-    concisely present the objectives, methodology, results, and conclusions of the work. It should be
+    This is a model abstract for the technical-scientific report. The abstract should concisely present the objectives, methodology, results, and conclusions of the work. It should be
     written in a single paragraph, with a maximum of 250 words, and should be clear and objective,
-    allowing the reader to quickly understand the content of the report. The secondary abstract should
-    be written in English. If the report is written in English, the primary abstract should be in Portuguese.
+    allowing the reader to quickly understand the content of the report. The secondary abstract should  be written in English. If the report is written in English, the secondary abstract should be in Portuguese.
 }
 % Palavras-chave do resumo secundário
 \keywordsseclang{technical-scientific report; model; Unifei ICT; LaTeX.}
@@ -87,7 +84,8 @@
 %----
 %  Listas de figuras, tabelas, abreviaturas e símbolos
 %  -- Estes elementos são opcionais e podem ser incluídos conforme a necessidade do relatório.
-%  -- Para inclui-los, descomente as linhas abaixo.
+%  -- Para inclui-los, descomente as linhas abaixo. Para suprimir, deixe comentado.
+% ----
 
 \listoffigures
 
@@ -122,7 +120,16 @@
 
 % ---
 % Referências bibliográficas
+% --- Imprime a bibliografia
 % ---
 \printbibliography
+
+% ---
+% Elementos pós-textuais são iniciados após \backmatter
+% --- Compreende apêndices, anexos, glossários e índices
+% --- São todos opcionais
+% ---
+
+\backmatter
 
 \end{document}

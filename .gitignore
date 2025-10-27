@@ -305,6 +305,5 @@ tmp_*
 # Ignorar o pdf gerado
 *.pdf
 
-# Ignorar scripts e wrappers locais criados para latexindent
-.vscode/latexindent-wrapper.*
-.vscode/format_all_latexindent.ps1
+# Ignorar configurações do VSCode
+.vscode/**
