@@ -1,3 +1,5 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
 \chapter{Desenvolvimento}\label{cap:desenvolvimento}
 
 Apesar deste capítulo ser intitulado ``Desenvolvimento'', o conteúdo específico pode variar dependendo
@@ -31,7 +33,8 @@ controle sobre a compilação de documentos \LaTeX, considere utilizar ferrament
 \texttt{latexmk} ou \texttt{arara}, que automatizam o processo e garantem que todas as referências
 e elementos do documento estejam atualizados corretamente. Este modelo foi desenvolvido para ser
 utilizado com ambientes de compilação modernos, notadamente \texttt{latexmk} com \texttt{xelatex} ou
-\texttt{lualatex}. Adaptações podem ser necessárias para o uso com outros ambientes.
+\texttt{lualatex}. Ele foi construído usando pacotes e fontes disponíveis na instalação completa do
+\LaTeX\ usando a distribuição TeX Live (\url{https://www.tug.org/texlive/}). Adaptações podem ser necessárias para o uso com outros ambientes.
 
 \section{Estruturação de seções e subseções}\label{sec:secoes-desenvolvimento}
 
@@ -47,7 +50,7 @@ adequada do conteúdo:
 \begin{itemize}
     \item \textbf{Capítulos}: Cada capítulo deve abordar um tema específico do trabalho. Utilize o
           comando \verb|\chapter{}| para criar novos capítulos. Lembre-se de que os capítulos são numerados
-          automaticamente. Acrescente um rótulo ao capítulo para facilitar autorrefêrencias dentro do
+          automaticamente. Acrescente um rótulo ao capítulo para facilitar autorreferências dentro do
           documento, usando o comando \verb|\label{}| logo após o título do capítulo. Por convenção, é
           interessante nomear os rótulos dos capítulos com o prefixo \texttt{cap:}, seguido de uma
           palavra-chave relacionada ao conteúdo do capítulo (por exemplo, \texttt{cap:introducao} para o
@@ -60,7 +63,7 @@ adequada do conteúdo:
           utilize o comando \verb|\subsection{}|. Isso ajuda a organizar o texto em tópicos específicos e
           facilita a leitura. Como prefixo para os rótulos das subseções, utilize \texttt{ssc:} (por exemplo,
           \texttt{ssc:sua-subseção} para a subseção de metodologia).
-    \item \textbf{Subsubseções}: Para uma divisão ainda mais detalhada, é possível utilizar o comando
+\item \textbf{Subsubseções}: Para uma divisão ainda mais detalhada, é possível utilizar o comando \linebreak
           \verb|\subsubsection{}|. Isso é útil para tópicos que exigem uma explicação mais aprofundada. Use o
           prefixo \texttt{sss:} para
           os rótulos das subsubseções (por exemplo, \texttt{sss:detalhes-tecnicos} para uma subsubseção
@@ -70,6 +73,24 @@ adequada do conteúdo:
           níveis de seções e subseções para temas semelhantes, garantindo que o leitor possa seguir o fluxo
           do texto facilmente.
 \end{itemize}
+
+Na sequência, veja como se parecem as subseções e subsubseções.
+
+\subsection{Subseção de exemplo}\label{ssc:exemplo}
+
+Esta é uma subseção de exemplo. Note que as subseções são numeradas automaticamente e podem ser
+referenciadas no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Este modelo
+também fornece o comando \verb"\refcomp{}{}" para incluir o nome do tipo de elemento referenciado
+(Capítulo, Seção, Subseção etc. Note que sempre são feitas em maiúsculas) antes do número da
+referência. Por exemplo, veja a seguir a referência para a subseção atual:
+\refcomp{Subseção}{ssc:exemplo}. Note a saída formata e o \emph{hyperlink} criado automaticamente
+para o elemento referenciado. O comando \verb"\ref{}" padrão do \LaTeX\ também funciona normalmente.
+
+\subsubsection{Subsubseção de exemplo}\label{sss:exemplo}
+
+Assim como as seções e subseções, as subsubseções também são numeradas automaticamente e podem ser
+referenciadas no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Por exemplo, veja
+a seguir a referência para a subsubseção atual: \refcomp{Subsubseção}{sss:exemplo}.
 
 \section{Citações}
 
@@ -83,7 +104,7 @@ e apresentação das referências bibliográficas. Este modelo utiliza o pacote 
 \footnote{Este modelo descreve de forma muito sucinta o uso do pacote \texttt{biblatex}.
     Recomenda-se a consulta à documentação do pacote para completo entendimento de como utilizá-lo}%
 %
-para gerenciar as referências, usando o pacote de estilo \texttt{abnt}, o que facilita a inclusão e
+ para gerenciar as referências, usando o pacote de estilo \texttt{abnt}, o que facilita a inclusão e
 formatação das citações de acordo com essas normas. Sua bibliografia deve estar organizada em um
 arquivo \texttt{.bib}, que neste modelo é denominado \texttt{referencias.bib} e está localizado na
 raiz do projeto. \textbf{Atenção!}  O arquivo incluído é fictício, usando referências falsas apenas
@@ -95,7 +116,7 @@ gerenciadores de referências, como o \texttt{Zotero} e o \texttt{Mendeley}, que
 organizar suas fontes e são capazes de exportar suas referências diretamente em para um arquivo
 \texttt{.bib}, facilitando a integração com o \LaTeX. Caso use uma dessas ferramentas, certifique-se
 de revisar o arquivo exportado para garantir que todas as informações estejam corretas e completas e
-simplesmente substiua o arquivo \texttt{referencias.bib} deste modelo pelo seu arquivo exportado.
+simplesmente substitua o arquivo \texttt{referencias.bib} deste modelo pelo seu arquivo exportado.
 Lembre-se de importá-lo no preâmbulo do arquivo principal do documento ou apenas o renomeie para
 \texttt{referencias.bib}, substituindo o arquivo original. A seguir, alguns exemplos de como fazer citações corretamente no texto.
 
@@ -114,7 +135,7 @@ margem esquerda, sem apas e com a mesma tipografia do corpo do texto, porém em 
 Supressões (quando você inicia a citação no meio de uma frase) devem ser indicadas por reticências entre colchetes
 (\texttt{[\ldots]}) e acréscimos (quando você insere palavras para esclarecer o sentido da citação)
 devem ser indicados por colchetes simples (\texttt{[texto adicional]}). Este modelo fornece o
-comando \texttt{\textbackslash quote} para facilitar a formatação de citações longas. Veja o exemplo
+comando \texttt{\textbackslash quote{}{}} para facilitar a formatação de citações longas. Veja o exemplo
 a seguir:
 
 \quote{martins2021}{%
@@ -142,4 +163,204 @@ Existe ainda a \emph{citação de citação}, que ocorre quando você deseja cit
 mencionada em outra fonte. Neste caso, usa-se a palavra ``apud'' para indicar que a citação foi
 retirada de uma fonte secundária. No entanto, é importante ressaltar que a citação de citação deve
 ser evitada sempre que possível, dando preferência à consulta direta da fonte original. Caso seja
-necessário utilizar uma citação de citação, faça-o da seguinte forma: Segundo \textcite[p. 45]{oliveira2018}, a padronização de relatórios técnicos é essencial para garantir a clareza e a uniformidade na apresentação dos resultados (apud \textcite{fernandes2019}).
+necessário utilizar uma citação de citação, faça-o da seguinte forma: Segundo \textcite[p. 45]{rodrigues2017}, a padronização de relatórios técnicos é essencial para garantir a clareza e a uniformidade na apresentação dos resultados (apud \textcite{lima2022}).
+
+\subsection{Exemplos de citações por tipo de referência}
+
+A seguir apresentamos exemplos curtos, para cada tipo de referência incluída no arquivo
+\texttt{referencias.bib}, mostrando uma citação indireta (paráfrase) e uma citação direta (trecho
+transcrito) usando os comandos disponíveis neste modelo%
+\footnote{Observação: os exemplos a seguir são fictícios e servem apenas para ilustração. As
+    citações diretas usadas aqui tem menos de 3 linhas, são apenas exemplos. Lembre-se que você deve
+    usá-las apenas quando a transcrição é superior à 3 linhas.}%
+.
+
+\begin{itemize}
+    \item \textbf{Artigo (article)} --- Indireta: \textcite{article1} discute técnicas de amostragem que facilitam a inferência em redes complexas. Direta:\par
+          \quote{article1}{A amostragem aleatória aplicada a topologias complexas reduz o viés nas estimativas de grau médio.}
+
+    \item \textbf{Livro (book)} --- Indireta: Segundo \textcite{book1}, métodos estatísticos clássicos ainda são válidos em muitos problemas práticos. Direta:\par
+          \quote{book1}{"Os testes de hipóteses constituem ferramenta central na análise de dados experimentais."}
+
+    \item \textbf{Anais / Trabalhos em Evento (inproceedings)} --- Indireta: \textcite{inproceedings1} apresenta otimizações aplicadas ao transporte urbano. Direta:\par
+          \quote{inproceedings1}{"Aplicar heurísticas de baixo custo pode reduzir congestionamentos sem investimentos pesados."}
+
+    \item \textbf{Capítulo em livro (incollection)} --- Indireta: \textcite{incollection1} descreve modelos de previsão de demanda. Direta:\par
+          \quote{incollection1}{"Modelos probabilísticos permitem estimativas robustas mesmo com dados esparsos."}
+
+    \item \textbf{Capítulo específico (inbook)} --- Indireta: \textcite{inbook1} cobre controle de qualidade na produção. Direta:\par
+          \quote{inbook1}{"O controle estatístico de processo reduz a variabilidade de produção quando bem aplicado."}
+
+    \item \textbf{Tese/Doutorado (phdthesis)} --- Indireta: Em sua tese, \textcite{phdthesis1} explora métodos numéricos para dinâmica de fluidos. Direta:\par
+          \quote{phdthesis1}{"A convergência do método implícito foi observada mesmo em malhas não-uniformes."}
+
+    \item \textbf{Dissertação/Mestrado (mastersthesis)} --- Indireta: \textcite{mastersthesis1} avalia algoritmos de roteamento. Direta:\par
+          \quote{mastersthesis1}{"Algoritmos baseados em demand-aware routing apresentam melhor desempenho sob cargas variáveis."}
+
+    \item \textbf{Relatório Técnico (techreport)} --- Indireta: O relatório do \textcite{techreport1} sumariza aplicações de sensoriamento remoto. Direta:\par
+          \quote{techreport1}{"Sensoriamento remoto é essencial para mapeamento ambiental em larga escala."}
+
+    \item \textbf{Manual (manual)} --- Indireta: O \textcite{manual1} descreve procedimentos de uso do sistema. Direta:\par
+          \quote{manual1}{"Siga o procedimento de inicialização para evitar perda de dados durante a atualização."}
+
+    \item \textbf{Recurso online (online)} --- Indireta: Dados públicos do \textcite{online1} podem ser usados para análises temporais. Direta:\par
+          \quote{online1}{"A série histórica de indicadores permite estudos comparativos entre regiões."}
+
+    \item \textbf{Material diverso (misc)} --- Indireta: \textcite{misc1} apresenta notas de aula úteis para introdução às redes neurais. Direta:\par
+          \quote{misc1}{"A normalização das entradas melhora a estabilidade do treinamento."}
+
+    \item \textbf{Anais (proceedings)} --- Indireta: Os \textcite{proceedings1} reúnem trabalhos relevantes da área. Direta:\par
+          \quote{proceedings1}{"Os anais deste simpósio apresentam avanços interdisciplinares em computação."}
+
+    \item \textbf{Patente (patent)} --- Indireta: A patente \textcite{patent1} descreve processo industrial inovador. Direta:\par
+          \quote{patent1}{"O método aumenta a resistência do compósito sem aumentar o custo de produção."}
+
+    \item \textbf{Documento não publicado (unpublished)} --- Indireta: \textcite{unpublished1} traz resultados preliminares sobre microplásticos. Direta:\par
+          \quote{unpublished1}{"Estudos iniciais indicam concentração elevada de partículas em amostras costeiras."}
+\end{itemize}
+
+\section{Figuras e Tabelas}\label{sec:figuras-tabelas}
+
+Assim como as citações, figuras e tabelas são elementos onipresentes em trabalhos acadêmicos e
+técnicos. Eles ajudam a ilustrar conceitos, apresentar dados e facilitar a compreensão do conteúdo.
+Figuras e tabelas devem ser inseridas no texto próximo ao local onde são mencionadas pela primeira
+vez, para facilitar a leitura e evitar que o leitor precise procurar por elas em outras partes do
+documento. Além disso, é importante numerar e rotular corretamente cada figura e tabela, utilizando
+o ambiente \texttt{figure} para figuras e \texttt{table} para tabelas. Isso garante que as referências
+a esses elementos sejam atualizadas automaticamente, mesmo que a ordem ou o número de figuras e
+tabelas mude durante o processo de edição.
+
+A norma ABNT NBR 14724:224~\cite{nbr14724:2024} estabelece diretrizes específicas para a
+formatação e apresentação de figuras e tabelas em trabalhos acadêmicos. De acordo com essa norma,
+as figuras devem ser numeradas consecutivamente em algarismos arábicos (Figura 1, Figura 2, etc.) e
+devem possuir uma legenda descritiva, localizada acima da figura. As tabelas também devem ser
+numeradas consecutivamente em algarismos arábicos (Tabela 1, Tabela 2, etc.) e devem possuir uma
+legenda descritiva, localizada acima da tabela. Além disso, é importante garantir que as figuras e
+tabelas estejam devidamente referenciadas no texto. Este modelo oferece os comandos
+\verb|\reffig{}| e \verb|\reftable{}| para autoreferências formatadas, bastando passar o rótulo da figura/tabela. Use os prefixos \texttt{fig:} para figuras (por exemplo, \texttt{fig:exemplo})
+e \texttt{tab:} para tabelas (por exemplo, \texttt{tab:exemplo}) ao criar os rótulos. Também existem
+os comandos \verb|\reffigcomp{}| e \verb|\reftablecomp{}| para citar uma figura junto com seu título. Esta não é uma prática padrão, mas pode ser interessante em alguns contextos.
+
+Figuras e tabelas devem referenciar suas fontes também, utilizando o comando \verb|\fonte{}|
+fornecido por este modelo, que posiciona a fonte de forma adequada conforme as normas ABNT.  Note
+que a fonte deve ser apresentada em fonte menor que o corpo do texto e alinhada à esquerda, conforme
+exemplificado a seguir. Caso a Figura ou Tabela sejam de autoria própria, utilize a expressão ``o
+próprio autor'' ou ``elaboração própria'' como fonte.
+
+Veja aqui uma referência à \reffig{fig:exemplo} e à \reftable{tab:exemplo}.
+
+\begin{figure}[!htbp]
+    \centering
+    \caption{Figura de exemplo}
+    \label{fig:exemplo}
+    \caption*{Uma figura de exemplo, elaborada pelo próprio autor. Note o alinhamento da ``fonte'', abaixo da figura. Esta legenda adicional é opcional, usada quando é necessário fornecer uma descrição mais detalhada da figura, complementando a legenda principal.}
+    \includegraphics[width=0.5\textwidth]{example-image}
+    \fonte{o próprio autor}
+\end{figure}
+
+\begin{table}[!htbp]
+    \centering
+    \caption{Tabela de exemplo}
+    \caption*{A legenda da tabela deve conter uma descrição clara e concisa do conteúdo apresentado.}
+    \label{tab:exemplo}
+    \begin{tabular}{@{}lllll@{}}
+        \toprule
+        Coluna 1 & Coluna 2 & Coluna 3 & Coluna 4 & Coluna 5 \\ \midrule
+        1        & 2        & 2        & 1        & 3        \\
+        1        & 2        & 1        & 4        & 3        \\
+        5        & 3        & 4        & 3        & 5        \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{table}
+
+Usando o pacote \texttt{subcaption}, é possível incluir múltiplas figuras ou tabelas dentro de um
+mesmo ambiente \texttt{figure} ou \texttt{table}, cada uma com sua própria legenda, além da legenda
+principal. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
+
+\begin{figure}[!htbp]
+    \centering
+    \caption[Figura múltipla]{Exemplo de figura múltipla}
+    \label{fig:exemplo-multiplo}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{Subfigura A}
+        \label{fig:subfig-a}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-b}
+        \caption{Subfigura B}
+        \caption*{Cada subfigura pode ter sua própria legenda}
+        \label{fig:subfig-b}
+    \end{subfigure}
+    \fonte{\cite{ibge2020,almeida2022}}
+\end{figure}
+
+Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
+detalhes sobre como utilizá-lo de forma eficaz. Ele pode ser encontrado no diretório oficial do
+\LaTeX\, na \gls{ctan}, no endereço eletrônico (\url{https://ctan.org/pkg/subcaption}).
+
+\section{Equações}\label{sec:equacoes}
+
+Equações também são elementos comuns em trabalhos acadêmicos, especialmente em áreas como
+matemática, física e engenharia. Equações podem ser apresentadas de duas formas, \emph{inline} ou
+em blocos separados. Equações \emph{inline} são inseridas diretamente no texto, enquanto equações em
+blocos separados são destacadas do texto, geralmente centralizadas e numeradas para referência. Veja
+um exemplo de equação \emph{inline}, usando a equação considerada por muitos, como a mais bela de
+todas, a \emph{Identidade de Euler}: \(e^{i\pi} + 1 = 0\). O \LaTeX\ provê uma maneira simples de
+formatar equações matemáticas, com uma variedade de símbolos e operadores disponíveis. Para equações
+em blocos separados, utilize o ambiente \texttt{equation}, como mostrado a seguir:
+
+\begin{equation}
+    a^2 + b^2 = c^2
+    \label{eq:pitagoras}
+\end{equation}
+
+Equações em blocos também podem ser referenciadas no texto. O modelo provê os comandos
+\verb|\refeq{}| e \verb|\refeqcomp{}| para referenciar equações com formatação consistente com o
+estilo do documento. Por exemplo, veja a referência à \refeq{eq:pitagoras}. E a referência
+completa à mesma: \refeqcomp{eq:pitagoras}{Equação do Teorema de Pitágoras}.
+
+\section{Abreviaturas, siglas e símbolos}\label{sec:abreviaturas-siglas-simbolos}
+
+Caso seu documento utilize muitas abreviaturas, siglas ou símbolos técnicos, é recomendável incluir
+uma lista dedicada a esses elementos. Isso ajuda o leitor a entender rapidamente o significado de
+termos técnicos ou abreviados usados ao longo do texto. Também serve como referência rápida, caso o
+leitor não se lembre imediatamente do significado de uma sigla ou símbolo específico. A lista de
+abreviaturas pode ser construída manualmente ou utilizando pacotes específicos do \LaTeX, como o
+\texttt{nomencl} ou o \texttt{glossaries}. Este modelo inclui um arquivo de exemplo para a lista de
+abreviaturas e siglas, localizado em \texttt{Preambulo/lista-abreviaturas.tex}. Para
+incluir a lista no seu documento, descomente a linha correspondente no arquivo principal do
+documento. Para imprimir a lista de abreviaturas e a lista de símbolos, descomente os comandos
+\verb|\printglossary|, no arquivo principal do modelo. A lista de abreviaturas e a lista de símbolos
+serão geradas automaticamente com base nas definições fornecidas no arquivo de abreviaturas e no
+arquivo de símbolos.
+
+Para referenciar uma abreviatura ou símbolo no texto, utilize o comando \verb|\gls{}|, passando como
+argumento a chave definida para a abreviatura ou símbolo no arquivo de definições. Por exemplo, para
+referenciar a abreviatura \emph{Mínimo Múltiplo Comum}, definida com a chave \texttt{mmc}, utilize o
+comando \verb|\gls{mmc}|. Veja: \gls{mmc}. Na primeira vez que a abreviatura for referenciada, o
+nome completo será exibido junto com a abreviatura entre parênteses. Nas referências subsequentes,
+apenas a abreviatura será exibida, observe: \gls{mmc}. Isso garante que o leitor compreenda o
+significado da abreviatura desde a primeira menção. A lista de abreviaturas e símbolos será
+atualizada automaticamente com base nas referências feitas no texto, garantindo apenas abreviaturas
+que foram citadas no texto apareçam na lista. Um outro ponto importante, é que o pacote
+\texttt{glossaries} é integrado ao pacote \texttt{hyperref}, garantindo que todas as referências a
+abreviaturas e símbolos sejam \emph{hyperlinks} clicáveis, facilitando a navegação no documento.
+
+Símbolos funcionam de forma parecida, eles devem ser citados no texo para que apareçam na lista de
+símbolos. Use o comando \verb|\gls{}| também para referenciar os símbolos, veja: \gls{symb:pi}. Caso
+deseje imprimir a descrição do símbolo no texto, utilize o comando \verb|\glsdesc{}|, veja a
+descrição para o símbolo \gls{symb:pi}: \glsdesc{symb:pi}. Se seu trabalho possui muitas equações
+usando símbolos específicos, é uma boa prática mantê-los organizados em um arquivo de definições
+separado, como o fornecido neste modelo em \texttt{Preambulo/lista-simbolos.tex}.
+
+Um ponto importante: a lista de abreviaturas não é gerada automaticamente. Ao incluir uma nova
+abreviatura ou símbolo no arquivo de definições, você deve compilar o documento para gerar o
+documento auxiliar necessário para a lista de abreviaturas. Dependendo do ambiente de compilação que
+você está utilizando, pode ser necessário executar comandos adicionais para gerar a lista de
+abreviaturas corretamente. Consulte a documentação do pacote \texttt{glossaries}
+(\url{https://www.ctan.org/pkg/glossaries}) para mais detalhes sobre como gerar a lista de
+abreviaturas e a lista de símbolos. Geralmente, isto envolve uma chamada ao comando
+\texttt{makeglossaries} passando o nome do arquivo principal na linha de comando.

@@ -1,3 +1,6 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
+
 \documentclass[12pt,a4paper,oneside]{book}
 \usepackage{UnifeiICTReport}
 %\usepackage[utf8]{inputenc} % Removido pois XeLaTeX usa UTF-8 nativo
@@ -7,9 +10,16 @@
 \usepackage{lipsum} % Para gerar texto placeholder
 \usepackage[style=abnt]{biblatex}
 \usepackage{fancyvrb} % Para formatação avançada de verbatim
-\usepackage{showframe}
-\usepackage{lua-visual-debug}
- 
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+% \usepackage{showframe} % para debug de margens e layout
+% \usepackage{lua-visual-debug} % para debug visual com LuaLaTeX
+
+\makeglossaries % necessário para glossários e listas de abreviaturas
+\subimport{Preambulo/}{lista-abreviaturas.tex}
+\subimport{Preambulo/}{lista-simbolos.tex}
+
 \bibliography{referencias.bib}
 
 %--------------------------------------
@@ -83,7 +93,9 @@
 
 \listoftables
 
-%subimport{Preambulo/}{lista-abreviaturas-simbolos.tex}
+\printglossary[type=\acronymtype,title={\acronymlistname}]
+
+\printglossary[type=symbols,title={\symbolslistname}]
 
 % ---
 % Sumário
@@ -95,7 +107,7 @@
 % ---
 % Introdução
 % ---
-% \subimport{Capitulos/cap1/}{cap1.tex}
+\subimport{Capitulos/cap1/}{cap1.tex}
 
 % ---
 % Desenvolvimento

@@ -24,7 +24,7 @@
   doi     = {10.1234/tec.2019.15.2.45}
 }
 
-@standard{nbr6023:2018,
+@manual{nbr6023:2018,
   title       = {NBR 6023},
   subtitle    = {Informação e Documentação — Referências — Elaboração},
   institution = {Associação Brasileira de Normas Técnicas},
@@ -74,17 +74,17 @@
   doi     = {10.5678/jes.2022.8.1.12}
 }
 
-@standard{nbr14724:2011,
+@manual{nbr14724:2024,
   title       = {NBR 14724},
   subtitle    = {Trabalhos Acadêmicos — Apresentação},
   institution = {Associação Brasileira de Normas Técnicas},
   location    = {Rio de Janeiro},
   number      = {14724},
-  year        = {2011}
+  year        = {2024}
 }
-
+% Se o autor é uma instituição, coloque o nome entre chaves para evitar a inversão
 @report{ibge2020,
-  author      = {Instituto Brasileiro de Geografia e Estatística},
+  author      = {{Instituto Brasileiro de Geografia e Estatística}},
   title       = {Censo Demográfico 2020},
   type        = {Relatório},
   institution = {IBGE},
@@ -115,7 +115,7 @@
   doi     = {10.3456/th.2021.12.3.78}
 }
 
-@standard{nbr6028:2003,
+@manual{nbr6028:2003,
   title       = {NBR 6028},
   subtitle    = {Resumo — Apresentação},
   institution = {Associação Brasileira de Normas Técnicas},
@@ -164,3 +164,117 @@
   year    = {2020},
   doi     = {10.7890/re.2020.25.4.101}
 }
+
+% --- Entradas adicionais fictícias para demonstração de citações ---
+@article{article1,
+  author  = {Alves, João and Pereira, Maria},
+  title   = {Um estudo sobre amostragem aleatória em redes},
+  journal = {Revista Brasileira de Amostragem},
+  year    = {2020},
+  volume  = {12},
+  number  = {2},
+  pages   = {45--59}
+}
+
+@book{book1,
+  author    = {Silva, Carlos},
+  title     = {Introdução à Estatística Aplicada},
+  publisher = {Editora Acadêmica},
+  year      = {2018},
+  address   = {São Paulo, BR}
+}
+
+@inproceedings{inproceedings1,
+  author    = {Costa, Ana and Rocha, Lucas},
+  title     = {Técnicas de otimização para transporte urbano},
+  booktitle = {Anais do Congresso Brasileiro de Transporte},
+  year      = {2019},
+  pages     = {101--110},
+  address   = {Belo Horizonte, BR}
+}
+
+@incollection{incollection1,
+  author    = {Mendes, Paulo},
+  title     = {Modelos de previsão de demanda},
+  booktitle = {Sistemas de Logística Moderna},
+  publisher = {Editora Técnica},
+  year      = {2021},
+  pages     = {201--225}
+}
+
+@inbook{inbook1,
+  author    = {Fernandes, Beatriz},
+  title     = {Capítulo sobre controle de qualidade},
+  booktitle = {Manual de Engenharia de Produção},
+  publisher = {Editora Universitária},
+  year      = {2017},
+  chapter   = {4},
+  pages     = {98--124}
+}
+
+@phdthesis{phdthesis1,
+  author  = {Gomes, Ricardo},
+  title   = {Métodos numéricos em dinâmica de fluidos},
+  school  = {Universidade Federal de Exemplo},
+  year    = {2016},
+  address = {Itajubá, BR}
+}
+
+@mastersthesis{mastersthesis1,
+  author = {Almeida, Patrícia},
+  title  = {Avaliação de desempenho de algoritmos de roteamento},
+  school = {Universidade Estadual de Amostra},
+  year   = {2015}
+}
+
+@techreport{techreport1,
+  author      = {Instituto de Pesquisa X},
+  title       = {Relatório técnico sobre sensoriamento remoto},
+  institution = {Instituto de Pesquisa X},
+  year        = {2014},
+  number      = {TR-2014-05}
+}
+
+@manual{manual1,
+  title        = {Guia do Usuário - Sistema Y},
+  author       = {Equipe de Desenvolvimento do Sistema Y},
+  organization = {Corporação Y},
+  year         = {2022}
+}
+
+@online{online1,
+  author  = {Instituto Nacional de Estatística},
+  title   = {Base de Dados sobre Indicadores Econômicos},
+  year    = {2023},
+  url     = {https://www.exemplo.gov.br/indicadores},
+  urldate = {2025-10-27}
+}
+
+@misc{misc1,
+  author = {Santos, L.},
+  title  = {Notas de aula sobre redes neurais},
+  year   = {2020},
+  note   = {Documento não publicado, material de curso}
+}
+
+@proceedings{proceedings1,
+  title     = {Anais do Simpósio Internacional de Computação},
+  year      = {2013},
+  publisher = {Associação de Computação}
+}
+
+@patent{patent1,
+  author = {Ribeiro, Hugo},
+  title  = {Processo para co-fabricação de compósitos},
+  year   = {2012},
+  number = {BR1123456A},
+  note   = {Patente concedida}
+}
+
+@unpublished{unpublished1,
+  author = {Oliveira, Marina},
+  title  = {Estudo preliminar sobre microplásticos em água},
+  year   = {2024},
+  note   = {Relatório interno, não publicado}
+}
+

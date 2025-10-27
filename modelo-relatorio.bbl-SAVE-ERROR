@@ -16,5 +16,299 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global/global}
+    \entry{almeida2022}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=584dffabf65f563005f03ce993846406}{%
+           family={Almeida},
+           familyi={A\bibinitperiod},
+           given={Beatriz},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {Universidade de São Paulo}%
+      }
+      \list{location}{1}{%
+        {São Paulo}%
+      }
+      \strng{namehash}{584dffabf65f563005f03ce993846406}
+      \strng{fullhash}{584dffabf65f563005f03ce993846406}
+      \strng{fullhashraw}{584dffabf65f563005f03ce993846406}
+      \strng{bibnamehash}{584dffabf65f563005f03ce993846406}
+      \strng{authorbibnamehash}{584dffabf65f563005f03ce993846406}
+      \strng{authornamehash}{584dffabf65f563005f03ce993846406}
+      \strng{authorfullhash}{584dffabf65f563005f03ce993846406}
+      \strng{authorfullhashraw}{584dffabf65f563005f03ce993846406}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{bookpagination}{sheet}
+      \field{subtitle}{Big Data e Machine Learning}
+      \field{title}{Análise de Dados em Grandes Volumes}
+      \field{type}{Tese (Doutorado)}
+      \field{year}{2022}
+      \field{pages}{180}
+      \range{pages}{1}
+    \endentry
+    \entry{fernandes2019}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b21b9ab3965a827e1f97821d88eea551}{%
+           family={Fernandes},
+           familyi={F\bibinitperiod},
+           given={Ana},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{fullhash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{fullhashraw}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{bibnamehash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{authorbibnamehash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{authornamehash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{authorfullhash}{b21b9ab3965a827e1f97821d88eea551}
+      \strng{authorfullhashraw}{b21b9ab3965a827e1f97821d88eea551}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Revista de Tecnologia}
+      \field{number}{2}
+      \field{title}{Avanços em Inteligência Artificial}
+      \field{volume}{15}
+      \field{year}{2019}
+      \field{pages}{45\bibrangedash 60}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1234/tec.2019.15.2.45
+      \endverb
+    \endentry
+    \entry{ibge2020}{report}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=638eed94c97a4776d2d0e13ee4adbf12}{%
+           family={{Instituto Brasileiro de Geografia e Estatística}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {IBGE}%
+      }
+      \list{location}{1}{%
+        {Brasília}%
+      }
+      \strng{namehash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{fullhash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{fullhashraw}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{bibnamehash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{authorbibnamehash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{authornamehash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{authorfullhash}{638eed94c97a4776d2d0e13ee4adbf12}
+      \strng{authorfullhashraw}{638eed94c97a4776d2d0e13ee4adbf12}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Censo Demográfico 2020}
+      \field{type}{Relatório}
+      \field{year}{2020}
+      \field{pages}{500}
+      \range{pages}{1}
+    \endentry
+    \entry{lima2022}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=f49f0f6121fa776794293facd54f98cd}{%
+           family={Lima},
+           familyi={L\bibinitperiod},
+           given={Carlos},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a2bc7e924dfe0a970ae596cec61d9585}{%
+           family={Pereira},
+           familyi={P\bibinitperiod},
+           given={Roberta},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{fullhash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{fullhashraw}{a08e49311c98511122ba968bde7d7b51}
+      \strng{bibnamehash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{authorbibnamehash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{authornamehash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{authorfullhash}{a08e49311c98511122ba968bde7d7b51}
+      \strng{authorfullhashraw}{a08e49311c98511122ba968bde7d7b51}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Engineering Studies}
+      \field{number}{1}
+      \field{title}{Sustentabilidade em Projetos de Engenharia}
+      \field{volume}{8}
+      \field{year}{2022}
+      \field{pages}{12\bibrangedash 28}
+      \range{pages}{17}
+      \verb{doi}
+      \verb 10.5678/jes.2022.8.1.12
+      \endverb
+    \endentry
+    \entry{martins2021}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=b4fc0472c33aec355fe0b9d14e08cd55}{%
+           family={Martins},
+           familyi={M\bibinitperiod},
+           given={Sofia},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{fullhash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{fullhashraw}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{bibnamehash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{authorbibnamehash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{authornamehash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{authorfullhash}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \strng{authorfullhashraw}{b4fc0472c33aec355fe0b9d14e08cd55}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Tecnologia Hoje}
+      \field{number}{3}
+      \field{title}{Inovação Tecnológica no Século XXI}
+      \field{volume}{12}
+      \field{year}{2021}
+      \field{pages}{78\bibrangedash 92}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.3456/th.2021.12.3.78
+      \endverb
+    \endentry
+    \entry{nbr14724:2024}{standard}{}{}
+      \list{institution}{1}{%
+        {Associação Brasileira de Normas Técnicas}%
+      }
+      \list{location}{1}{%
+        {Rio de Janeiro}%
+      }
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{number}{14724}
+      \field{subtitle}{Trabalhos Acadêmicos — Apresentação}
+      \field{title}{NBR 14724}
+      \field{year}{2024}
+    \endentry
+    \entry{nbr6023:2018}{standard}{}{}
+      \list{institution}{1}{%
+        {Associação Brasileira de Normas Técnicas}%
+      }
+      \list{location}{1}{%
+        {Rio de Janeiro}%
+      }
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{title}
+      \field{number}{6023}
+      \field{subtitle}{Informação e Documentação — Referências — Elaboração}
+      \field{title}{NBR 6023}
+      \field{year}{2018}
+    \endentry
+    \entry{rodrigues2017}{book}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=284bc3c6913f7c35e5d7886bc0b7f463}{%
+           family={Rodrigues},
+           familyi={R\bibinitperiod},
+           given={Fernando},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Porto Alegre}%
+      }
+      \list{publisher}{1}{%
+        {Editora Estatística}%
+      }
+      \strng{namehash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{fullhash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{fullhashraw}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{bibnamehash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{authorbibnamehash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{authornamehash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{authorfullhash}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \strng{authorfullhashraw}{284bc3c6913f7c35e5d7886bc0b7f463}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{1}
+      \field{isbn}{978-85-4567-890-1}
+      \field{subtitle}{Técnicas e Exemplos}
+      \field{title}{Estatística Aplicada}
+      \field{year}{2017}
+    \endentry
+    \entry{silva2020}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=b46215306b00bef8ab13b04703461abe}{%
+           family={Silva},
+           familyi={S\bibinitperiod},
+           given={João},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c924378271b20d5a2b90bacad166f5a0}{%
+           family={Oliveira},
+           familyi={O\bibinitperiod},
+           given={Maria},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {São Paulo}%
+      }
+      \list{publisher}{1}{%
+        {Editora Universitária}%
+      }
+      \strng{namehash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{fullhash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{fullhashraw}{8cda9964914e071d27908efd8839e9a9}
+      \strng{bibnamehash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{authorbibnamehash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{authornamehash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{authorfullhash}{8cda9964914e071d27908efd8839e9a9}
+      \strng{authorfullhashraw}{8cda9964914e071d27908efd8839e9a9}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{3}
+      \field{isbn}{978-85-1234-567-8}
+      \field{subtitle}{Conceitos Básicos e Aplicações}
+      \field{title}{Introdução à Ciência da Computação}
+      \field{year}{2020}
+      \field{pages}{250}
+      \range{pages}{1}
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 

@@ -1,3 +1,6 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
+
 % UnifeiICTReport.sty -- formatação para relatórios técnicos-científicos do Instituto de Ciências
 % Tecnológicas (ICT) da Universidade Federal de Itajujbá (Unifei) Campus Itabira
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
@@ -9,7 +12,7 @@
 \DeclareOption{roman}{\@romantrue}
 \DeclareOption{sans}{\@romanfalse}
 
-% Accumula opções fornecidas ao pacote para processamento posterior
+% Acumula opções fornecidas ao pacote para processamento posterior
 \def\UnifeiICTReport@rawopts{}
 \DeclareOption*{%
     % concatena, separado por vírgula
@@ -94,7 +97,10 @@
 % Finalmente passa as opções calculadas para babel e carrega o pacote
 \PassOptionsToPackage{\UnifeiICTReport@babelopts}{babel}
 \RequirePackage{babel}
-\RequirePackage{heuristica}
+% Note: do not \RequirePackage{heuristica} unconditionally here — prefer
+% to use an OpenType installation when available or fall back to system
+% serif fonts. Loading the legacy `heuristica` package early can cause
+% fontspec/font-shape warnings; we handle heuristica only via font detection.
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{geometry}
 \geometry{%
@@ -107,12 +113,142 @@
 \RequirePackage{tikz}
 \usetikzlibrary{matrix, positioning, calc}
 \RequirePackage{graphicx}
+
+% --- Medir largura do último gráfico incluído ---
+% Guardamos a última imagem em uma caixa e a largura em \LastGraphicWidth.
+\newsavebox{\unifeiLastGraphicBox}
+\newlength{\LastGraphicWidth}
+% Auxiliares para medidas de subfiguras
+\newlength{\Unifei@CurrentFigureWidth}
+\newlength{\Unifei@tmpwd}
+% Preserve original \includegraphics and wrap it to measure the box.
+\let\Unifei@OldIncludeGraphics\includegraphics
+\RequirePackage{xparse}
+\RenewDocumentCommand{\includegraphics}{O{} m}{%
+    % Save the graphic into a box so we can measure its width and then
+    % typeset the same box. Using \sbox avoids double typesetting.
+        \sbox{\unifeiLastGraphicBox}{\Unifei@OldIncludeGraphics[#1]{#2}}%
+        \setlength{\LastGraphicWidth}{\wd\unifeiLastGraphicBox}%
+        \usebox{\unifeiLastGraphicBox}%
+}
 \RequirePackage{setspace}
 \RequirePackage{etoolbox}
+\RequirePackage[acronym, symbols, translate=babel]{glossaries}
+
+
+
+
+% Hook to capture the width of the last tabular environment automatically
+% so \fonte can align to table left edge as well. Wrapping the tabular
+% contents directly can break internal alignment (tabular uses \crcr and
+% fragile grouping). Instead, after the tabular finishes we grab the last
+% vertical box (the table's vbox) and store it in \unifeiLastGraphicBox,
+% then record its width. This avoids reboxing the tabular contents.
+% Save original tabular macros so we can wrap the environment safely
+\let\Unifei@OldTabular\tabular
+\let\Unifei@Oldendtabular\endtabular
+
+% Redefine the tabular environment to capture its typeset result into
+% \unifeiLastGraphicBox (via lrbox), record its width, and then typeset
+% the saved box. We use xparse to accept the optional positional argument
+% (like [t]) and the mandatory column specification.
+\RenewDocumentEnvironment{tabular}{o m b}{%
+    \begin{lrbox}{\unifeiLastGraphicBox}%
+        % Invoke the original tabular begin with or without the optional arg
+        \IfNoValueTF{#1}{\Unifei@OldTabular{#2}}{\Unifei@OldTabular[#1]{#2}}%
+        % Body of the tabular (captured as #3)
+        #3
+        % Close the original tabular
+        \Unifei@Oldendtabular
+    \end{lrbox}%
+    % Record width and typeset the captured table box
+    \global\setlength{\LastGraphicWidth}{\wd\unifeiLastGraphicBox}%
+    \usebox{\unifeiLastGraphicBox}%
+}{% end environment (nothing to do)
+}
+
+% --- Suporte para longtable: determinar largura usada para legendas/\fonte
+% longtable é multi-página e não pode ser reboxado de forma segura. Em vez
+% disso, usamos \LTcapwidth (largura de caption/coluna para longtable) quando
+% disponível; caso contrário, usamos \linewidth como fallback. Isso permite
+% que \fonte alinhe à esquerda na maioria dos casos sem interferir na
+% tipografia do longtable.
+\AtEndEnvironment{longtable}{%
+    % Se \LTcapwidth estiver definido, use-o; senão, fallback para \linewidth
+    \@ifundefined{LTcapwidth}{%
+        \global\setlength{\LastGraphicWidth}{\linewidth}%
+    }{%
+        \global\setlength{\LastGraphicWidth}{\LTcapwidth}%
+    }%
+}
+
+% --- Captura e acumula larguras de subfigure ---
+% Quando houver subfiguras dentro de um figure, queremos que \fonte use a
+% largura total combinada (soma das larguras dos subfigure). Para isso:
+% - Ao entrar em um figure, resetamos o acumulador \Unifei@CurrentFigureWidth
+% - Redefinimos o ambiente subfigure para capturar seu argumento de largura
+%   (por exemplo 0.45\textwidth), converter em comprimento e somar ao
+%   acumulador. Também reboxamos o conteúdo do subfigure para medir/usar
+%   de forma segura.
+\AtBeginEnvironment{figure}{%
+    \setlength{\Unifei@CurrentFigureWidth}{0pt}%
+}
+
+% Defer subfigure wrapping until after document preamble so that the
+% environment is defined (the user may load subcaption after this package).
+\AtBeginDocument{%
+    \@ifundefined{subfigure}{%
+        % subfigure not defined; do nothing
+    }{%
+        % Preserve original subfigure begin/end so we can invoke them inside our wrapper
+        \let\Unifei@OldSubfigure\subfigure
+        \let\Unifei@Oldendsubfigure\endsubfigure
+
+        \RenewDocumentEnvironment{subfigure}{o m b}{%
+            % capture the subfigure into a box (so we can safely typeset it later)
+            \begin{lrbox}{\unifeiLastGraphicBox}%
+                % invoke original subfigure begin (with optional placement #1)
+                \IfNoValueTF{#1}{\Unifei@OldSubfigure{#2}}{\Unifei@OldSubfigure[#1]{#2}}%
+                % body of the subfigure
+                #3
+                % close original subfigure
+                \Unifei@Oldendsubfigure
+            \end{lrbox}%
+            % convert the width argument (#2) into a length and add to current figure width
+            \setlength{\Unifei@tmpwd}{#2}%
+            \global\addtolength{\Unifei@CurrentFigureWidth}{\Unifei@tmpwd}%
+            % update LastGraphicWidth to the running total so \fonte will use it
+            \global\setlength{\LastGraphicWidth}{\Unifei@CurrentFigureWidth}%
+            % typeset the captured subfigure box
+            \usebox{\unifeiLastGraphicBox}%
+        }{% end subfigure
+        }
+    }%
+}
+
+% Quando o figure terminar, se acumulamos alguma largura, use-a como LastGraphicWidth
+\AtEndEnvironment{figure}{%
+    \ifdim\Unifei@CurrentFigureWidth>0pt
+        \global\setlength{\LastGraphicWidth}{\Unifei@CurrentFigureWidth}%
+    \fi
+}
 \RequirePackage{xstring}
 \RequirePackage{indentfirst}
 % For proper justified text inside narrow blocks
 \RequirePackage{ragged2e}
+
+% Make figure/table/equation numbering continuous across the document
+% (do not reset per chapter). Use chngcntr to remove the dependency on
+% the chapter counter.
+\RequirePackage{chngcntr}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+\counterwithout{equation}{chapter}
+
+% Ensure caption package is available (some documents load subcaption instead);
+% configure captions to use a sans-serif font (label bold + sans, text sans).
+\RequirePackage{caption}
+\captionsetup{font=small,labelfont={bf,sf},textfont={sf}}
 
 % --- Carregamento da fonte Exo2 a partir do subdiretório "Fontes/Exo2" ---
 % Define \ExoTwo como família de fonte local se os arquivos estiverem presentes.
@@ -156,18 +292,35 @@
     \fi
 }
 
+% \unifeismallcaps: prefer real OpenType small-caps when available,
+% but avoid requesting the feature for the local Exo2 bundle (which does
+% not provide small-caps and causes a font shape warning). If Exo2 is
+% available, fall back to a simple uppercase (keeps text extraction
+% accurate). Otherwise attempt to use OpenType small-caps where present.
 \newcommand{\unifeismallcaps}[1]{%
-    {\unifeifont\addfontfeatures{Letters=SmallCaps}\MakeUppercase{#1}}%
+    \ifExoTwoAvailable
+        {\unifeifont\MakeUppercase{#1}}%
+    \else
+        {\unifeifont\addfontfeatures{Letters=SmallCaps}\MakeUppercase{#1}}%
+    \fi
 }
 
 % --- Configure main font: prefer Heuristica; carregue também fontes matemáticas via unicode-math ---
 % fontspec já foi requerido antes; agora garantimos unicode-math disponível.
 \RequirePackage{unicode-math}
 
-% Prefer Heuristica como fonte principal quando disponível. Caso não exista, tenta fallbacks.
+% Prefer Heuristica como fonte principal quando disponível.
+% Se o pacote 'heuristica' foi carregado (fonte clássica Type1 via pacote),
+% permitimos que ele defina \rmdefault e evitamos chamar \setmainfont (que tenta
+% carregar OpenType pelo nome). Caso contrário, tentamos nomes OpenType comuns.
+% Simplified Heuristica detection: try the OpenType family name 'Heuristica'
+% directly (many TeXLive installations provide it under this name). Avoid
+% probing legacy names such as 'Heuristica-TLF' which can trigger mktextfm
+% attempts and noisy warnings when the legacy shape files are not present.
 \IfFontExistsTF{Heuristica}{%
     \setmainfont{Heuristica}[Ligatures=TeX,Scale=MatchLowercase]
 }{%
+    % fallback chain when Heuristica OpenType not available
     \PackageWarning{UnifeiICTReport}{Main system font "Heuristica" not found; attempting fallbacks (Libertinus Serif, TeX Gyre Termes).}
     \IfFontExistsTF{Libertinus Serif}{%
         \setmainfont{Libertinus Serif}[Ligatures=TeX,Scale=MatchLowercase]
@@ -175,7 +328,6 @@
         \IfFontExistsTF{TeX Gyre Termes}{%
             \setmainfont{TeX Gyre Termes}[Ligatures=TeX,Scale=MatchLowercase]
         }{%
-            % leave default if none found; issue a warning
             \PackageWarning{UnifeiICTReport}{No preferred main fonts (Heuristica/Libertinus/TeX Gyre Termes) found; leaving default font.}
         }
     }
@@ -196,6 +348,30 @@
             }{%
                 % último recurso
                 \setmathfont{Asana Math}
+            }
+        }
+    }
+}
+
+% --- Fonte monoespaçada ---
+% Prefer IBM Plex Mono usando o nome de família que o TeXLive registra
+% (por exemplo "IBM Plex Mono"). Não sondamos "plex-otf" para evitar que
+% mktextfm seja chamado em instalações que exponham o pacote sob nomes
+% diferentes.
+\IfFontExistsTF{IBM Plex Mono}{%
+    \setmonofont{IBM Plex Mono}[Scale=MatchLowercase]
+}{%
+    \IfFontExistsTF{IBMPlexMono}{%
+        \setmonofont{IBMPlexMono}[Scale=MatchLowercase]
+    }{%
+        \IfFontExistsTF{Inconsolata}{%
+            \setmonofont{Inconsolata}[Scale=MatchLowercase]
+        }{%
+            \IfFontExistsTF{Latin Modern Mono}{%
+                \setmonofont{Latin Modern Mono}[Scale=MatchLowercase]
+            }{%
+                % nada a fazer; usará a monofont padrão do sistema
+                \PackageWarning{UnifeiICTReport}{No preferred monospaced fonts found (IBM Plex Mono/Inconsolata/Latin Modern Mono); leaving default monospace.}
             }
         }
     }
@@ -291,6 +467,16 @@
 \addto\captionsspanish{\renewcommand{\figuresourcename}{Fuente}} % Tradução para espanhol
 \addto\captionsfrench{\renewcommand{\figuresourcename}{Source}}  % Tradução para francês
 \addto\captionsgerman{\renewcommand{\figuresourcename}{Quelle}} % Tradução para alemão
+\newcommand{\acronymlistname}{List of Acronyms} % Padrão em inglês
+\addto\captionsbrazilian{\renewcommand{\acronymlistname}{Lista de Abreviaturas e Siglas}}
+\addto\captionsspanish{\renewcommand{\acronymlistname}{Lista de Acrónimos}} % Tradução para espanhol
+\addto\captionsfrench{\renewcommand{\acronymlistname}{Liste des Acronymes}}  % Tradução para francês
+\addto\captionsgerman{\renewcommand{\acronymlistname}{Acronym-Liste}} % Tradução para alemão
+\newcommand{\symbolslistname}{List of Symbols} % Padrão em inglês
+\addto\captionsbrazilian{\renewcommand{\symbolslistname}{Lista de Símbolos}}
+\addto\captionsspanish{\renewcommand{\symbolslistname}{Lista de Símbolos}} % Tradução para espanhol
+\addto\captionsfrench{\renewcommand{\symbolslistname}{Liste des Symboles}}  % Tradução para francês
+\addto\captionsgerman{\renewcommand{\symbolslistname}{Symbol-Liste}} % Tradução para alemão
 
 % Cores institucionais
 \definecolor{unifeiblue}{cmyk}{1, 0.7, 0.1, 0.45}
@@ -304,7 +490,34 @@
 
 \renewcommand{\baselinestretch}{1.5}
 
-\providecommand{\refcomp}[2]{\hyperref[#2]{\textcolor{unifeiblue}{\textbf{#1~\ref*{#2} - \nameref*{#2}}}}}
+\providecommand{\refcomp}[2]{\hyperref[#2]{\color{unifeiblue}{\textbf{#1~\ref*{#2} - \nameref*{#2}}}}}
+
+% Nomes para referências tipo equação e suas traduções
+\newcommand{\eqname}{Equation}
+\addto\captionsbrazilian{\renewcommand{\eqname}{Equação}}
+\addto\captionsspanish{\renewcommand{\eqname}{Ecuación}}
+\addto\captionsfrench{\renewcommand{\eqname}{Équation}}
+\addto\captionsgerman{\renewcommand{\eqname}{Gleichung}}
+
+% Wrappers específicos para figuras, tabelas e equações usando o formato de \refcomp
+% Uso: \reffig{<label>}, \reftable{<label>}, \refeq{<label>}
+\providecommand{\reffig}[1]{\hyperref[#1]{\color{unifeiblue}\figurename~\ref{#1}}}
+\providecommand{\reftable}[1]{\hyperref[#1]{\color{unifeiblue}\tablename~\ref{#1}}}
+\providecommand{\refeq}[1]{\hyperref[#1]{\color{unifeiblue}\eqname~\ref{#1}}}
+\providecommand{\reffigcomp}[1]{\refcomp{\figurename}{#1}}
+\providecommand{\reftablecomp}[1]{\refcomp{\tablename}{#1}}
+% \refeqcomp: accept a mandatory label and an optional custom name for the equation.
+% Usage: \refeqcomp{<label>} or \refeqcomp{<label>}[<custom name>]
+\NewDocumentCommand{\refeqcomp}{m o}{%
+    \IfNoValueTF{#2}{%
+        % no custom name: use the localized \eqname via \refcomp
+        \refcomp{\eqname}{#1}%
+    }{%
+        % custom name provided: build same formatted hyperref but with the
+        % provided name instead of \nameref*{#1}
+        \hyperref[#1]{\color{unifeiblue}{\textbf{\eqname~\ref*{#1} - #2}}}%
+    }%
+}
 
 % Redefine \quote to accept two parameters: bibliographic key and quoted text.
 % Appearance:
@@ -328,15 +541,23 @@
 }
 
 \providecommand{\fonte}[1]{%
-  \par % Garante que estamos em um novo parágrafo
-  \vspace{2pt} % Pequeno espaço vertical após a figura
-  \small % Define o tamanho da fonte como pequeno (ABNT pede menor)
-  \noindent % Remove a indentação da primeira linha
-  {
-    \raggedright % Força o alinhamento à esquerda
-    \figuresourcename: {#1}
-    \par % Finaliza o parágrafo com alinhamento à esquerda
-  }
+    % Place the source text aligned to the left edge of the last included
+    % graphic while matching caption styling: small size, sans-serif text
+    % and label in bold sans-serif (same as \captionsetup{labelfont={bf,sf},textfont={sf}}).
+    \par\vspace{2pt}% small gap after the figure
+    {\small\sffamily% caption uses small + sans
+        % If \LastGraphicWidth hasn't been set (no previous graphic), fall back
+        % to full line width (left-aligned).
+        \ifdim\LastGraphicWidth=0pt
+            \makebox[\linewidth][l]{\textbf{\figuresourcename:}~#1.}\par
+        \else
+            % center an inner box of width \LastGraphicWidth and left-align
+            % the source inside it so it sits at the left edge of the graphic
+            \makebox[\linewidth][c]{% centered relative to the text block
+                \makebox[\LastGraphicWidth][l]{\textbf{\figuresourcename:}~#1.}%
+            }\par
+        \fi
+    }
 }
 
 %-------------------------------------------------
@@ -447,7 +668,7 @@
                         % Determine whether to use 'Autor' or 'Autores'
                         \begingroup
                         \edef\UnifeiICTReport@authdetok{\detokenize\expandafter{\@author}}%
-                        \IfSubStr{\UnifeiICTReport@authdetok}{\string\\}{\textsc{\color{unifeiblue}\unifeifont\Large Autores}}{\textsc{\color{unifeiblue}\unifeifont\Large Autor}}\\
+                        \IfSubStr{\UnifeiICTReport@authdetok}{\string\\}{{\color{unifeiblue}\unifeismallcaps{\Large Autores}}}{{\color{unifeiblue}\unifeismallcaps{\Large Autor}}}\\
                         \vspace{0.25\baselineskip}
                         % print the provided author(s)
                         \large\@author
@@ -464,11 +685,11 @@
                     \begin{minipage}[t]{0.40\textwidth}
                         \setstretch{1.0}
                         \begin{flushright}
-                            \textsc{\color{unifeiblue}\unifeifont\Large Orientador}\\
+                            {\color{unifeiblue}\unifeismallcaps{\Large Orientador}}\\
                             \vspace{0.25\baselineskip}
                             \large\@supervisor
                             \if@cosupervisorpresent
-                                \par\vspace{0.5em}\textsc{\color{unifeiblue}\unifeifont\Large Coorientador}\\
+                                \par\vspace{0.5em}{\color{unifeiblue}\unifeismallcaps{\Large Coorientador}}\\
                                 \vspace{0.25\baselineskip}
                                 \large\@cosupervisor
                             \fi
@@ -533,12 +754,12 @@
 }
 
 % Capítulo: "Número~NomeCapítulo" no mesmo parágrafo
-\titleformat{\chapter}[hang]{\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase}{\thechapter}{0.5em}{}
+\titleformat{\chapter}[hang]{\unifeifont\color{unifeiblue}\Large\bfseries\MakeUppercase}{\thechapter}{0.5em}{}
 \titlespacing*{\chapter}{0pt}{20pt}{10pt}
 % Seções/subseções também usam a fonte institucional nos rótulos
 \titleformat{\section}[hang]{\unifeifont\color{unifeiblue}\large\bfseries}{\thesection}{0.5em}{}
-\titleformat{\subsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}[hang]{\unifeifont\color{unifeiblue}\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\subsection}[hang]{\unifeifont\color{unifeiblue}\large}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}[hang]{\unifeifont\color{unifeiblue}\normalsize}{\thesubsubsection}{1em}{}
 
 % Redefine table of contents title to match chapter title styling
 \renewcommand{\tableofcontents}{%
@@ -571,7 +792,73 @@
     \if@openright\cleardoublepage\else\clearpage\fi
 }
 
+% Center and style glossary titles to match the document's pretext headings
+% Redefine \glossarysection to accept an optional TOC title (first arg)
+% and a mandatory printed title (second arg). Use the TOC title for
+% running heads when provided, otherwise fall back to the printed title.
+\renewcommand*{\glossarysection}[2][]{%
+    \cleardoublepage
+    	\thispagestyle{plain}%
+    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{#2}\par}%
+    \vspace{1em}%
+    % choose running head: optional arg #1 if not empty, else printed title #2
+    \ifdefempty{#1}{\markboth{#2}{#2}}{\markboth{#1}{#1}}%
+}
+
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
+
+% ------------------------------------------------------------------
+% Formatação das entradas do Sumário (ToC)
+% Capítulos: \unifeifont, large, bold, uppercase
+% Seções: normalfont, large, bold
+% Subseções: normalsize, normalfont, sem bold
+% Subsubseções: normalsize, normalfont, itálico
+% Observação: evitamos criar novos comandos com nomes iniciados em "\t"
+% (problema conhecido). Redefinimos as macros locais \l@... usadas pelo
+% mecanismo de escrita do .toc.
+\makeatletter
+\renewcommand{\l@chapter}[2]{%
+    \ifnum \c@tocdepth>\m@ne
+        \addpenalty{-\@highpenalty}%
+        \vskip 1.0em \@plus\p@%
+        % capítulos sem recuo lateral, número/reserva pequena
+        \@dottedtocline{0}{0em}{1.5em}{% title
+            {\unifeifont\color{unifeiblue}\normalsize\bfseries\MakeUppercase{#1}}%
+        }{#2}% page
+    \fi
+}
+
+\renewcommand{\l@section}[2]{%
+    \ifnum \c@tocdepth>\z@
+        \addpenalty{-\@highpenalty}%
+        % recuo das seções um pouco menor
+        \@dottedtocline{1}{1.0em}{2.0em}{% title
+            {\unifeifont\color{unifeiblue}\normalsize\bfseries #1}%
+        }{#2}% page
+    \fi
+}
+
+\renewcommand{\l@subsection}[2]{%
+    \ifnum \c@tocdepth>\tw@
+        \addpenalty{-\@highpenalty}%
+        % recuo das subseções reduzido
+        \@dottedtocline{2}{2.2em}{2.6em}{% title
+            {\unifeifont\color{unifeiblue}\normalsize #1}%
+        }{#2}% page
+    \fi
+}
+
+\renewcommand{\l@subsubsection}[2]{%
+    % mostrar subsubsections quando tocdepth > 2 (i.e., tocdepth>=3)
+    \ifnum \c@tocdepth>\tw@
+        \addpenalty{-\@highpenalty}%
+        % recuo das subsubseções reduzido
+        \@dottedtocline{3}{4.0em}{3.2em}{% title
+            {\unifeifont\color{unifeiblue}\normalsize\itshape #1}%
+        }{#2}% page
+    \fi
+}
+\makeatother
 
 \endinput

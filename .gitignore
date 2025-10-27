@@ -42,6 +42,8 @@ __latexindent_temp*
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bcf
+*.bbl-*
+*.bcf-*
 *.blg
 *-blx.aux
 *-blx.bib
@@ -128,7 +130,7 @@ acs-*.bib
 *.lzs
 
 # uncomment this for glossaries-extra (will ignore makeindex's style files!)
-# *.ist
+*.ist
 
 # gnuplottex
 *-gnuplottex-*
