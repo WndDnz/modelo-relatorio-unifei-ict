@@ -111,6 +111,8 @@
 \RequirePackage{etoolbox}
 \RequirePackage{xstring}
 \RequirePackage{indentfirst}
+% For proper justified text inside narrow blocks
+\RequirePackage{ragged2e}
 
 % --- Carregamento da fonte Exo2 a partir do subdiretório "Fontes/Exo2" ---
 % Define \ExoTwo como família de fonte local se os arquivos estiverem presentes.
@@ -281,6 +283,15 @@
 \newcommand{\@keywordsseclang}{}
 \providecommand{\keywordsseclang}[1]{\renewcommand{\@keywordsseclang}{#1}}
 
+%-----------------
+% TRADUÇÕES
+%-----------------
+\newcommand{\figuresourcename}{Source} % Padrão em inglês
+\addto\captionsbrazilian{\renewcommand{\figuresourcename}{Fonte}}
+\addto\captionsspanish{\renewcommand{\figuresourcename}{Fuente}} % Tradução para espanhol
+\addto\captionsfrench{\renewcommand{\figuresourcename}{Source}}  % Tradução para francês
+\addto\captionsgerman{\renewcommand{\figuresourcename}{Quelle}} % Tradução para alemão
+
 % Cores institucionais
 \definecolor{unifeiblue}{cmyk}{1, 0.7, 0.1, 0.45}
 \definecolor{unifeired}{cmyk}{0, 0.95, 1, 0}
@@ -294,6 +305,39 @@
 \renewcommand{\baselinestretch}{1.5}
 
 \providecommand{\refcomp}[2]{\hyperref[#2]{\textcolor{unifeiblue}{\textbf{#1~\ref*{#2} - \nameref*{#2}}}}}
+
+% Redefine \quote to accept two parameters: bibliographic key and quoted text.
+% Appearance:
+% - Use the main document font (set via \setmainfont)
+% - One size smaller than normal (\small)
+% - Justified inside the quoted block (\justifying)
+% - The quoted block is flush right and has a left indent of 4cm
+% - The citation (\cite{<key>}) appears right-aligned inside the block
+% Usage: \quote{<bibkey>}{<quoted text>}
+\DeclareRobustCommand{\quote}[2]{%
+    \par\bigskip%
+    \noindent\hfill% push the box to the right
+    \begin{minipage}{\dimexpr\linewidth-4cm\relax}% width reduced by 4cm
+        {\normalsize\small% no indent, one size below normal
+        \justifying\noindent #2\par% quoted text, justified
+        \vspace{0.1\baselineskip}% small gap
+        \hfill\raggedright{\footnotesize\cite{#1}}% citation right-aligned within the block
+        }%
+    \end{minipage}%
+    \par\bigskip%
+}
+
+\providecommand{\fonte}[1]{%
+  \par % Garante que estamos em um novo parágrafo
+  \vspace{2pt} % Pequeno espaço vertical após a figura
+  \small % Define o tamanho da fonte como pequeno (ABNT pede menor)
+  \noindent % Remove a indentação da primeira linha
+  {
+    \raggedright % Força o alinhamento à esquerda
+    \figuresourcename: {#1}
+    \par % Finaliza o parágrafo com alinhamento à esquerda
+  }
+}
 
 %-------------------------------------------------
 % CAPA E FOLHA DE ROSTO

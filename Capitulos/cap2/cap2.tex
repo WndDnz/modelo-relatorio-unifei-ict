@@ -1,0 +1,145 @@
+\chapter{Desenvolvimento}\label{cap:desenvolvimento}
+
+Apesar deste capítulo ser intitulado ``Desenvolvimento'', o conteúdo específico pode variar dependendo
+da natureza do trabalho. Em trabalhos acadêmicos como monografias e teses, o segundo capítulo é
+dedicado à apresentação detalhada do tema abordado, incluindo destacadamente a fundamentação
+teórica e o estado da arte. Os outros capítulos geralmente tratam da metodologia aplicada, dos
+experimentos realizados e da análise dos resultados obtidos, finalizando com um capítulo final
+dedicado às conclusões elaboradas pelos autores e sugestões de trabalhos futuros e melhoramentos.
+
+Neste modelo, abordaremos neste capítulo orientações para o uso adequado do estilo de formatação,
+para que seu trabalho esteja em conformidade com as normas estabelecidas e seja visualmente
+atraente. Afinal, um trabalho bem formatado facilita a leitura e compreensão por parte dos
+avaliadores além de transmitir profissionalismo e enriquecer a experiência do leitor.
+
+\section{Estruturação do conteúdo}\label{sec:estrutura-desenvolvimento}
+
+Este modelo  foi estruturado com os capítulos separados em arquivos distintos, localizados na
+pasta \texttt{Capitulos/}. Cada capítulo ocupa seu subdiretório próprio, o que facilita a
+organização do conteúdo e permite que você trabalhe de forma modular. Para
+incluir um novo capítulo, crie um arquivo \LaTeX\ na pasta correspondente e importe-o no arquivo
+principal. Os nomes dos arquivos são livres, mas é recomendável utilizar nomes descritivos que
+facilitem a identificação do conteúdo de cada capítulo ou sua sequência numérica, como utilizado
+neste modelo.
+
+O arquivo principal do relatório, \texttt{modelo-relatorio.tex}, importa os capítulos conforme
+necessário, utilizando o comando \verb|\subimport| do pacote \texttt{import}. Assim, para economizar
+no tempo de compilação durante a edição, você pode comentar temporariamente a importação de
+capítulos que não estão sendo editados no momento. Uma vez que seu documento esteja pronto para a
+compilação final, basta descomentar todas as importações e executar a compilação completa. Para mais
+controle sobre a compilação de documentos \LaTeX, considere utilizar ferramentas como
+\texttt{latexmk} ou \texttt{arara}, que automatizam o processo e garantem que todas as referências
+e elementos do documento estejam atualizados corretamente. Este modelo foi desenvolvido para ser
+utilizado com ambientes de compilação modernos, notadamente \texttt{latexmk} com \texttt{xelatex} ou
+\texttt{lualatex}. Adaptações podem ser necessárias para o uso com outros ambientes.
+
+\section{Estruturação de seções e subseções}\label{sec:secoes-desenvolvimento}
+
+Quando se escreve um documento organizado, é importante estruturar o conteúdo em seções e subseções
+de forma clara e lógica. Isso facilita a leitura e compreensão do texto, além de ajudar o leitor a
+navegar pelo documento. Lembre-se que seu trabalho também servirá como referência para futuros
+alunos e pesquisadores, portanto, uma boa estruturação é essencial.
+
+Este modelo é baseado na classe \texttt{book}, que organiza o conteúdo em uma estrutura hierárquica
+de capítulos, seções e subseções. A seguir, apresentamos algumas diretrizes para a estruturação
+adequada do conteúdo:
+
+\begin{itemize}
+    \item \textbf{Capítulos}: Cada capítulo deve abordar um tema específico do trabalho. Utilize o
+          comando \verb|\chapter{}| para criar novos capítulos. Lembre-se de que os capítulos são numerados
+          automaticamente. Acrescente um rótulo ao capítulo para facilitar autorrefêrencias dentro do
+          documento, usando o comando \verb|\label{}| logo após o título do capítulo. Por convenção, é
+          interessante nomear os rótulos dos capítulos com o prefixo \texttt{cap:}, seguido de uma
+          palavra-chave relacionada ao conteúdo do capítulo (por exemplo, \texttt{cap:introducao} para o
+          capítulo de introdução).
+    \item \textbf{Seções}: Dentro de cada capítulo, utilize o comando \verb|\section{}| para criar
+          seções que dividem o conteúdo em partes menores e mais gerenciáveis. As seções também são
+          numeradas automaticamente. Use o prefixo \texttt{sec:} para os rótulos das seções (por exemplo,
+          \texttt{sec:objetivos} para a seção de objetivos).
+    \item \textbf{Subseções}: Caso seja necessário dividir ainda mais o conteúdo dentro de uma seção,
+          utilize o comando \verb|\subsection{}|. Isso ajuda a organizar o texto em tópicos específicos e
+          facilita a leitura. Como prefixo para os rótulos das subseções, utilize \texttt{ssc:} (por exemplo,
+          \texttt{ssc:sua-subseção} para a subseção de metodologia).
+    \item \textbf{Subsubseções}: Para uma divisão ainda mais detalhada, é possível utilizar o comando
+          \verb|\subsubsection{}|. Isso é útil para tópicos que exigem uma explicação mais aprofundada. Use o
+          prefixo \texttt{sss:} para
+          os rótulos das subsubseções (por exemplo, \texttt{sss:detalhes-tecnicos} para uma subsubseção
+          chamada detalhes técnicos). Normalmente, é raro o uso de subsubseções, já que o nível de detalhamento
+          excessivo pode dificultar a leitura do texto. Use com parcimônia.
+    \item \textbf{Consistência}: Mantenha uma estrutura consistente ao longo do documento. Use os mesmos
+          níveis de seções e subseções para temas semelhantes, garantindo que o leitor possa seguir o fluxo
+          do texto facilmente.
+\end{itemize}
+
+\section{Citações}
+
+Nenhum trabalho acadêmico está realmente completo sem uma discussão adequada sobre as fontes que o
+sustentam. Sendo assim, citações de trabalhos da literatura associada ao tema são fundamentais para
+que o trabalho tenha credibilidade e rigor acadêmico. As citações em texto devem seguir as normas da
+Associação Brasileira de Normas Técnicas (ABNT), especificamente a NBR
+6023:2018~\cite{nbr6023:2018}, que estabelecem diretrizes claras para a formatação
+e apresentação das referências bibliográficas. Este modelo utiliza o pacote \texttt{biblatex}%
+%
+\footnote{Este modelo descreve de forma muito sucinta o uso do pacote \texttt{biblatex}.
+    Recomenda-se a consulta à documentação do pacote para completo entendimento de como utilizá-lo}%
+%
+para gerenciar as referências, usando o pacote de estilo \texttt{abnt}, o que facilita a inclusão e
+formatação das citações de acordo com essas normas. Sua bibliografia deve estar organizada em um
+arquivo \texttt{.bib}, que neste modelo é denominado \texttt{referencias.bib} e está localizado na
+raiz do projeto. \textbf{Atenção!}  O arquivo incluído é fictício, usando referências falsas apenas
+para servir de exemplo de como organizar suas fontes.
+
+Você também pode adicionar a bibliografia diretamente no arquivo principal do
+documento, embora isso não seja recomendado para trabalhos mais extensos. Existem programas
+gerenciadores de referências, como o \texttt{Zotero} e o \texttt{Mendeley}, que são úteis para
+organizar suas fontes e são capazes de exportar suas referências diretamente em para um arquivo
+\texttt{.bib}, facilitando a integração com o \LaTeX. Caso use uma dessas ferramentas, certifique-se
+de revisar o arquivo exportado para garantir que todas as informações estejam corretas e completas e
+simplesmente substiua o arquivo \texttt{referencias.bib} deste modelo pelo seu arquivo exportado.
+Lembre-se de importá-lo no preâmbulo do arquivo principal do documento ou apenas o renomeie para
+\texttt{referencias.bib}, substituindo o arquivo original. A seguir, alguns exemplos de como fazer citações corretamente no texto.
+
+O primeiro tipo de citação é a citação direta, que consiste em transcrever exatamente as palavras de
+um autor. Para isso, utilize o comando \texttt{\textbackslash cite} para incluir a referência no
+texto. Citações diretas com até três linhas devem ser incorporadas ao parágrafo, entre aspas. Por
+exemplo, segundo \textcite{fernandes2019}, ``a utilização de modelos padronizados em relatórios
+técnicos é essencial para garantir a clareza e a uniformidade na apresentação dos resultados''. Note
+que em \LaTeX, as aspas iniciais são representadas por dois acentos graves (\texttt{``}) e as aspas
+finais por dois apóstrofos (\texttt{''}). Aspas simples são representadas por um acento grave
+(\texttt{`}) e um apóstrofo (\texttt{'}) para abrir e fechar, respectivamente. Use aspas simples
+para uma citação dentro de outra citação.
+
+Citações diretas com mais de três linhas devem ser formatadas em um bloco separado, com recuo na
+margem esquerda, sem apas e com a mesma tipografia do corpo do texto, porém em tamanho menor.
+Supressões (quando você inicia a citação no meio de uma frase) devem ser indicadas por reticências entre colchetes
+(\texttt{[\ldots]}) e acréscimos (quando você insere palavras para esclarecer o sentido da citação)
+devem ser indicados por colchetes simples (\texttt{[texto adicional]}). Este modelo fornece o
+comando \texttt{\textbackslash quote} para facilitar a formatação de citações longas. Veja o exemplo
+a seguir:
+
+\quote{martins2021}{%
+[\ldots] modelos padronizados para elaboração de relatórios técnicos são fundamentais para a comunicação
+científica eficaz. A estruturação comum garante que as ideias e fatos sejam devidamente comunicadas
+aos receptores. A organização adequada do texto também é essencial para sua catalogação,
+possibilitando a futuros leitores a compreenssão [grafia errada no original] do conteúdo de forma mais ágil e eficiente, assim
+como sua consulta posterior.
+}
+
+Note que citações diretas longas não devem ser usadas com frequência excessiva, para evitar que o
+texto se torne fragmentado e difícil de ler. Use-as apenas quando for realmente necessário
+reproduzir fielmente as ideias do autor.
+
+Sendo assim, o tipo mais comum de citação é a citação indireta,
+que consiste em parafrasear as ideias de um autor com suas próprias palavras. Sintetize o conteúdo e
+apresente-o de forma clara e concisa, sempre respeitando e atribuindo a fonte original.
+Para fazer uma citação indireta, utilize o comando \texttt{\textbackslash textcite} ou
+\texttt{\textbackslash parencite}, dependendo do contexto. Por exemplo, \textcite{silva2020} destaca a importância de
+utilizar fontes confiáveis e atualizadas para embasar as argumentações em trabalhos acadêmicos.
+Alternativamente, pode-se dizer que a utilização de fontes confiáveis é crucial para a credibilidade
+do trabalho (cf. \parencite{silva2020}).
+
+Existe ainda a \emph{citação de citação}, que ocorre quando você deseja citar uma fonte que foi
+mencionada em outra fonte. Neste caso, usa-se a palavra ``apud'' para indicar que a citação foi
+retirada de uma fonte secundária. No entanto, é importante ressaltar que a citação de citação deve
+ser evitada sempre que possível, dando preferência à consulta direta da fonte original. Caso seja
+necessário utilizar uma citação de citação, faça-o da seguinte forma: Segundo \textcite[p. 45]{oliveira2018}, a padronização de relatórios técnicos é essencial para garantir a clareza e a uniformidade na apresentação dos resultados (apud \textcite{fernandes2019}).
