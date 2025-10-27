@@ -306,7 +306,7 @@ __*
 tmp_*
 
 # Ignorar o pdf gerado
-*.pdf
+# *.pdf
 
 # Ignorar configurações do VSCode
 .vscode/**
