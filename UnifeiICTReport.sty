@@ -571,7 +571,7 @@
 % CAPA E FOLHA DE ROSTO
 %-------------------------------------------------
 \renewcommand{\maketitle}{%
-    \pagenumbering{gobble}
+    % \pagenumbering{gobble}
     %----------------------------
     %   Capa
     %----------------------------
@@ -710,11 +710,9 @@
             \end{flushleft}
         \end{minipage}
         \begin{minipage}{0.45\textwidth}
-
             \begin{flushright} \includegraphics[width=0.7\textwidth]{Logos/assin_hor_ICT}
             \end{flushright}
         \end{minipage}\\[.5 cm]
-        
         {\large\parbox{\textwidth}{\centering\@location,~\@state,~\today}\par} % Data da compilação
     \end{titlepage}
     \if@openright
@@ -772,7 +770,7 @@
 % Redefine table of contents title to match chapter title styling
 \renewcommand{\tableofcontents}{%
     \cleardoublepage
-        	\thispagestyle{plain}% use plain pagestyle (page number placement)
+        	\thispagestyle{empty}% use plain pagestyle (page number placement)
     % Title styled like chapter titles: institutional font, color and uppercase
     {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\contentsname}\par}
     \vspace{1em}% small gap before the contents
@@ -783,7 +781,7 @@
 % Apply same styling to List of Figures
 \renewcommand{\listoffigures}{%
     \cleardoublepage
-    \thispagestyle{plain}
+    \thispagestyle{empty}
     {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listfigurename}\par}
     \vspace{1em}
     \@starttoc{lof}
@@ -793,7 +791,7 @@
 % Apply same styling to List of Tables
 \renewcommand{\listoftables}{%
     \cleardoublepage
-    \thispagestyle{plain}
+    \thispagestyle{empty}
     {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listtablename}\par}
     \vspace{1em}
     \@starttoc{lot}
@@ -806,7 +804,7 @@
 % running heads when provided, otherwise fall back to the printed title.
 \renewcommand*{\glossarysection}[2][]{%
     \cleardoublepage
-    	\thispagestyle{plain}%
+    	\thispagestyle{empty}%
     {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{#2}\par}%
     \vspace{1em}%
     % choose running head: optional arg #1 if not empty, else printed title #2
@@ -825,7 +823,6 @@
 % Observação: evitamos criar novos comandos com nomes iniciados em "\t"
 % (problema conhecido). Redefinimos as macros locais \l@... usadas pelo
 % mecanismo de escrita do .toc.
-\makeatletter
 \renewcommand{\l@chapter}[2]{%
     \ifnum \c@tocdepth>\m@ne
         \addpenalty{-\@highpenalty}%
@@ -867,6 +864,22 @@
         }{#2}% page
     \fi
 }
-\makeatother
+
+% 1. Redefinir o \frontmatter
+\renewcommand\frontmatter{
+    \cleardoublepage
+    \@mainmatterfalse % Mantém os capítulos como \chapter*
+    \pagenumbering{arabic} % <-- MUDANÇA: Inicia com números arábicos
+    \pagestyle{empty}      % <-- ADIÇÃO: Esconde os números de página
+}
+
+% 2. Redefinir o \mainmatter
+\renewcommand\mainmatter{
+    \cleardoublepage
+    \@mainmattertrue  % Habilita capítulos numerados (\chapter)
+    % A linha \pagenumbering{arabic} foi REMOVIDA daqui
+    % para impedir que o contador seja reiniciado.
+    \pagestyle{plain} % <-- ADIÇÃO: Torna os números visíveis
+}
 
 \endinput
