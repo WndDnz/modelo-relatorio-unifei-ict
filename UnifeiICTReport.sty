@@ -611,26 +611,14 @@
     \else
         \clearpage
     \fi
-    %-------------
+    %------------------------------------------------
     % Folha de rosto
-    %-------------
+    %------------------------------------------------
     \begin{titlepage}
         \thispagestyle{empty}
         \setcounter{page}{1}%
         \centering % Centre everything on the page
         \setstretch{1.0}
-        %------------------------------------------------
-        %	Logos no topo
-        %------------------------------------------------
-        \begin{minipage}{0.45\textwidth}
-            \begin{flushleft} \includegraphics[width=0.8\textwidth]{Logos/assin_hor_PANTONE_pos}
-            \end{flushleft}
-        \end{minipage}
-        \begin{minipage}{0.45\textwidth}
-
-            \begin{flushright} \includegraphics[width=0.7\textwidth]{Logos/assin_hor_ICT}
-            \end{flushright}
-        \end{minipage}\\[.5 cm]
         %------------------------------------------------
         %	Cabeçalhos
         %------------------------------------------------
@@ -714,6 +702,19 @@
             }
         \end{parbox}
         \vfill\vfill\vfill%
+        %------------------------------------------------
+        %	Logos no rodapé
+        %------------------------------------------------
+        \begin{minipage}{0.45\textwidth}
+            \begin{flushleft} \includegraphics[width=0.8\textwidth]{Logos/assin_hor_PANTONE_pos}
+            \end{flushleft}
+        \end{minipage}
+        \begin{minipage}{0.45\textwidth}
+
+            \begin{flushright} \includegraphics[width=0.7\textwidth]{Logos/assin_hor_ICT}
+            \end{flushright}
+        \end{minipage}\\[.5 cm]
+        
         {\large\parbox{\textwidth}{\centering\@location,~\@state,~\today}\par} % Data da compilação
     \end{titlepage}
     \if@openright
