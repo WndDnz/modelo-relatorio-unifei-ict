@@ -384,6 +384,39 @@
     }
 }
 
+% --- Fonte sem serifa (sans) ---
+% Preferir IBM Plex Sans como família sem serifa do documento. Usamos uma
+% verificação sequencial (não aninhada) para evitar problemas de agrupamento
+% e aplicamos o primeiro nome de família disponível.
+\newif\if@unifei@sansset
+\@unifei@sanssetfalse
+% Tentar IBM Plex Sans com nomes comuns seguidos de fallbacks conhecidos
+\IfFontExistsTF{IBM Plex Sans}{%
+    \setsansfont{IBM Plex Sans}[Scale=MatchLowercase]%
+    \@unifei@sanssettrue
+}{}
+\IfFontExistsTF{IBMPlexSans}{%
+    \if@unifei@sansset\else
+        \setsansfont{IBMPlexSans}[Scale=MatchLowercase]%
+        \@unifei@sanssettrue
+    \fi
+}{}
+\IfFontExistsTF{TeX Gyre Heros}{%
+    \if@unifei@sansset\else
+        \setsansfont{TeX Gyre Heros}[Scale=MatchLowercase]%
+        \@unifei@sanssettrue
+    \fi
+}{}
+\IfFontExistsTF{Arial}{%
+    \if@unifei@sansset\else
+        \setsansfont{Arial}[Scale=MatchLowercase]%
+        \@unifei@sanssettrue
+    \fi
+}{}
+\if@unifei@sansset\else
+    \PackageWarning{UnifeiICTReport}{No preferred sans-serif fonts found (IBM Plex Sans/IBMPlexSans/TeX Gyre Heros/Arial); leaving default sans.}
+\fi
+
 % --- Formatação de títulos com titlesec: usar Exo2 (\unifeifont) nos títulos ---
 % Removemos o uso direto de \pretocmd (que aplicava \unifeifont globalmente) e
 % configuramos titlesec para aplicar \unifeifont apenas aos rótulos/títulos.
@@ -616,7 +649,6 @@
     %------------------------------------------------
     \begin{titlepage}
         \thispagestyle{empty}
-        \setcounter{page}{1}%
         \centering % Centre everything on the page
         \setstretch{1.0}
         %------------------------------------------------
@@ -715,6 +747,7 @@
         \end{minipage}\\[.5 cm]
         {\large\parbox{\textwidth}{\centering\@location,~\@state,~\today}\par} % Data da compilação
     \end{titlepage}
+    \setcounter{page}{2}%
     \if@openright
         \cleardoublepage
     \else

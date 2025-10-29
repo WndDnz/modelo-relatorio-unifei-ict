@@ -14,6 +14,34 @@ para que seu trabalho esteja em conformidade com as normas estabelecidas e seja 
 atraente. Afinal, um trabalho bem formatado facilita a leitura e compreensão por parte dos
 avaliadores além de transmitir profissionalismo e enriquecer a experiência do leitor.
 
+\section{Preparação do ambiente de compilação}\label{sec:preparacao-ambiente}
+
+Este modelo foi desenvolvido em instalação local completa do \LaTeX\, usando a distribuição TeX Live
+(\url{https://www.tug.org/texlive/}) e ambientes de compilação modernos, notadamente
+\texttt{xelatex} ou \texttt{lualatex}. Ele foi construído usando pacotes e fontes tipográficas
+normalmente disponíveis na instalação completa do TeX Live . Adaptações podem ser necessárias para o
+uso com outros ambientes. As fontes utilizadas no modulo são:
+\begin{itemize}
+      \item \textbf{Exo 2}: Fonte \emph{sans-serif} moderna e destacada, usada nos títulos e elementos e destaque. É a fonte institucional recomendada no Manual de Identidade visual da Unifei.
+      \item \textbf{Heuristica}: Fonte \emph{serif} elegante e legível, utilizada para o corpo do texto.
+      \item \textbf{IBM Plex Sans}: Fonte \emph{sans-serif} da famíla Plex, humanística e com boa legibilidade em tamanhos pequenos, utilizada para legendas.
+      \item \textbf{IBM Plex Mono}: Fonte monoespaçada utilizada para trechos de código e elementos técnicos.
+\end{itemize}
+
+Caso esteja utilizando uma distribuição diferente do \LaTeX\, é possível que as fontes originais não
+sejam carregadas corretamente. Exceto pela fonte Exo 2, que é fornecida com o modelo, as outras
+fontes são carregadas usando o sistema de fontes do seu sistema operacional. Certifique-se de que as
+fontes estão instaladas corretamente em seu sistema, caso deseje manter o documento em sua forma
+original. As definições de fontes usam \emph{fallbacks} para fontes similares, então mesmo que você
+não possua as fontes originais instaladas em seu sistema, o documento ainda será compilado corretamente.
+
+O arquivo principal do relatório, \texttt{modelo-relatorio.tex}, importa os capítulos conforme
+necessário, utilizando o comando \verb|\subimport| do pacote \texttt{import}. Assim, para economizar no tempo de compilação durante a edição, você pode comentar temporariamente a importação
+de capítulos que não estão sendo editados no momento. Uma vez que seu documento esteja pronto para a
+compilação final, basta descomentar todas as importações e executar a compilação completa. Para mais
+controle sobre a compilação de documentos \LaTeX, considere utilizar ferramentas como
+\texttt{latexmk} ou \texttt{arara}, que automatizam o processo e garantem que todas as referências e elementos do documento estejam atualizados corretamente.
+
 \section{Estruturação do conteúdo}\label{sec:estrutura-desenvolvimento}
 
 Este modelo  foi estruturado com os capítulos separados em arquivos distintos, localizados na
@@ -23,18 +51,6 @@ incluir um novo capítulo, crie um arquivo \LaTeX\ na pasta correspondente e imp
 principal. Os nomes dos arquivos são livres, mas é recomendável utilizar nomes descritivos que
 facilitem a identificação do conteúdo de cada capítulo ou sua sequência numérica, como utilizado
 neste modelo.
-
-O arquivo principal do relatório, \texttt{modelo-relatorio.tex}, importa os capítulos conforme
-necessário, utilizando o comando \verb|\subimport| do pacote \texttt{import}. Assim, para economizar
-no tempo de compilação durante a edição, você pode comentar temporariamente a importação de
-capítulos que não estão sendo editados no momento. Uma vez que seu documento esteja pronto para a
-compilação final, basta descomentar todas as importações e executar a compilação completa. Para mais
-controle sobre a compilação de documentos \LaTeX, considere utilizar ferramentas como
-\texttt{latexmk} ou \texttt{arara}, que automatizam o processo e garantem que todas as referências
-e elementos do documento estejam atualizados corretamente. Este modelo foi desenvolvido para ser
-utilizado com ambientes de compilação modernos, notadamente \texttt{latexmk} com \texttt{xelatex} ou
-\texttt{lualatex}. Ele foi construído usando pacotes e fontes disponíveis na instalação completa do
-\LaTeX\ usando a distribuição TeX Live (\url{https://www.tug.org/texlive/}). Adaptações podem ser necessárias para o uso com outros ambientes.
 
 \section{Estruturação de seções e subseções}\label{sec:secoes-desenvolvimento}
 
@@ -80,11 +96,11 @@ Na sequência, veja como se parecem as subseções e subsubseções.
 
 Esta é uma subseção de exemplo. Note que as subseções são numeradas automaticamente e podem ser
 referenciadas no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Este modelo
-também fornece o comando \verb"\refcomp{}{}" para incluir o nome do tipo de elemento referenciado
+também fornece o comando \verb|\refcomp{}{}| para incluir o nome do tipo de elemento referenciado
 (Capítulo, Seção, Subseção etc. Note que sempre são feitas em maiúsculas) antes do número da
 referência. Por exemplo, veja a seguir a referência para a subseção atual:
 \refcomp{Subseção}{ssc:exemplo}. Note a saída formata e o \emph{hyperlink} criado automaticamente
-para o elemento referenciado. O comando \verb"\ref{}" padrão do \LaTeX\ também funciona normalmente.
+para o elemento referenciado. O comando \verb|\ref{}| padrão do \LaTeX\ também funciona normalmente.
 
 \subsubsection{Subsubseção de exemplo}\label{sss:exemplo}
 
@@ -180,43 +196,43 @@ transcrito) usando os comandos disponíveis neste modelo%
           \quote{article1}{A amostragem aleatória aplicada a topologias complexas reduz o viés nas estimativas de grau médio.}
 
     \item \textbf{Livro (book)} --- Indireta: Segundo \textcite{book1}, métodos estatísticos clássicos ainda são válidos em muitos problemas práticos. Direta:\par
-          \quote{book1}{"Os testes de hipóteses constituem ferramenta central na análise de dados experimentais."}
+          \quote{book1}{``Os testes de hipóteses constituem ferramenta central na análise de dados experimentais.''}
 
     \item \textbf{Anais / Trabalhos em Evento (inproceedings)} --- Indireta: \textcite{inproceedings1} apresenta otimizações aplicadas ao transporte urbano. Direta:\par
-          \quote{inproceedings1}{"Aplicar heurísticas de baixo custo pode reduzir congestionamentos sem investimentos pesados."}
+          \quote{inproceedings1}{``Aplicar heurísticas de baixo custo pode reduzir congestionamentos sem investimentos pesados.''}
 
     \item \textbf{Capítulo em livro (incollection)} --- Indireta: \textcite{incollection1} descreve modelos de previsão de demanda. Direta:\par
-          \quote{incollection1}{"Modelos probabilísticos permitem estimativas robustas mesmo com dados esparsos."}
+          \quote{incollection1}{``Modelos probabilísticos permitem estimativas robustas mesmo com dados esparsos.''}
 
     \item \textbf{Capítulo específico (inbook)} --- Indireta: \textcite{inbook1} cobre controle de qualidade na produção. Direta:\par
-          \quote{inbook1}{"O controle estatístico de processo reduz a variabilidade de produção quando bem aplicado."}
+          \quote{inbook1}{``O controle estatístico de processo reduz a variabilidade de produção quando bem aplicado.''}
 
     \item \textbf{Tese/Doutorado (phdthesis)} --- Indireta: Em sua tese, \textcite{phdthesis1} explora métodos numéricos para dinâmica de fluidos. Direta:\par
-          \quote{phdthesis1}{"A convergência do método implícito foi observada mesmo em malhas não-uniformes."}
+          \quote{phdthesis1}{``A convergência do método implícito foi observada mesmo em malhas não-uniformes.''}
 
     \item \textbf{Dissertação/Mestrado (mastersthesis)} --- Indireta: \textcite{mastersthesis1} avalia algoritmos de roteamento. Direta:\par
-          \quote{mastersthesis1}{"Algoritmos baseados em demand-aware routing apresentam melhor desempenho sob cargas variáveis."}
+          \quote{mastersthesis1}{``Algoritmos baseados em demand-aware routing apresentam melhor desempenho sob cargas variáveis.''}
 
     \item \textbf{Relatório Técnico (techreport)} --- Indireta: O relatório do \textcite{techreport1} sumariza aplicações de sensoriamento remoto. Direta:\par
-          \quote{techreport1}{"Sensoriamento remoto é essencial para mapeamento ambiental em larga escala."}
+          \quote{techreport1}{``Sensoriamento remoto é essencial para mapeamento ambiental em larga escala.''}
 
     \item \textbf{Manual (manual)} --- Indireta: O \textcite{manual1} descreve procedimentos de uso do sistema. Direta:\par
-          \quote{manual1}{"Siga o procedimento de inicialização para evitar perda de dados durante a atualização."}
+          \quote{manual1}{``Siga o procedimento de inicialização para evitar perda de dados durante a atualização.''}
 
     \item \textbf{Recurso online (online)} --- Indireta: Dados públicos do \textcite{online1} podem ser usados para análises temporais. Direta:\par
-          \quote{online1}{"A série histórica de indicadores permite estudos comparativos entre regiões."}
+          \quote{online1}{``A série histórica de indicadores permite estudos comparativos entre regiões.''}
 
     \item \textbf{Material diverso (misc)} --- Indireta: \textcite{misc1} apresenta notas de aula úteis para introdução às redes neurais. Direta:\par
-          \quote{misc1}{"A normalização das entradas melhora a estabilidade do treinamento."}
+          \quote{misc1}{``A normalização das entradas melhora a estabilidade do treinamento.''}
 
     \item \textbf{Anais (proceedings)} --- Indireta: Os \textcite{proceedings1} reúnem trabalhos relevantes da área. Direta:\par
-          \quote{proceedings1}{"Os anais deste simpósio apresentam avanços interdisciplinares em computação."}
+          \quote{proceedings1}{``Os anais deste simpósio apresentam avanços interdisciplinares em computação.''}
 
     \item \textbf{Patente (patent)} --- Indireta: A patente \textcite{patent1} descreve processo industrial inovador. Direta:\par
-          \quote{patent1}{"O método aumenta a resistência do compósito sem aumentar o custo de produção."}
+          \quote{patent1}{``O método aumenta a resistência do compósito sem aumentar o custo de produção.''}
 
     \item \textbf{Documento não publicado (unpublished)} --- Indireta: \textcite{unpublished1} traz resultados preliminares sobre microplásticos. Direta:\par
-          \quote{unpublished1}{"Estudos iniciais indicam concentração elevada de partículas em amostras costeiras."}
+          \quote{unpublished1}{``Estudos iniciais indicam concentração elevada de partículas em amostras costeiras.''}
 \end{itemize}
 
 \section{Figuras e Tabelas}\label{sec:figuras-tabelas}
@@ -294,7 +310,7 @@ principal. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
         \caption*{Cada subfigura pode ter sua própria legenda}
         \label{fig:subfig-b}
     \end{subfigure}
-    \fonte{\cite{ibge2020,almeida2022}}
+    \fonte{(a): \cite{ibge2020}; (b): \cite{almeida2022}}
 \end{figure}
 
 Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
