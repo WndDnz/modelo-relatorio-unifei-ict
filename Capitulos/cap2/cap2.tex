@@ -90,23 +90,42 @@ adequada do conteúdo:
           do texto facilmente.
 \end{itemize}
 
-Na sequência, veja como se parecem as subseções e subsubseções.
+Na sequência, veja como se parecem as subsubseções e os parágrafos.
 
-\subsection{Subseção de exemplo}\label{ssc:exemplo}
+\subsection{Subsubseção de exemplo}\label{ssc:exemplo}
 
-Esta é uma subseção de exemplo. Note que as subseções são numeradas automaticamente e podem ser
-referenciadas no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Este modelo
-também fornece o comando \verb|\refcomp{}{}| para incluir o nome do tipo de elemento referenciado
-(Capítulo, Seção, Subseção etc. Note que sempre são feitas em maiúsculas) antes do número da
-referência. Por exemplo, veja a seguir a referência para a subseção atual:
-\refcomp{Subseção}{ssc:exemplo}. Note a saída formata e o \emph{hyperlink} criado automaticamente
-para o elemento referenciado. O comando \verb|\ref{}| padrão do \LaTeX\ também funciona normalmente.
+Esta é uma subsubseção de exemplo. Note que ela é numerada automaticamente e pode ser
+referenciada no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Este modelo
+também fornece o comando \verb|\refcomp{}{}|, que imprime o nome da divisão e seu título junto com o
+número, no formato \emph{Divisão N - Título}. O nome da divisão é determinado automaticamente a
+partir do rótulo, não pelo primeiro argumento --- ou seja, você não precisa (nem deve) digitá-lo. Por
+exemplo, veja a seguir a referência para a divisão atual: \refcomp{}{ssc:exemplo}. Note a formatação
+da saída e o \emph{hyperlink} criado automaticamente para o elemento referenciado. O comando
+\verb|\ref{}| padrão do \LaTeX\ também funciona normalmente.
 
-\subsubsection{Subsubseção de exemplo}\label{sss:exemplo}
+Como este modelo segue a ABNT NBR 14724:2024, que não admite a divisão do trabalho em capítulos, os
+níveis são nomeados um degrau abaixo do comando \LaTeX\ correspondente. A correspondência é a
+seguinte:
 
-Assim como as seções e subseções, as subsubseções também são numeradas automaticamente e podem ser
-referenciadas no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Por exemplo, veja
-a seguir a referência para a subsubseção atual: \refcomp{Subsubseção}{sss:exemplo}.
+\begin{itemize}
+    \item \verb|\chapter| --- \textbf{Seção} (divisão primária);
+    \item \verb|\section| --- \textbf{Subseção};
+    \item \verb|\subsection| --- \textbf{Subsubseção};
+    \item \verb|\subsubsection| --- \textbf{Parágrafo} (nível mais baixo numerado).
+\end{itemize}
+
+Existe ainda a forma com asterisco, \verb|\refcomp*{Nome}{rótulo}|, que imprime literalmente o nome
+informado no primeiro argumento. Use-a apenas para rótulos fora da hierarquia acima --- contadores
+próprios, ambientes personalizados etc. ---, para os quais o nome não pode ser determinado
+automaticamente. Ela também serve quando você deseja um nome diferente do padrão: por exemplo,
+\verb|\refcomp*{Ilustração}{fig:exemplo}| produz \refcomp*{Ilustração}{fig:exemplo}, em vez do nome
+``Figura'' que seria usado normalmente.
+
+\subsubsection{Parágrafo de exemplo}\label{sss:exemplo}
+
+Assim como as demais divisões, os parágrafos também são numerados automaticamente e podem ser
+referenciados no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Por exemplo, veja
+a seguir a referência para o parágrafo atual: \refcomp{}{sss:exemplo}.
 
 \section{Citações}
 
@@ -246,7 +265,7 @@ o ambiente \texttt{figure} para figuras e \texttt{table} para tabelas. Isso gara
 a esses elementos sejam atualizadas automaticamente, mesmo que a ordem ou o número de figuras e
 tabelas mude durante o processo de edição.
 
-A norma ABNT NBR 14724:224~\cite{nbr14724:2024} estabelece diretrizes específicas para a
+A norma ABNT NBR 14724:2024~\cite{nbr14724:2024} estabelece diretrizes específicas para a
 formatação e apresentação de figuras e tabelas em trabalhos acadêmicos. De acordo com essa norma,
 as figuras devem ser numeradas consecutivamente em algarismos arábicos (Figura 1, Figura 2, etc.) e
 devem possuir uma legenda descritiva, localizada acima da figura. As tabelas também devem ser

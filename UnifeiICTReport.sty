@@ -112,6 +112,30 @@
 % serif fonts. Loading the legacy `heuristica` package early can cause
 % fontspec/font-shape warnings; we handle heuristica only via font detection.
 \RequirePackage[hidelinks]{hyperref}
+
+% --- Nomes automáticos de divisão para \autoref (cascata de rebaixamento) ---
+% A ABNT NBR 14724:2024 (4.2.2) determina que trabalhos acadêmicos não sejam
+% divididos em "capítulos", mas em seções. Este modelo usa \chapter apenas como
+% mecanismo interno para a seção primária, então cada nível é rebaixado um degrau
+% na nomenclatura das referências cruzadas:
+%     \chapter       -> Seção        \subsection    -> Subsubseção
+%     \section       -> Subseção     \subsubsection -> Parágrafo
+% "Parágrafo" é o último nível porque a numeração para em subsubsection
+% (secnumdepth=3) e o comando \paragraph do LaTeX não é usado neste modelo.
+%
+% ATENÇÃO: este bloco PRECISA ficar dentro de \AtBeginDocument. O hyperref define
+% esses nomes no próprio hook de fim de preâmbulo; um \renewcommand solto aqui ou
+% um \addto\captionsbrazilian{} seria sobrescrito por ele e silenciosamente
+% ignorado (os nomes voltariam a ser "Capítulo", "Seção"...). Não "simplifique"
+% para \renewcommand direto, e não altere apenas um dos níveis: os quatro andam
+% juntos, senão dois níveis diferentes passam a ter o mesmo nome.
+\AtBeginDocument{%
+    \renewcommand{\chapterautorefname}{Seção}%
+    \renewcommand{\sectionautorefname}{Subseção}%
+    \renewcommand{\subsectionautorefname}{Subsubseção}%
+    \renewcommand{\subsubsectionautorefname}{Parágrafo}%
+}
+
 \RequirePackage{geometry}
 \geometry{%
     top=3cm,
@@ -530,7 +554,27 @@
 
 \renewcommand{\baselinestretch}{1.5}
 
-\providecommand{\refcomp}[2]{\hyperref[#2]{\color{unifeiblue}{\textbf{#1~\ref*{#2} - \nameref*{#2}}}}}
+% \refcomp: referência cruzada completa, no formato "<Tipo> <número> - <título>".
+%
+% Uso normal (recomendado):  \refcomp{<ignorado>}{<rótulo>}
+%   O nome do tipo é resolvido automaticamente pelo \autoref, conforme a cascata
+%   definida no início deste arquivo (\chapter -> Seção, \section -> Subseção...).
+%   O primeiro argumento é ignorado: ele existe apenas para manter compatível a
+%   forma de chamada usada por \reffigcomp, \reftablecomp e \refeqcomp.
+%
+% Uso com asterisco:  \refcomp*{<Tipo>}{<rótulo>}
+%   Imprime <Tipo> literalmente, para rótulos fora da hierarquia que o \autoref
+%   reconhece (contadores próprios, ambientes personalizados etc.). Sem o
+%   asterisco, esses rótulos sairiam apenas com o número, sem nome algum.
+\NewDocumentCommand{\refcomp}{s m m}{%
+    \IfBooleanTF{#1}{%
+        % versão estrelada: nome do tipo literal, vindo do argumento
+        \hyperref[#3]{\color{unifeiblue}{\textbf{#2~\ref*{#3} - \nameref*{#3}}}}%
+    }{%
+        % versão normal: nome do tipo resolvido pelo \autoref (ignora #2)
+        \hyperref[#3]{\color{unifeiblue}{\textbf{\autoref*{#3} - \nameref*{#3}}}}%
+    }%
+}
 
 % Nomes para referências tipo equação e suas traduções
 \newcommand{\eqname}{Equation}

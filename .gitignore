@@ -310,3 +310,6 @@ tmp_*
 
 # Ignorar configurações do VSCode
 .vscode/**
+
+# Diretório de saída do latexmk
+/build/
