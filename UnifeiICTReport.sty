@@ -548,6 +548,15 @@
 \definecolor{unifeimedgrey}{cmyk}{0.2, 0.1, 0.1, 0.25}
 \definecolor{unifeilightgrey}{cmyk}{0.05, 0.03, 0.03, 0.05}
 
+% Links de citação em azul institucional, no mesmo tom das referências cruzadas
+% produzidas por \refcomp e afins (que colorem o texto por conta própria).
+% colorlinks=true é necessário para que o hyperref colora qualquer link, mas
+% allcolors=. mantém todos os demais tipos (índice, URLs, notas) com a cor
+% corrente do texto, preservando o comportamento do hidelinks passado na carga
+% do pacote. O ponto é uma cor especial do hyperref: "não mude a cor".
+% Precisa vir depois do \definecolor acima, senão a cor ainda não existe.
+\hypersetup{colorlinks=true, allcolors=., citecolor=unifeiblue}
+
 % Linha horizontal utilitária
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 % \newcommand{\hrule}{\rule{\linewidth}{0.2mm}}
@@ -642,6 +651,49 @@
             }\par
         \fi
     }
+}
+
+%-------------------------------------------------
+% AMBIENTES DE FIGURA E TABELA COM LEGENDA GARANTIDA (ABNT NBR 14724:2024)
+%-------------------------------------------------
+% A norma exige a legenda ACIMA da ilustração/tabela e a fonte ABAIXO. Com os
+% ambientes figure/table crus isso depende de o autor escrever \caption antes do
+% conteúdo — o hábito mais comum em LaTeX é o contrário, e sair errado não gera
+% nenhum aviso na compilação. Estes dois ambientes recebem rótulo e legenda como
+% argumentos e emitem a legenda antes do corpo, então não existe ordem errada
+% possível de escrever.
+%
+% Uso: \begin{figuraabnt}[<posição>]{<rótulo>}{<legenda>}[<legenda curta>]
+%          <conteúdo>
+%          \fonte{<fonte>}
+%      \end{figuraabnt}
+% A posição padrão é [!htbp]; a legenda curta (para a Lista de Ilustrações) é
+% opcional e vem por último. \fonte{} continua sendo chamado pelo autor, DENTRO
+% do ambiente e depois do conteúdo — é o que o mantém junto do float na página.
+%
+% ATENÇÃO: \caption PRECISA vir antes de \label. É o \caption que incrementa o
+% contador do float; com o \label antes, todo \ref para esse rótulo resolve para
+% o contador do capítulo ("1") em vez do número da figura ("1.3"), sem erro nem
+% aviso na compilação. Não inverta as duas linhas.
+%
+% Os ambientes figure/table crus continuam disponíveis, mas para eles o modelo
+% não garante nada: a posição da legenda volta a depender da ordem do código.
+\NewDocumentEnvironment{figuraabnt}{O{!htbp} m m o}{%
+    \begin{figure}[#1]%
+        \centering
+        \IfNoValueTF{#4}{\caption{#3}}{\caption[#4]{#3}}%
+        \label{#2}%
+        }{%
+    \end{figure}%
+}
+
+\NewDocumentEnvironment{tabelaabnt}{O{!htbp} m m o}{%
+    \begin{table}[#1]%
+        \centering
+        \IfNoValueTF{#4}{\caption{#3}}{\caption[#4]{#3}}%
+        \label{#2}%
+        }{%
+    \end{table}%
 }
 
 %-------------------------------------------------

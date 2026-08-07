@@ -261,9 +261,9 @@ técnicos. Eles ajudam a ilustrar conceitos, apresentar dados e facilitar a comp
 Figuras e tabelas devem ser inseridas no texto próximo ao local onde são mencionadas pela primeira
 vez, para facilitar a leitura e evitar que o leitor precise procurar por elas em outras partes do
 documento. Além disso, é importante numerar e rotular corretamente cada figura e tabela, utilizando
-o ambiente \texttt{figure} para figuras e \texttt{table} para tabelas. Isso garante que as referências
-a esses elementos sejam atualizadas automaticamente, mesmo que a ordem ou o número de figuras e
-tabelas mude durante o processo de edição.
+os ambientes \texttt{figuraabnt} para figuras e \texttt{tabelaabnt} para tabelas, fornecidos por este
+modelo. Isso garante que as referências a esses elementos sejam atualizadas automaticamente, mesmo
+que a ordem ou o número de figuras e tabelas mude durante o processo de edição.
 
 A norma ABNT NBR 14724:2024~\cite{nbr14724:2024} estabelece diretrizes específicas para a
 formatação e apresentação de figuras e tabelas em trabalhos acadêmicos. De acordo com essa norma,
@@ -282,22 +282,36 @@ que a fonte deve ser apresentada em fonte menor que o corpo do texto e alinhada 
 exemplificado a seguir. Caso a Figura ou Tabela sejam de autoria própria, utilize a expressão ``o
 próprio autor'' ou ``elaboração própria'' como fonte.
 
+Para que a legenda fique sempre acima do conteúdo, como a norma exige, use os ambientes
+\texttt{figuraabnt} e \texttt{tabelaabnt} deste modelo em vez dos ambientes \texttt{figure} e
+\texttt{table} do \LaTeX. Neles, o rótulo e a legenda são argumentos do próprio ambiente, e não
+comandos escritos no meio do corpo, de modo que não há ordem errada possível de digitar:
+
+\begin{verbatim}
+\begin{figuraabnt}[!htbp]{fig:rotulo}{Legenda da figura}[Legenda curta]
+    \includegraphics[width=0.9\textwidth]{arquivo}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+\end{verbatim}
+
+O primeiro argumento, entre colchetes, é a posição do float e pode ser omitido (o padrão é
+\texttt{[!htbp]}). Seguem o rótulo e a legenda, ambos obrigatórios. O último argumento, também entre
+colchetes e opcional, é uma legenda curta, usada apenas na Lista de Ilustrações quando a legenda
+principal for longa demais para caber ali. O ambiente \texttt{tabelaabnt} tem exatamente a mesma
+assinatura. Os ambientes \texttt{figure} e \texttt{table} continuam disponíveis, mas neles a posição
+da legenda volta a depender da ordem em que você escreve o código, sem nenhum aviso caso saia fora
+da norma.
+
 Veja aqui uma referência à \reffig{fig:exemplo} e à \reftable{tab:exemplo}.
 
-\begin{figure}[!htbp]
-    \centering
-    \caption{Figura de exemplo}
-    \label{fig:exemplo}
+\begin{figuraabnt}{fig:exemplo}{Figura de exemplo}
     \caption*{Uma figura de exemplo, elaborada pelo próprio autor. Note o alinhamento da ``fonte'', abaixo da figura. Esta legenda adicional é opcional, usada quando é necessário fornecer uma descrição mais detalhada da figura, complementando a legenda principal.}
     \includegraphics[width=0.9\textwidth]{example-image}
     \fonte{o próprio autor}
-\end{figure}
+\end{figuraabnt}
 
-\begin{table}[!htbp]
-    \centering
-    \caption{Tabela de exemplo}
+\begin{tabelaabnt}{tab:exemplo}{Tabela de exemplo}
     \caption*{A legenda da tabela deve conter uma descrição clara e concisa do conteúdo apresentado.}
-    \label{tab:exemplo}
     \begin{tabular}{@{}lllll@{}}
         \toprule
         Coluna 1 & Coluna 2 & Coluna 3 & Coluna 4 & Coluna 5 \\ \midrule
@@ -306,16 +320,13 @@ Veja aqui uma referência à \reffig{fig:exemplo} e à \reftable{tab:exemplo}.
         5        & 3        & 4        & 3        & 5        \\ \bottomrule
     \end{tabular}
     \fonte{o próprio autor}
-\end{table}
+\end{tabelaabnt}
 
 Usando o pacote \texttt{subcaption}, é possível incluir múltiplas figuras ou tabelas dentro de um
-mesmo ambiente \texttt{figure} ou \texttt{table}, cada uma com sua própria legenda, além da legenda
-principal. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
+mesmo ambiente \texttt{figuraabnt} ou \texttt{tabelaabnt}, cada uma com sua própria legenda, além da
+legenda principal --- esta última continua sendo o argumento do ambiente. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
 
-\begin{figure}[!htbp]
-    \centering
-    \caption[Figura múltipla]{Exemplo de figura múltipla}
-    \label{fig:exemplo-multiplo}
+\begin{figuraabnt}{fig:exemplo-multiplo}{Exemplo de figura múltipla}[Figura múltipla]
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{example-image-a}
@@ -330,7 +341,7 @@ principal. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
         \label{fig:subfig-b}
     \end{subfigure}
     \fonte{(a): \cite{ibge2020}; (b): \cite{almeida2022}}
-\end{figure}
+\end{figuraabnt}
 
 Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
 detalhes sobre como utilizá-lo de forma eficaz. Ele pode ser encontrado no diretório oficial do
@@ -355,7 +366,9 @@ em blocos separados, utilize o ambiente \texttt{equation}, como mostrado a segui
 Equações em blocos também podem ser referenciadas no texto. O modelo provê os comandos
 \verb|\refeq{}| e \verb|\refeqcomp{}| para referenciar equações com formatação consistente com o
 estilo do documento. Por exemplo, veja a referência à \refeq{eq:pitagoras}. E a referência
-completa à mesma: \refeqcomp{eq:pitagoras}{Equação do Teorema de Pitágoras}.
+completa à mesma: \refeqcomp{eq:pitagoras}[Equação do Teorema de Pitágoras]. Note que o nome
+customizado vai entre colchetes, por ser um argumento opcional; sem ele, basta
+\verb|\refeqcomp{eq:pitagoras}|.
 
 \section{Abreviaturas, siglas e símbolos}\label{sec:abreviaturas-siglas-simbolos}
 
