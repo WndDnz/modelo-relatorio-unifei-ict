@@ -16,14 +16,14 @@ The document class SHALL provide `figuraabnt` and `tabelaabnt` environments that
 - **THEN** the document class makes no positioning guarantee for that block — caption order depends entirely on source order, as in standard LaTeX
 
 ### Requirement: Source note remains below the float content
-The `\fonte{}` macro SHALL continue to render its source-attribution text below the float content and left-aligned to the last measured graphic/table width, called by the author after the body exactly as before this change.
+The `\fonte{}` macro SHALL continue to render its source-attribution text below the float content and left-aligned to the last measured graphic/table width, called by the author as the last element inside the environment body, exactly as before this change.
 
 #### Scenario: Single figure with source note
-- **WHEN** a `figuraabnt` environment contains `\includegraphics` in its body, followed by a `\fonte{...}` call after `\end{figuraabnt}`
+- **WHEN** a `figuraabnt` environment contains `\includegraphics` in its body, followed by a `\fonte{...}` call as the last element of that body
 - **THEN** the compiled PDF shows, top to bottom: caption, image, source note
 
 #### Scenario: Compound figure with subfigures and a shared source note
-- **WHEN** a `figuraabnt` environment's body contains multiple `subfigure` blocks, followed by a single `\fonte{...}` call after `\end{figuraabnt}`
+- **WHEN** a `figuraabnt` environment's body contains multiple `subfigure` blocks, followed by a single `\fonte{...}` call as the last element of that body
 - **THEN** the compiled PDF shows the top-level caption above all subfigures and the source note below all of them, matching the existing multi-subfigure example's visual result
 
 ### Requirement: Float placement behavior is preserved

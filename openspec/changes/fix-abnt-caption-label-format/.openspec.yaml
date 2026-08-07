@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-08-07
+goal: "Corrigir três defeitos de conformidade na apresentação de legendas de
+  figuras e tabelas: separador dois-pontos em vez de travessão, legenda centrada
+  na mancha em vez de acompanhar as margens da ilustração, e listas de
+  ilustrações/tabelas sem a palavra designativa e o travessão."

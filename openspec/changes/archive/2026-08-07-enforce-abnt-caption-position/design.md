@@ -29,8 +29,11 @@ Alternative considered: keep `\caption{}` callable inside the body but have the 
 **Inside the wrapper, `\caption` must be emitted before `\label`.**
 Verified by compiling both orders against a real `figure` float: with `\label` first, `\ref` to that label resolves to the chapter counter ("1") instead of the float number ("1.3") — `\label` captures whatever counter is current, and it's `\caption` that steps the float counter. This is invisible at build time (no error, no warning), so it's exactly the kind of thing that ships broken. The `.sty` gets a comment marking the ordering as load-bearing.
 
-**`\fonte{}` stays a separate, manually-called command after `\end{figuraabnt}`.**
-It was never the fragile part — `\fonte{}` is already always called after `\end{figure}` in every existing example, so it's already always visually last. No change needed to its interface or implementation.
+**`\fonte{}` stays a separate, manually-called command, INSIDE the environment body, after the content.**
+Corrected during implementation: an earlier draft of this document claimed `\fonte{}` was already called after `\end{figure}`. It is not — every existing example calls it as the last thing *inside* the float (`cap2.tex:293, 308, 332`). That placement is load-bearing: a float is typeset as a unit and moves to wherever LaTeX places it, so a `\fonte{}` written after `\end{figuraabnt}` would detach from its figure and stay in the running text. It also has to run while `\LastGraphicWidth` still holds the value the body just measured. Keeping it inside is both correct and a no-op for the interface — no change to `\fonte{}` itself.
+
+**Environment signature is `O{!htbp} m m o`, not `o m m b`.**
+Two deviations from the original task text. (a) No `b` body-capture argument: capturing the body as balanced tokens is unnecessary here — the wrapper only needs to emit `\caption`/`\label` in its *begin* code, and the body then typesets normally. Capturing it would freeze catcodes at read time and break `verbatim`/`\verb` inside a float for no gain. (b) The placement argument defaults to `!htbp` (`O{!htbp}`), matching what every existing example passed explicitly, and a trailing optional argument carries the short caption for the List of Illustrations — the multi-subfigure example already used `\caption[Figura múltipla]{...}`, so dropping short-caption support would have been a regression.
 
 **Secondary `\caption*{}` description text remains usable inside the body, uncontracted.**
 The existing example uses `\caption*{...}` for supplementary description (e.g., cap2.tex:272). This isn't the primary "Figura N – título" the norm governs the position of, so no guarantee is made about it — author places it wherever makes sense in the body.

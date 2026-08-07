@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-08-07
+goal: "Acrescentar ao modelo dois grupos de elementos estruturais ausentes: a
+  folha de aprovação (obrigatória pela NBR 14724:2024, comando único
+  parametrizado por tipo de trabalho, default relatório de disciplina) e os
+  apêndices e anexos pós-textuais identificados por letras maiúsculas
+  consecutivas."
