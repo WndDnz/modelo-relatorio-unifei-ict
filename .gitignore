@@ -313,3 +313,11 @@ tmp_*
 
 # Diretório de saída do latexmk
 /build/
+
+# Documentos normativos de referência (.refs/)
+# O guia de normalização da UFV é material de divulgação e vai versionado.
+# A NBR 14724:2024 NÃO vai: é norma paga da ABNT e o exemplar em disco está
+# marcado d'água com a licença de um terceiro (SENAI DN, com CNPJ e nome do
+# responsável). Este repositório é público, então versioná-la redistribuiria
+# a norma e exporia esses dados. Mantenha o arquivo apenas em disco.
+/.refs/ABNT_NBR_14724_2024-1.pdf
