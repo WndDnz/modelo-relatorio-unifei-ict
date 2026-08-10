@@ -24,6 +24,11 @@ Each appendix SHALL be headed by the word APÊNDICE followed by a capital letter
 - **WHEN** a group contains more than twenty-six entries
 - **THEN** the twenty-seventh is identified `AA`, per §4.2.3.3
 
+#### Scenario: Beyond the doubled-letter range
+
+- **WHEN** a group exceeds fifty-two entries, past `ZZ`, for which §4.2.3.3 defines no further convention
+- **THEN** compilation stops with an explicit error naming that limit, and the error is raised as an error — never expanded into the label's own value, which would corrupt the label in the `.aux` and re-fire on every later compilation
+
 #### Scenario: No numeric indicative
 
 - **WHEN** any appendix or annex heading is rendered

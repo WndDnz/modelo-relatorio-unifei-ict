@@ -1,8 +1,10 @@
+# illustration-types Specification
+
 ## Purpose
 
 Makes the designative word a property of each illustration rather than a hardcoded "Figura", per ABNT NBR 14724:2024 §5.8, with an independent numbering sequence and an optional dedicated list per type (§4.2.1.9) — and holds the boundary between illustration (§5.8) and table (§5.9).
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Each illustration carries its own designative word
 An illustration SHALL be captioned with the designative word for its type, followed by its order number, a travessão and its title — never with a generic word standing in for a specific one.
@@ -31,8 +33,6 @@ An illustration SHALL be captioned with the designative word for its type, follo
 
 - **WHEN** the author writes the type declaration in a plain document preamble, as the template's own documentation instructs
 - **THEN** it compiles without the author wrapping it in `\makeatletter`/`\makeatother` — the command's name carries no `@`, since a document preamble does not treat `@` as a letter and the declaration would otherwise fail with "Undefined control sequence"
-
-  (Scenario added post-archive: the original implementation shipped this entry point as `\Unifei@NewIllustrationType`, which no author could call — the first scenario above was written too loosely to catch it. Renamed to `\novotipoilustracao`; see the audit note in tasks.md.)
 
 ### Requirement: Each type numbers independently
 Every illustration type SHALL maintain its own arabic order sequence, counted by order of occurrence in the text.

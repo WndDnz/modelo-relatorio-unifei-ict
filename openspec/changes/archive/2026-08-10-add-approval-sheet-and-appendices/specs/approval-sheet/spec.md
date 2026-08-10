@@ -50,6 +50,31 @@ The rendered sheet SHALL present the author's name, the work's title and its sub
 - **WHEN** the author has not declared board members for a type that expects them
 - **THEN** the sheet still renders with the correct number of blank signature blocks, since §4.2.1.3 requires the date and signatures to be filled in after approval — a sheet printed for signing is the normal case, not an error
 
+### Requirement: A subtitle is subordinated to the title by a colon
+When the work has a subtitle, the sheet SHALL present it preceded by a colon, marking its subordination to the title, per §4.1.1 alínea d) — "subtítulo: se houver, deve ser precedido de dois-pontos, evidenciando a sua subordinação ao título". The colon SHALL be supplied by the template, not typed by the author.
+
+The norm states this rule explicitly for the capa; §4.2.1.1.1(c) and §4.2.1.3 list only "subtítulo, se houver", without restating the punctuation. The template applies it wherever title and subtitle appear together, since the colon is the mark of the subordination itself rather than an ornament of the cover — consistent with the published UFV models and with NBR 6023, which separates title from subtitle by a colon in references.
+
+#### Scenario: Work with a subtitle
+
+- **WHEN** the document declares both a title and a subtitle
+- **THEN** the sheet presents them joined by a colon, and the author does not type that colon into either declaration
+
+#### Scenario: Work without a subtitle
+
+- **WHEN** the document declares no subtitle
+- **THEN** the title appears alone, with no trailing colon
+
+#### Scenario: Title and subtitle form one continuous block
+
+- **WHEN** title and subtitle are rendered together
+- **THEN** they flow as a single continuous block with no paragraph break and no change of type size between them, distinguished by weight alone — the title in bold, the subtitle not
+
+#### Scenario: Letter case is the cover's, not the whole document's
+
+- **WHEN** the sheet renders the title block
+- **THEN** it uses normal case, while the capa and folha de rosto render the same composition in upper case
+
 ### Requirement: Typography follows the norm's rules for this element
 The sheet SHALL be rendered without a title and without a numeric indicative per §5.2.4, with the natureza set in single spacing and aligned from the middle of the text block to the right margin per §5.2.
 
