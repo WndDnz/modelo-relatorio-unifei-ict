@@ -279,7 +279,32 @@
 % Ensure caption package is available (some documents load subcaption instead);
 % configure captions to use a sans-serif font (label bold + sans, text sans).
 \RequirePackage{caption}
-\captionsetup{font=small,labelfont={bf,sf},textfont={sf}}
+% labelsep=endash renders "Figura 1 – Título" (travessão) instead of the
+% package's default colon, per NBR 14724:2024 §5.8. Set once, document-wide,
+% so any illustration type added later inherits it without restating it.
+% Institutional preference for an em dash instead? One-key swap: labelsep=emdash.
+\captionsetup{font=small,labelfont={bf,sf},textfont={sf},labelsep=endash}
+
+% List entries must carry the designative word and the travessão too, per
+% §4.2.1.9 (figures) and §4.2.1.10 (tables) — not the bare "1   Título" that
+% book.cls prints by default for \listoffigures/\listoftables.
+% Uses a literal en dash (–), not "--": under XeLaTeX/fontspec text ligatures
+% are off by default, so "--" prints as two hyphens instead of ligating —
+% verified by compiling. Kept visually identical to \captionsetup's
+% labelsep=endash above.
+\DeclareCaptionListFormat{abntfig}{#1\figurename~#2 –~}
+\captionsetup[figure]{listformat=abntfig}
+\DeclareCaptionListFormat{abnttab}{#1\tablename~#2 –~}
+\captionsetup[table]{listformat=abnttab}
+
+% newfloat lets later illustration types (Quadro, Gráfico, ...) become real
+% float types — own counter, own \caption support, own list — without
+% reimplementing float mechanics. Each type opens one more \write stream for
+% its list file; LaTeX caps write streams at 16. This document already
+% consumes several (aux, toc, lof, lot, glossaries' .acr/.sls, biblatex,
+% hyperref), so there is headroom for a handful of custom types, not dozens.
+% Hitting the ceiling surfaces as "No room for a new \write" at compile time.
+\RequirePackage{newfloat}
 
 % --- Carregamento da fonte Exo2 a partir do subdiretório "Fontes/Exo2" ---
 % Define \ExoTwo como família de fonte local se os arquivos estiverem presentes.
@@ -633,21 +658,35 @@
     \par\bigskip%
 }
 
+% Width declared by figuraabnt/tabelaabnt via their <width> argument (see
+% below). Empty by default: \fonte then falls back to \LastGraphicWidth
+% exactly as before this key existed, so undeclared floats render byte-identical.
+\def\Unifei@DeclaredWidth{}
+
 \providecommand{\fonte}[1]{%
     % Place the source text aligned to the left edge of the last included
     % graphic while matching caption styling: small size, sans-serif text
     % and label in bold sans-serif (same as \captionsetup{labelfont={bf,sf},textfont={sf}}).
     \par\vspace{2pt}% small gap after the figure
     {\small\sffamily% caption uses small + sans
-        % If \LastGraphicWidth hasn't been set (no previous graphic), fall back
-        % to full line width (left-aligned).
-        \ifdim\LastGraphicWidth=0pt
-            \makebox[\linewidth][l]{\textbf{\figuresourcename:}~#1.}\par
+        \ifx\Unifei@DeclaredWidth\@empty
+            % If \LastGraphicWidth hasn't been set (no previous graphic), fall back
+            % to full line width (left-aligned).
+            \ifdim\LastGraphicWidth=0pt
+                \makebox[\linewidth][l]{\textbf{\figuresourcename:}~#1.}\par
+            \else
+                % center an inner box of width \LastGraphicWidth and left-align
+                % the source inside it so it sits at the left edge of the graphic
+                \makebox[\linewidth][c]{% centered relative to the text block
+                    \makebox[\LastGraphicWidth][l]{\textbf{\figuresourcename:}~#1.}%
+                }\par
+            \fi
         \else
-            % center an inner box of width \LastGraphicWidth and left-align
-            % the source inside it so it sits at the left edge of the graphic
-            \makebox[\linewidth][c]{% centered relative to the text block
-                \makebox[\LastGraphicWidth][l]{\textbf{\figuresourcename:}~#1.}%
+            % Illustration declared its width explicitly (§5.8): \fonte follows
+            % that width instead of the measured one, so caption, content and
+            % source share the same left/right edges.
+            \makebox[\linewidth][c]{%
+                \makebox[\Unifei@DeclaredWidth][l]{\textbf{\figuresourcename:}~#1.}%
             }\par
         \fi
     }
@@ -663,13 +702,21 @@
 % argumentos e emitem a legenda antes do corpo, então não existe ordem errada
 % possível de escrever.
 %
-% Uso: \begin{figuraabnt}[<posição>]{<rótulo>}{<legenda>}[<legenda curta>]
+% Uso: \begin{figuraabnt}[<posição>]{<rótulo>}{<legenda>}[<legenda curta>]<<largura>>
 %          <conteúdo>
 %          \fonte{<fonte>}
 %      \end{figuraabnt}
 % A posição padrão é [!htbp]; a legenda curta (para a Lista de Ilustrações) é
 % opcional e vem por último. \fonte{} continua sendo chamado pelo autor, DENTRO
 % do ambiente e depois do conteúdo — é o que o mantém junto do float na página.
+%
+% <<largura>>, entre "menor que"/"maior que" e opcional, declara a largura da
+% ilustração (ex.: <0.9\textwidth>). Quando presente, a legenda e o \fonte{}
+% passam a acompanhar exatamente essa largura, como exige o §5.8 ("Tipo, número
+% de ordem, título, fonte, legenda e notas devem acompanhar as margens da
+% ilustração"). Repita o mesmo valor passado a \includegraphics/à tabela. Sem
+% esse argumento o comportamento é o de sempre: legenda na largura do bloco de
+% texto e \fonte{} alinhado à largura medida do último gráfico.
 %
 % ATENÇÃO: \caption PRECISA vir antes de \label. É o \caption que incrementa o
 % contador do float; com o \label antes, todo \ref para esse rótulo resolve para
@@ -678,23 +725,107 @@
 %
 % Os ambientes figure/table crus continuam disponíveis, mas para eles o modelo
 % não garante nada: a posição da legenda volta a depender da ordem do código.
-\NewDocumentEnvironment{figuraabnt}{O{!htbp} m m o}{%
-    \begin{figure}[#1]%
-        \centering
-        \IfNoValueTF{#4}{\caption{#3}}{\caption[#4]{#3}}%
-        \label{#2}%
-        }{%
-    \end{figure}%
+% \Unifei@DeclareABNTEnv{<ambiente flutuante>}{<nome do ambiente ABNT>} gera um
+% ambiente no molde figuraabnt/tabelaabnt em torno de QUALQUER ambiente
+% flutuante existente (figure, table, ou um tipo declarado via
+% \novotipoilustracao abaixo). figuraabnt e tabelaabnt são apenas as duas
+% primeiras instâncias desta fábrica — seu nome e comportamento continuam
+% exatamente os mesmos de antes.
+\newcommand{\Unifei@DeclareABNTEnv}[2]{%
+    \NewDocumentEnvironment{#2}{O{!htbp} m m o D<>{}}{%
+        \def\Unifei@DeclaredWidth{##5}%
+        \begin{#1}[##1]%
+            \centering
+            \ifx\Unifei@DeclaredWidth\@empty\else\captionsetup{width=\Unifei@DeclaredWidth}\fi
+            \IfNoValueTF{##4}{\caption{##3}}{\caption[##4]{##3}}%
+            \label{##2}%
+            }{%
+        \end{#1}%
+    }%
+}
+\Unifei@DeclareABNTEnv{figure}{figuraabnt}
+\Unifei@DeclareABNTEnv{table}{tabelaabnt}
+
+%-------------------------------------------------
+% TIPOS DE ILUSTRAÇÃO (NBR 14724:2024 §5.8)
+%-------------------------------------------------
+% §5.8: toda ilustração é precedida de sua palavra designativa (desenho,
+% esquema, fluxograma, fotografia, gráfico, mapa, organograma, planta, quadro,
+% retrato, figura, imagem, entre outros) — não existe uma palavra genérica
+% "Figura" para todas elas. figuraabnt/tabelaabnt (acima) cobrem Figura e
+% Tabela; \novotipoilustracao abre o mesmo tratamento para qualquer outro
+% tipo, com contador, ambiente ABNT, referências cruzadas e lista próprios —
+% sem reescrever essa máquina a cada tipo novo.
+%
+% Uso: \novotipoilustracao{<contador>}{<palavra designativa>}{<ambiente ABNT>}
+%   <contador>: nome do ambiente/contador interno, só ASCII (ex.: quadro).
+%   <palavra designativa>: como deve aparecer impressa (ex.: Quadro, Gráfico).
+%   <ambiente ABNT>: nome do ambiente que o autor vai usar (ex.: quadroabnt).
+% Gera: o ambiente <ambiente ABNT> (mesma assinatura de figuraabnt/tabelaabnt,
+% incluindo a largura declarada opcional <<largura>>), \ref<contador>{} e
+% \ref<contador>comp{} (no molde de \reffig/\reffigcomp), a lista
+% \listof<contador>s (reaproveita o estilo de \listoffigures — mesma cor
+% institucional, mesma fonte, mesmo cabeçalho centralizado — sem duplicar
+% aquele bloco), e o número de ordem próprio do tipo, independente de
+% Figura/Tabela/outros tipos (\counterwithout-equivalente via within=none).
+%
+% O nome é SEM "@" de propósito: este é o único comando desta seção que o
+% autor chama do preâmbulo do próprio documento, onde "@" não é letra. Com um
+% nome à la \Unifei@... o autor precisaria envolver a chamada em
+% \makeatletter/\makeatother, e sem isso a compilação morre com "Undefined
+% control sequence" — verificado por compilação. Os demais comandos desta
+% seção são internos e mantêm o prefixo \Unifei@.
+%
+% Só funciona no preâmbulo: \DeclareFloatingEnvironment (do newfloat) é
+% \@onlypreamble.
+\newcommand{\novotipoilustracao}[3]{%
+    \DeclareFloatingEnvironment[name={#2}, listname={Lista de #2s}, within=none, placement=!htbp]{#1}%
+    % Herda a caixa alargada de \l@figure (fix-abnt-caption-label-format), não
+    % o \numberline{2.3em} padrão do book.cls — senão "Quadro 1 –" sobrepõe o
+    % título como a \l@figure original sobrepunha antes daquela correção.
+    % Adiado para \AtBeginDocument: \l@figure só recebe essa caixa mais larga
+    % bem mais abaixo neste arquivo (seção do Sumário), e um \let aqui, no
+    % ponto em que o tipo é declarado, capturaria a definição estreita padrão
+    % do book.cls em vez da personalizada.
+    \AtBeginDocument{\expandafter\let\csname l@#1\endcsname\l@figure}%
+    \DeclareCaptionListFormat{abnt#1}{##1\@nameuse{#1name}~##2 –~}%
+    \captionsetup[#1]{listformat=abnt#1}%
+    % Ganchos de acumulação de largura de subfigure (\S 216–265 acima) ficam
+    % amarrados ao nome literal do ambiente "figure"; um tipo novo abre um
+    % ambiente com outro nome e não os disparava sem este realinhamento.
+    \AtBeginEnvironment{#1}{\setlength{\Unifei@CurrentFigureWidth}{0pt}}%
+    \AtEndEnvironment{#1}{%
+        \ifdim\Unifei@CurrentFigureWidth>0pt
+            \global\setlength{\LastGraphicWidth}{\Unifei@CurrentFigureWidth}%
+        \fi
+    }%
+    \Unifei@DeclareABNTEnv{#1}{#3}%
+    \Unifei@GenXref{#1}%
 }
 
-\NewDocumentEnvironment{tabelaabnt}{O{!htbp} m m o}{%
-    \begin{table}[#1]%
-        \centering
-        \IfNoValueTF{#4}{\caption{#3}}{\caption[#4]{#3}}%
-        \label{#2}%
-        }{%
-    \end{table}%
+% \Unifei@GenXref{<contador>} gera \ref<contador>/\ref<contador>comp no molde
+% de \reffig/\reffigcomp (linhas ~613–617 acima), usando a palavra designativa
+% do tipo (\<contador>name, definida por \DeclareFloatingEnvironment).
+\newcommand{\Unifei@GenXref}[1]{%
+    \expandafter\providecommand\csname ref#1\endcsname[1]{%
+        \hyperref[##1]{\color{unifeiblue}\@nameuse{#1name}~\ref{##1}}%
+    }%
+    \expandafter\providecommand\csname ref#1comp\endcsname[1]{%
+        \refcomp{\@nameuse{#1name}}{##1}%
+    }%
 }
+
+% Tipos fornecidos pelo modelo: Quadro e Gráfico cobrem os casos observados em
+% relatórios do ICT. Um tipo do §5.8 que o modelo não prevê (Fluxograma,
+% Organograma, ...) usa o mesmo \novotipoilustracao — não requer editar o
+% pacote.
+\novotipoilustracao{quadro}{Quadro}{quadroabnt}
+\novotipoilustracao{grafico}{Gráfico}{graficoabnt}
+
+% Tabela (tabelaabnt, acima) fica FORA deste mecanismo de propósito: o §5.9
+% rege tabelas à parte, vinculadas às normas de apresentação tabular do IBGE,
+% com lista própria (§4.2.1.10) já coberta por \listoftables — não é um tipo
+% de ilustração do §5.8.
 
 %-------------------------------------------------
 % CAPA E FOLHA DE ROSTO
@@ -992,6 +1123,20 @@
             {\unifeifont\color{unifeiblue}\normalsize\itshape #1}%
         }{#2}% page
     \fi
+}
+
+% book.cls reserves only 2.3em for \l@figure/\l@table (a bare number). Once
+% the list format above injects the designative word and the travessão
+% ("Figura 1 – "), that box overflows and collides with the title — verified
+% by compiling. Widened to fit "Figura 100 – " (three digits, so the box
+% does not need re-tuning the day a report reaches its hundredth figure).
+\renewcommand{\l@figure}[2]{%
+    \addpenalty{-\@highpenalty}%
+    \@dottedtocline{1}{0em}{6.5em}{{\unifeifont\color{unifeiblue}\normalsize #1}}{#2}%
+}
+\renewcommand{\l@table}[2]{%
+    \addpenalty{-\@highpenalty}%
+    \@dottedtocline{1}{0em}{6.5em}{{\unifeifont\color{unifeiblue}\normalsize #1}}{#2}%
 }
 
 % 1. Redefinir o \frontmatter

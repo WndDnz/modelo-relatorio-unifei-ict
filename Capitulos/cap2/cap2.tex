@@ -295,17 +295,32 @@ comandos escritos no meio do corpo, de modo que não há ordem errada possível 
 \end{verbatim}
 
 O primeiro argumento, entre colchetes, é a posição do float e pode ser omitido (o padrão é
-\texttt{[!htbp]}). Seguem o rótulo e a legenda, ambos obrigatórios. O último argumento, também entre
+\texttt{[!htbp]}). Seguem o rótulo e a legenda, ambos obrigatórios. O próximo argumento, também entre
 colchetes e opcional, é uma legenda curta, usada apenas na Lista de Ilustrações quando a legenda
 principal for longa demais para caber ali. O ambiente \texttt{tabelaabnt} tem exatamente a mesma
 assinatura. Os ambientes \texttt{figure} e \texttt{table} continuam disponíveis, mas neles a posição
 da legenda volta a depender da ordem em que você escreve o código, sem nenhum aviso caso saia fora
 da norma.
 
+Há ainda um último argumento opcional, entre \texttt{<} e \texttt{>}: a largura declarada da
+ilustração. A norma exige que ``tipo, número de ordem, título, fonte, legenda e notas devem
+acompanhar as margens da ilustração'' (§5.8) — ou seja, quando o gráfico é mais estreito que o bloco
+de texto, a legenda e a fonte devem se alinhar à largura do gráfico, não à largura da página. Sem
+esse argumento, a legenda ocupa o bloco de texto inteiro e a fonte se alinha à largura medida do
+último gráfico incluído, como sempre foi. Repita nele o mesmo valor passado a
+\texttt{\textbackslash includegraphics}:
+
+\begin{verbatim}
+\begin{figuraabnt}{fig:rotulo}{Legenda}<0.9\textwidth>
+    \includegraphics[width=0.9\textwidth]{arquivo}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+\end{verbatim}
+
 Veja aqui uma referência à \reffig{fig:exemplo} e à \reftable{tab:exemplo}.
 
-\begin{figuraabnt}{fig:exemplo}{Figura de exemplo}
-    \caption*{Uma figura de exemplo, elaborada pelo próprio autor. Note o alinhamento da ``fonte'', abaixo da figura. Esta legenda adicional é opcional, usada quando é necessário fornecer uma descrição mais detalhada da figura, complementando a legenda principal.}
+\begin{figuraabnt}{fig:exemplo}{Figura de exemplo}<0.9\textwidth>
+    \caption*{Uma figura de exemplo, elaborada pelo próprio autor. Note o alinhamento da ``fonte'', abaixo da figura. Esta legenda adicional é opcional, usada quando é necessário fornecer uma descrição mais detalhada da figura, complementando a legenda principal. Note também que a legenda e a fonte acompanham a largura declarada da figura.}
     \includegraphics[width=0.9\textwidth]{example-image}
     \fonte{o próprio autor}
 \end{figuraabnt}
@@ -346,6 +361,70 @@ legenda principal --- esta última continua sendo o argumento do ambiente. Veja 
 Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
 detalhes sobre como utilizá-lo de forma eficaz. Ele pode ser encontrado no diretório oficial do
 \LaTeX\, na \gls{ctan}, no endereço eletrônico (\url{https://ctan.org/pkg/subcaption}).
+
+\subsection{Outros tipos de ilustração}\label{sec:tipos-ilustracao}
+
+A norma não fala apenas em ``figura''. O §5.8 exige que toda ilustração venha precedida de sua
+palavra designativa específica — desenho, esquema, fluxograma, fotografia, gráfico, mapa,
+organograma, planta, quadro, retrato, figura, imagem, entre outros —, cada uma com sua própria
+sequência numérica e, quando conveniente, sua própria lista (§4.2.1.9). Além de \texttt{figuraabnt}
+e \texttt{tabelaabnt}, este modelo já fornece \texttt{quadroabnt} e \texttt{graficoabnt}, com
+exatamente a mesma assinatura — incluindo a largura declarada opcional \texttt{<largura>}. Veja o
+\refgrafico{gra:exemplo} como exemplo:
+
+\begin{graficoabnt}{gra:exemplo}{Gráfico de exemplo}<0.7\textwidth>
+    \includegraphics[width=0.7\textwidth]{example-image}
+    \fonte{o próprio autor}
+\end{graficoabnt}
+
+Um relatório que precise de um tipo não previsto aqui (Fluxograma, Organograma, ...) não precisa
+esperar uma atualização do pacote. Basta declarar o tipo no preâmbulo do próprio documento:
+
+\begin{verbatim}
+\novotipoilustracao{fluxograma}{Fluxograma}{fluxogramaabnt}
+\end{verbatim}
+
+Os três argumentos são o nome interno do contador (só ASCII), a palavra designativa como deve
+aparecer impressa, e o nome do ambiente que você vai usar no texto. A partir daí,
+\texttt{fluxogramaabnt} funciona exatamente como \texttt{quadroabnt} ou \texttt{graficoabnt} --- com
+contador, referências cruzadas (\verb|\reffluxograma{}|) e lista (\verb|\listoffluxogramas|)
+próprios. É a mesma máquina que gera os tipos que já vêm no pacote.
+
+\subsubsection{Quadro não é Tabela}\label{sec:quadro-vs-tabela}
+
+Este é o erro mais comum: chamar de ``Tabela'' qualquer coisa organizada em linhas e colunas. A
+norma traça a fronteira pelo tipo de dado central, não pelo layout. Uma tabela é a forma não
+discursiva de apresentar informações das quais o \emph{dado numérico} se destaca como informação
+central (§5.9, vinculado às normas de apresentação tabular do IBGE); um quadro é uma ilustração
+comum (§5.8) cujo conteúdo central é \emph{textual}, ainda que organizado em linhas e colunas. Veja
+o \refquadro{qua:exemplo} e a \reftable{tab:exemplo-quadro} a seguir: é a mesma avaliação, uma vez
+qualitativa (Quadro) e outra numérica (Tabela).
+
+\begin{quadroabnt}{qua:exemplo}{Quadro de exemplo}
+    \caption*{Avaliação qualitativa: o dado central de cada célula é uma palavra, não um número — por isso é um Quadro, não uma Tabela.}
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Critério    & Avaliação \\ \midrule
+        Usabilidade & Boa       \\
+        Desempenho  & Regular   \\
+        Documentação & Boa      \\
+        Suporte     & Ruim      \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{quadroabnt}
+
+\begin{tabelaabnt}{tab:exemplo-quadro}{Tabela de exemplo (mesma avaliação, em números)}
+    \caption*{A mesma avaliação do \refquadro{qua:exemplo}, agora com o dado numérico como informação central — por isso é uma Tabela.}
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Critério    & Nota (0--10) \\ \midrule
+        Usabilidade & 8            \\
+        Desempenho  & 6            \\
+        Documentação & 8           \\
+        Suporte     & 3            \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{tabelaabnt}
 
 \section{Equações}\label{sec:equacoes}
 
