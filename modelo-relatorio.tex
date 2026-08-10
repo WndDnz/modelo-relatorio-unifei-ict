@@ -29,7 +29,11 @@
 % Título, subtítulo e autores (compatibilidade com unifeiICT.sty)
 \title{Modelo de Relatório Técnico-Científico para os cursos do ICT}
 
-% Comente ou remova a linha abaixo se não houver subtítulo
+% Comente ou remova a linha abaixo se não houver subtítulo.
+% Escreva SÓ o texto do subtítulo, sem dois-pontos: a NBR 14724:2024 §4.1.1(d)
+% exige que ele venha "precedido de dois-pontos, evidenciando a sua
+% subordinação ao título", e o modelo insere essa pontuação sozinho na capa,
+% na folha de rosto e na folha de aprovação.
 \subtitle{Incluindo instruções de uso}
 
 % Se houver mais de um autor, separe os nomes com \\ (quebra de linha)
@@ -44,6 +48,21 @@
 
 % Disciplina que o relatório atende
 \subject{Nome da Disciplina}
+
+% Metadados adicionais usados pela folha de aprovação (\folhaaprovacao, mais
+% abaixo). Data de aprovação e nota são opcionais; sem elas, a folha sai sem
+% essas linhas, em vez de com campos em branco estranhos.
+% \aprovacaodata{15 de dezembro de 2025}
+% \notaaprovacao{9,5}
+
+% Membros da banca examinadora — só usados pelos tipos tcc/dissertacao.
+% Chame uma vez por membro esperado; campos em branco ainda reservam um bloco
+% de assinatura corretamente formatado (a folha é impressa para assinar).
+% \bancamembro{Prof. Dr. Fulano de Tal}{Doutor em Engenharia}{Unifei}
+% \bancamembro{Prof. Dra. Beltrana de Tal}{Doutora em Engenharia}{Unifei}
+% \bancamembro{}{}{}
+% \bancamembro{Prof. Dra. Beltrana de Tal}{Doutora em Engenharia}{Unifei}
+% \bancamembro{}{}{}
 
 
 % Resumo na língua principal
@@ -78,6 +97,15 @@
 \maketitle
 
 % ---
+% Folha de aprovação (NBR 14724:2024 §4.2.1.3) — elemento obrigatório.
+% Padrão é o tipo "disciplina"; para os outros, passe o tipo explicitamente:
+%   \folhaaprovacao[estagio]      -- relatório de estágio
+%   \folhaaprovacao[tcc]          -- trabalho de conclusão de curso
+%   \folhaaprovacao[dissertacao]  -- dissertação de mestrado
+% ---
+\folhaaprovacao
+
+% ---
 % Resumos
 % ---
 \makeabstracts
@@ -91,6 +119,13 @@
 \listoffigures
 
 \listoftables
+
+% Quadro e Gráfico (NBR 14724:2024 §5.8) têm lista própria, como Figura e
+% Tabela. Descomente a que fizer sentido para o relatório; nenhum tipo usado
+% no texto gera página em branco por a lista ficar comentada.
+% \listofquadros
+%
+% \listofgraficos
 
 \printglossary[type=\acronymtype,title={\acronymlistname}]
 
@@ -131,5 +166,32 @@
 % ---
 
 \backmatter
+
+% Apêndices: produzidos pelo próprio autor, para complementar a argumentação
+% (NBR 14724:2024 §3.4). \apendices abre o grupo (uma entrada coletiva no
+% sumário); cada \apendice{<rótulo>}{<título>} abre um apêndice, lettered A, B, ...
+\apendices
+
+\apendice{ape:questionario}{Questionário aplicado na pesquisa}
+Este apêndice é de autoria do próprio autor do relatório — daí ser um
+\emph{apêndice}, e não um anexo. Ilustrações dentro de um apêndice continuam a
+mesma sequência numérica do restante do documento e aparecem normalmente nas
+listas, como a \reffig{fig:questionario} a seguir demonstra.
+
+\begin{figuraabnt}{fig:questionario}{Estrutura do questionário aplicado}
+    \includegraphics[width=0.6\textwidth]{example-image}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+
+% Anexos: documentos de terceiros, incorporados como fundamentação, prova ou
+% ilustração (§3.3) -- não escritos pelo autor do relatório.
+\anexos
+
+\anexo{ane:certificado}{Certificado de participação no evento}
+Este anexo reproduz um documento de terceiros — o certificado emitido pela
+organização do evento — anexado ao relatório como prova, e não redigido pelo
+autor. Essa autoria é exatamente o que separa um \emph{anexo} de um
+\emph{apêndice}: veja o \refcomp{}{ape:questionario}, de autoria própria, em
+contraste com este.
 
 \end{document}

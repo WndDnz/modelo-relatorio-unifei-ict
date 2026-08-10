@@ -582,6 +582,36 @@
     \ifblank{#1}{\@cosupervisorpresentfalse}{\@cosupervisorpresenttrue}%
 }
 
+%-------------------------------------------------
+% METADADOS DA FOLHA DE APROVAÇÃO (NBR 14724:2024 §4.2.1.3)
+%-------------------------------------------------
+% Reaproveita \@title/\@subtitle/\@author/\@supervisor/\@subject (acima) — não
+% precisam ser redeclarados. O que falta é o que a capa/folha de rosto não
+% cobrem: data de aprovação, nota (opcional) e o supervisor de empresa (só
+% para relatório de estágio).
+\newcommand{\@aprovacaodata}{}
+\providecommand{\aprovacaodata}[1]{\renewcommand{\@aprovacaodata}{#1}}
+
+\newcommand{\@notaaprovacao}{}
+\providecommand{\notaaprovacao}[1]{\renewcommand{\@notaaprovacao}{#1}}
+
+\newcommand{\@empresasupervisor}{}
+\providecommand{\empresasupervisor}[1]{\renewcommand{\@empresasupervisor}{#1}}
+
+% Banca examinadora: cada membro precisa de nome, titulação e instituição —
+% não cabe no padrão \supervisor{<nome>} de um único valor. Em vez de um
+% pacote de chave-valor, um comando repetível que ACUMULA (via
+% \g@addto@macro, mecanismo padrão do núcleo do LaTeX2e) uma lista de chamadas
+% a \Unifei@AssinaturaBloco, disparada de uma vez na hora de renderizar a
+% folha. Chame uma vez por membro esperado — inclusive com campos em branco,
+% se os nomes ainda não forem conhecidos: o resultado é um bloco de
+% assinatura corretamente formatado, mas em branco, não um erro (§4.2.1.3: a
+% folha é impressa para ser assinada depois).
+\newcommand{\Unifei@BancaLista}{}
+\providecommand{\bancamembro}[3]{% #1=nome #2=titulação #3=instituição
+    \g@addto@macro\Unifei@BancaLista{\Unifei@AssinaturaBloco{#1}{#2}{#3}}%
+}
+
 \newcommand{\@abstract}{}
 \providecommand{\abstract}[1]{\renewcommand{\@abstract}{#1}}
 \newcommand{\@abstractseclang}{}
@@ -1018,6 +1048,140 @@
     \fi
 }
 
+%-------------------------------------------------
+% FOLHA DE APROVAÇÃO (NBR 14724:2024 §4.2.1.3)
+%-------------------------------------------------
+% Elemento obrigatório, sem título e sem indicativo numérico (§5.2.4) — por
+% isso nada abaixo usa \chapter/\section ou \addcontentsline. Chame
+% \folhaaprovacao logo depois de \maketitle (antes de \makeabstracts), como
+% no driver deste modelo. Reaproveita \@title/\@subtitle/\@author/
+% \@supervisor/\@subject já declarados para a capa — não precisam ser
+% redeclarados.
+%
+% Tipos suportados e base normativa de cada um — não "corrija" o de estágio
+% removendo o supervisor de empresa por julgar não-normativo, é exatamente o
+% ponto:
+%   disciplina    (padrão) — §1 Escopo ("aplica-se... a trabalhos acadêmicos
+%                  e similares, intra e extraclasse") + §4.2.1.1.1(e), que
+%                  nomeia "aprovação em disciplina" como objetivo válido da
+%                  natureza. Caso previsto pela norma, não uma adaptação.
+%   estagio       — coberto apenas por "e similares" do §1; não há cláusula
+%                  específica para relatório de estágio. Adaptação
+%                  institucional.
+%   tcc           — trabalho de conclusão de curso, banca examinadora.
+%   dissertacao   — dissertação de mestrado, banca examinadora.
+% #1/#2/#3 podem chegar como texto literal (de \bancamembro, digitado pelo
+% autor) OU como uma referência de macro (\@supervisor, de disciplina/
+% estágio) — \ifblank{#1} sozinho só detecta o segundo caso corretamente por
+% acidente: uma referência de macro é sempre "1 token", nunca vazio, mesmo
+% quando a macro referenciada está vazia. \edef normaliza os dois casos para
+% texto já expandido antes de testar, então um \supervisor{} nunca declarado
+% também produz um bloco corretamente em branco, não uma linha \textbf{} vazia.
+\newcommand{\Unifei@AssinaturaBloco}[3]{% #1=nome #2=titulação #3=instituição
+    \par\vspace{2em}
+    \begingroup
+    \edef\Unifei@ABnome{#1}%
+    \edef\Unifei@ABtitulacao{#2}%
+    \edef\Unifei@ABinstituicao{#3}%
+    \begin{center}
+        \rule{7cm}{0.4pt}\\[0.3em]
+        \ifdefempty{\Unifei@ABnome}{}{\textbf{\Unifei@ABnome}\\}%
+        \ifdefempty{\Unifei@ABtitulacao}{}{\Unifei@ABtitulacao\\}%
+        \ifdefempty{\Unifei@ABinstituicao}{}{\Unifei@ABinstituicao}%
+    \end{center}
+    \endgroup
+}
+
+\newcommand{\Unifei@FolhaAprovacaoCabecalho}{%
+    \begin{center}
+        % Mesmo bloco contínuo da capa, mas em caixa normal — a caixa alta
+        % fica restrita à capa e à folha de rosto.
+        {\setstretch{1.0}\unifeifont\color{unifeiblue}\Large
+            \Unifei@FullTitleBloco{\@firstofone}\par}
+        \vspace{0.5em}
+        {\large\@author\par}
+    \end{center}
+    \vspace{1.5em}
+}
+
+% Natureza: alinhada da metade do bloco de texto até a margem direita, espaço
+% simples (§5.2) — mesmo padrão que \maketitle já usa na folha de rosto
+% (\hfill + parbox{0.5\textwidth} com \setstretch{1.0}, ~linha 946 acima);
+% reaproveitado aqui, não duplicado com valores diferentes.
+\newcommand{\Unifei@FolhaAprovacaoNatureza}[1]{%
+    \hfill%
+    \begin{parbox}{0.5\textwidth}{%
+        \setstretch{1.0}\normalsize
+        #1%
+        \ifdefempty{\@aprovacaodata}{}{\par\vspace{1em}Data de aprovação: \@aprovacaodata.}%
+        \ifdefempty{\@notaaprovacao}{}{\par\vspace{0.5em}Nota: \@notaaprovacao.}%
+    }%
+    \end{parbox}%
+    \par
+}
+
+\newcommand{\Unifei@FolhaAprovacao@disciplina}{%
+    \Unifei@FolhaAprovacaoCabecalho
+    \Unifei@FolhaAprovacaoNatureza{%
+        Relatório apresentado ao professor da disciplina de \@subject,
+        como requisito parcial para aprovação no semestre.%
+    }%
+    \vfill
+    \Unifei@AssinaturaBloco{\@supervisor}{Professor da disciplina}{}%
+    \vfill
+}
+
+\newcommand{\Unifei@FolhaAprovacao@estagio}{%
+    \Unifei@FolhaAprovacaoCabecalho
+    \Unifei@FolhaAprovacaoNatureza{%
+        Relatório de estágio supervisionado apresentado como requisito
+        parcial para aprovação na disciplina de \@subject.%
+    }%
+    \vfill
+    \Unifei@AssinaturaBloco{\@supervisor}{Orientador acadêmico}{}%
+    \Unifei@AssinaturaBloco{\@empresasupervisor}{Supervisor de estágio}{}%
+    \vfill
+}
+
+\newcommand{\Unifei@FolhaAprovacao@tcc}{%
+    \Unifei@FolhaAprovacaoCabecalho
+    \Unifei@FolhaAprovacaoNatureza{%
+        Trabalho de Conclusão de Curso apresentado como requisito parcial
+        para obtenção do título de Bacharel em \@subject.%
+    }%
+    \vfill
+    \Unifei@BancaLista
+    \vfill
+}
+
+\newcommand{\Unifei@FolhaAprovacao@dissertacao}{%
+    \Unifei@FolhaAprovacaoCabecalho
+    \Unifei@FolhaAprovacaoNatureza{%
+        Dissertação apresentada como requisito parcial para obtenção do
+        título de Mestre em \@subject.%
+    }%
+    \vfill
+    \Unifei@BancaLista
+    \vfill
+}
+
+% Uso: \folhaaprovacao ou \folhaaprovacao[<tipo>], tipo em
+% {disciplina,estagio,tcc,dissertacao}. Um tipo desconhecido é erro de
+% compilação (não renderiza o padrão silenciosamente).
+\NewDocumentCommand{\folhaaprovacao}{O{disciplina}}{%
+    \clearpage
+    \thispagestyle{empty}%
+    \@ifundefined{Unifei@FolhaAprovacao@#1}{%
+        \PackageError{UnifeiICTReport}%
+            {Tipo de folha de aprovação desconhecido: '#1'}%
+            {Tipos suportados por \string\folhaaprovacao:
+             disciplina, estagio, tcc, dissertacao.}%
+    }{%
+        \csname Unifei@FolhaAprovacao@#1\endcsname
+    }%
+    \clearpage
+}
+
 %----------------------------
 %   IMPRIMIR OS RESUMOS
 %----------------------------
@@ -1190,6 +1354,147 @@
     % A linha \pagenumbering{arabic} foi REMOVIDA daqui
     % para impedir que o contador seja reiniciado.
     \pagestyle{plain} % <-- ADIÇÃO: Torna os números visíveis
+}
+
+% \backmatter NÃO é redefinido aqui, de propósito: o \backmatter herdado do
+% book.cls só faz \cleardoublepage/\clearpage + \@mainmatterfalse. Isso deixa
+% \chapter sem número (irrelevante aqui — apêndices/anexos não usam \chapter)
+% e NÃO mexe em \pagestyle, que continua "plain" (números de página visíveis,
+% contínuos) — exatamente o que o §5.3 exige. Confirmado lendo o próprio
+% book.cls, não só supondo.
+
+%-------------------------------------------------
+% APÊNDICES E ANEXOS (NBR 14724:2024 §4.2.3.3/§4.2.3.4)
+%-------------------------------------------------
+% Por que não reaproveitar \chapter/\appendix: (a) \titleformat{\chapter} acima
+% imprime o contador cru — \appendix produziria só "A", sem a palavra; (b) o
+% nome do \autoref precisaria mudar por região. Testado por compilação (não
+% suposto): um \renewcommand{\chapterautorefname}{...} lido pelo \autoref no
+% momento da REFERÊNCIA, não do \label — uma referência escrita depois da troca
+% mas apontando para um rótulo do corpo principal escrito antes dela sai errada
+% ("Apêndice 1" em vez de "Seção 1"). Ver design.md, "Resolved Questions", para
+% o resultado completo do teste.
+%
+% A solução que evita o problema por construção: cada grupo (apêndice/anexo)
+% tem seu PRÓPRIO contador, nunca compartilhado com \c@chapter, e sua PRÓPRIA
+% palavra de \autoref — fixa, nunca trocada. \chapterautorefname continua
+% "Seção" o documento inteiro, sem exceção.
+\newcounter{apendicesec}
+\newcounter{anexosec}
+\newcounter{Unifei@tmpAlph}
+
+% Conversão contador -> letra, dobrando após Z (AA, BB, ..., ZZ), como exige o
+% §4.2.3.3. PRECISA ser totalmente expansível: \refstepcounter grava
+% \thecontador dentro de um \edef (\@currentlabel), e um \setcounter (que faz
+% uma atribuição, não expansível) dentro dessa cadeia corrompe o rótulo em vez
+% de dar erro claro — verificado por compilação. \@Alph{<número>} (usado por
+% \Alph internamente) é expansível; \setcounter não é. Por isso \@Alph aqui, e
+% não \Alph{Unifei@tmpAlph} com um contador auxiliar.
+% Acima de 52 devolve o número cru. Não é um "resultado válido" — é só uma
+% degradação que mantém a expansão legal; quem reclama é
+% \Unifei@ChecarTetoGrupo, abaixo. \PackageError AQUI dentro seria um erro:
+% este comando é expandido pelo \protected@edef do \refstepcounter, e o
+% \GenericError inteiro acabava gravado no .aux como o VALOR do rótulo
+% (\newlabel{...}{{\GenericError ...}}), corrompendo o rótulo e re-disparando
+% o erro a cada compilação seguinte — reproduzido e confirmado por compilação.
+\newcommand{\Unifei@GroupLetter}[1]{%
+    \ifnum\value{#1}>52
+        \number\value{#1}%
+    \else
+        \ifnum\value{#1}>26
+            \@Alph{\numexpr\value{#1}-26\relax}\@Alph{\numexpr\value{#1}-26\relax}%
+        \else
+            \@Alph{\value{#1}}%
+        \fi
+    \fi
+}
+
+% Levantado logo DEPOIS do \refstepcounter, em contexto normal (não
+% expansível) — é aqui que o teto do §4.2.3.3 é aplicado de verdade.
+\newcommand{\Unifei@ChecarTetoGrupo}[1]{%
+    \ifnum\value{#1}>52
+        \PackageError{UnifeiICTReport}%
+            {Sequência de apêndices/anexos excedeu 52 entradas}%
+            {A NBR 14724:2024 \string\S 4.2.3.3\space prevê letras dobradas (AA a ZZ)
+             além de Z, mas não define convenção alguma depois disso.
+             Reorganize o documento.}%
+    \fi
+}
+\renewcommand{\theapendicesec}{\Unifei@GroupLetter{apendicesec}}
+\renewcommand{\theanexosec}{\Unifei@GroupLetter{anexosec}}
+
+% Nome de \autoref fixo por grupo — nunca trocado, então \refcomp{}{rótulo} e
+% \autoref{rótulo} já resolvem corretamente para qualquer rótulo de apêndice
+% ou anexo, sem precisar de um \refapendice/\refanexo dedicado.
+\newcommand{\apendicesecautorefname}{Apêndice}
+\newcommand{\anexosecautorefname}{Anexo}
+
+% Abre o GRUPO: registra o texto coletivo do sumário — "APÊNDICES"/"ANEXOS",
+% uma linha só, não uma por letra, seguindo o modelo publicado pela UFV citado
+% no design.md — mas NÃO o escreve ainda. \addcontentsline captura \thepage no
+% momento em que é chamado; chamá-lo aqui, ainda na página onde \apendices foi
+% escrito no código (antes do \cleardoublepage do primeiro \apendice), gravaria
+% o número de página ERRADO — reproduzido por compilação: tanto "APÊNDICES"
+% quanto "ANEXOS" apontavam para a mesma página, a do último elemento antes
+% deles. Em vez disso, \apendice/\anexo (abaixo) consomem este texto pendente
+% logo depois do PRÓPRIO \cleardoublepage, quando \thepage já é a página certa.
+\def\Unifei@ApendicesPendente{}%
+\def\Unifei@AnexosPendente{}%
+\newcommand{\apendices}{\def\Unifei@ApendicesPendente{APÊNDICES}}
+\newcommand{\anexos}{\def\Unifei@AnexosPendente{ANEXOS}}
+
+% Comando interno: abre UM apêndice/anexo, já na página certa (\cleardoublepage
+% já executado por \apendice/\anexo). #1=contador #2=palavra #3=rótulo #4=título
+% Título centralizado, mesma ênfase do \chapter (\unifeifont, unifeiblue,
+% \Large\bfseries, uppercase — igual à linha ~1013 acima), sem indicativo
+% numérico (§5.2.3) — a letra faz parte do texto do título, não é um número de
+% seção.
+%
+% ATENÇÃO: \label PRECISA vir depois de \hyper@makecurrent e \NR@gettitle, que
+% por sua vez PRECISAM vir depois do \chapter* de exibição. Motivo, verificado
+% por compilação (ver design.md): \chapter*, mesmo estrelado, dispara a própria
+% âncora do hyperref para o marcador de PDF, sobrescrevendo o contexto que
+% \refstepcounter tinha acabado de montar — sem o \hyper@makecurrent, \label
+% capturaria "chapter" em vez do contador dedicado, e toda referência a ele
+% sairia "Seção X" em vez de "Apêndice X"/"Anexo X". Pelo mesmo motivo, o
+% pacote nameref normalmente ensina \chapter* a registrar \@currentlabelname
+% (usado por \nameref, e portanto por \refcomp) via um patch em \@schapter —
+% mas o titlesec, carregado depois, reescreve a maquinaria de capítulo e some
+% com esse gancho: sem o \NR@gettitle abaixo, \refcomp a um apêndice/anexo
+% imprimiria o nome do ÚLTIMO capítulo numerado real, não o título do próprio
+% apêndice/anexo — reproduzido e confirmado por compilação. Não inverta a
+% ordem desses três comandos.
+\newcommand{\Unifei@AbrirElementoPosTextualCorpo}[4]{%
+    \thispagestyle{plain}%
+    \refstepcounter{#1}%
+    \Unifei@ChecarTetoGrupo{#1}%
+    {\centering\unifeifont\color{unifeiblue}\Large\bfseries
+        \MakeUppercase{#2\ \csname the#1\endcsname\ —\ #4}\par}%
+    \vspace{1em}%
+    \hyper@makecurrent{#1}%
+    \NR@gettitle{#4}%
+    \label{#3}%
+}
+
+% Uso: \apendice{<rótulo>}{<título>} / \anexo{<rótulo>}{<título>}, um por
+% apêndice/anexo, depois de \apendices/\anexos ter aberto o grupo.
+\newcommand{\apendice}[2]{%
+    \cleardoublepage
+    \ifx\Unifei@ApendicesPendente\@empty\else
+        \phantomsection
+        \addcontentsline{toc}{chapter}{\Unifei@ApendicesPendente}%
+        \gdef\Unifei@ApendicesPendente{}%
+    \fi
+    \Unifei@AbrirElementoPosTextualCorpo{apendicesec}{APÊNDICE}{#1}{#2}%
+}
+\newcommand{\anexo}[2]{%
+    \cleardoublepage
+    \ifx\Unifei@AnexosPendente\@empty\else
+        \phantomsection
+        \addcontentsline{toc}{chapter}{\Unifei@AnexosPendente}%
+        \gdef\Unifei@AnexosPendente{}%
+    \fi
+    \Unifei@AbrirElementoPosTextualCorpo{anexosec}{ANEXO}{#1}{#2}%
 }
 
 \endinput
