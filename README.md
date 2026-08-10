@@ -67,12 +67,24 @@ Atenção: neste fluxo manual os arquivos auxiliares e o PDF ficam na raiz do pr
 Edite `modelo-relatorio.tex` para preencher os metadados:
 
 - `\title{...}` — título
-- `\subtitle{...}` — subtítulo (opcional)
+- `\subtitle{...}` — subtítulo (opcional). Passe **só o texto**, sem dois-pontos: a NBR 14724:2024 §4.1.1, alínea d) exige que o subtítulo seja "precedido de dois-pontos, evidenciando a sua subordinação ao título", e o modelo insere essa pontuação sozinho. Sem subtítulo declarado, nenhum dois-pontos aparece.
+- `\fulltitle` — o título completo composto: título + `:` + subtítulo (ou só o título, se não houver subtítulo). É totalmente expansível, então serve dentro de `\edef`, de metadados de PDF (`\hypersetup{pdftitle={\fulltitle}}`) e de referências cruzadas, sem precisar recompor a string à mão.
+
+  Na capa e na folha de rosto, título e subtítulo são diagramados como um **bloco contínuo** — sem quebra de parágrafo entre eles, fluindo como um texto só —, ambos em caixa alta, distinguidos apenas pelo peso: título em negrito, subtítulo sem negrito. No restante do documento (folha de aprovação), o mesmo bloco aparece em caixa normal.
 - `\author{...}` — autor(es) (use `\\` para múltiplos autores)
 - `\supervisor{...}` — orientador (opcional)
 - `\cosupervisor{...}` — coorientador (opcional)
 - `\subject{...}` — disciplina ou assunto
 - `\abstract{...}` e `\keywords{...}` — resumo e palavras-chave
+
+### Folha de aprovação
+
+Metadados adicionais, usados apenas pela folha de aprovação (todos opcionais):
+
+- `\aprovacaodata{...}` — data de aprovação. Sem ela, a folha simplesmente não imprime essa linha (em vez de um campo em branco estranho).
+- `\notaaprovacao{...}` — nota, quando a instituição usa esse campo. Mesmo comportamento se omitida.
+- `\empresasupervisor{...}` — supervisor de estágio na empresa; só usado pelo tipo `estagio`.
+- `\bancamembro{Nome}{Titulação}{Instituição}` — adiciona um membro à banca examinadora; só usado pelos tipos `tcc`/`dissertacao`. Chame uma vez por membro esperado — inclusive com os três campos em branco, se os nomes ainda não forem conhecidos: o resultado é um bloco de assinatura corretamente formatado, mas em branco (a folha é impressa para ser assinada depois), não um erro.
 
 ## Macros e comandos personalizados (resumo rápido)
 
@@ -84,9 +96,9 @@ O pacote `UnifeiICTReport.sty` fornece várias macros úteis. Abaixo há uma lis
 - `\unifeismallcaps{Texto}` — versão em small-caps (ou uppercase quando small-caps não estão disponíveis na fonte local).
 - `\refcomp{}{rótulo}` — referência formatada com nome do tipo, número e título (ex.: `\refcomp{}{sec:ex}` produz "Subseção 2.1 - Objetivos"). O nome do tipo é resolvido automaticamente pelo `\autoref`, seguindo a nomenclatura da NBR 14724:2024 adotada pelo modelo: `\chapter` → Seção, `\section` → Subseção, `\subsection` → Subsubseção, `\subsubsection` → Parágrafo. O primeiro argumento é ignorado, existindo só para compatibilidade com `\reffigcomp` e afins.
 - `\refcomp*{Tipo}{rótulo}` — versão estrelada: imprime `Tipo` literalmente. Use para rótulos que o `\autoref` não reconhece (contadores próprios, ambientes personalizados) ou quando quiser outro nome (ex.: `\refcomp*{Ilustração}{fig:exemplo}`).
-- `\reffig{<label>}`, `\reftable{<label>}`, `\refeq{<label>}` — referências rápidas a figura, tabela e equação.
+- `\reffig{<label>}`, `\reftable{<label>}`, `\refeq{<label>}` — referências rápidas a figura, tabela e equação. `\refquadro{<label>}` e `\refgrafico{<label>}` fazem o mesmo para Quadro e Gráfico (veja abaixo).
 - `\refeqcomp{<label>}` ou `\refeqcomp{<label>}[<nome opcional>]` — referência a equações no mesmo estilo de `\refcomp`; a forma com `[...]` permite passar um nome customizado para substituir o nome que viria de `\nameref*{...}`.
-- `figuraabnt` / `tabelaabnt` — ambientes para figuras e tabelas com a legenda garantidamente acima do conteúdo, como exige a NBR 14724:2024. Rótulo e legenda são argumentos do ambiente, não comandos escritos no corpo, então não há ordem errada possível de digitar:
+- `figuraabnt` / `tabelaabnt` / `quadroabnt` / `graficoabnt` — ambientes para figuras, tabelas, quadros e gráficos com a legenda garantidamente acima do conteúdo, como exige a NBR 14724:2024 §5.8 (figuras, quadros, gráficos, ...) e §5.9 (tabelas). Rótulo e legenda são argumentos do ambiente, não comandos escritos no corpo, então não há ordem errada possível de digitar:
 
   ```latex
   \begin{figuraabnt}[!htbp]{fig:rotulo}{Legenda da figura}[Legenda curta]
@@ -95,7 +107,37 @@ O pacote `UnifeiICTReport.sty` fornece várias macros úteis. Abaixo há uma lis
   \end{figuraabnt}
   ```
 
-  A posição do float (primeiro argumento, opcional) tem `[!htbp]` como padrão; a legenda curta (último argumento, opcional) só aparece na Lista de Ilustrações. `tabelaabnt` tem a mesma assinatura. Os ambientes `figure` e `table` continuam disponíveis, mas neles a posição da legenda depende da ordem do código, sem aviso caso saia fora da norma.
+  A posição do float (primeiro argumento, opcional) tem `[!htbp]` como padrão; a legenda curta (penúltimo argumento, opcional) só aparece na respectiva lista. `tabelaabnt`, `quadroabnt` e `graficoabnt` têm exatamente a mesma assinatura. Os ambientes `figure` e `table` continuam disponíveis, mas neles a posição da legenda depende da ordem do código, sem aviso caso saia fora da norma.
+
+  Um último argumento opcional, entre `<` e `>`, declara a largura da ilustração (ex.: `<0.9\textwidth>`, repetindo o valor passado a `\includegraphics`). Quando presente, a legenda e o `\fonte{}` passam a acompanhar exatamente essa largura, como exige a NBR 14724:2024 §5.8. Sem ele, o comportamento é o de sempre: legenda na largura do bloco de texto, `\fonte{}` alinhado à largura medida do último gráfico.
+
+  `quadroabnt` e `graficoabnt` têm numeração e lista próprias (`\listofquadros`/`\listofgraficos`, comentadas por padrão em `modelo-relatorio.tex`, como as demais listas opcionais), independentes de `figuraabnt`. Note a diferença entre Quadro e Tabela: o §5.9 reserva "Tabela" para conteúdo cujo dado central é numérico; um Quadro é uma ilustração comum (§5.8) cujo conteúdo central é textual, mesmo organizado em linhas e colunas. Veja o exemplo lado a lado em `Capitulos/cap2/cap2.tex`.
+
+  Um tipo de ilustração que o modelo não prevê (Fluxograma, Organograma, ...) não exige editar o pacote: `\novotipoilustracao{<contador>}{<palavra designativa>}{<ambiente>}`, **no preâmbulo do seu documento**, declara um tipo novo — contador próprio, ambiente `<ambiente>` no mesmo molde acima, `\ref<contador>`/`\ref<contador>comp` e `\listof<contador>s` — a partir dessas três informações. É a mesma máquina que gera `quadroabnt` e `graficoabnt`:
+
+  ```latex
+  \novotipoilustracao{fluxograma}{Fluxograma}{fluxogramaabnt}
+  ```
+
+  Depois disso, `\begin{fluxogramaabnt}{flu:rotulo}{Legenda}` e `\reffluxograma{flu:rotulo}` funcionam como os tipos que já vêm no pacote.
+
+- `\folhaaprovacao` ou `\folhaaprovacao[<tipo>]` — folha de aprovação (NBR 14724:2024 §4.2.1.3), elemento obrigatório. Chame logo depois de `\maketitle`, antes de `\makeabstracts`. `<tipo>` é opcional e vale `disciplina` (padrão), `estagio`, `tcc` ou `dissertacao`; um tipo desconhecido é erro de compilação, não renderiza o padrão silenciosamente. Reaproveita `\title`/`\subtitle`/`\author`/`\supervisor`/`\subject` já declarados para a capa — não precisam ser redeclarados. `disciplina` e `estagio` assinam com `\supervisor`/`\empresasupervisor`; `tcc`/`dissertacao` assinam com a banca declarada via `\bancamembro` (veja acima).
+- `\apendices` / `\anexos` — abrem o grupo de apêndices/anexos pós-textuais (NBR 14724:2024 §4.2.3.3/§4.2.3.4), com uma entrada coletiva no sumário ("APÊNDICES"/"ANEXOS", não uma por letra). Chame uma vez, depois de `\backmatter`, antes do primeiro `\apendice`/`\anexo` do respectivo grupo.
+- `\apendice{<rótulo>}{<título>}` / `\anexo{<rótulo>}{<título>}` — abre um apêndice/anexo, lettered A, B, ... independentemente (dois grupos, duas sequências). Título centralizado, com a mesma ênfase visual da seção primária, sem indicativo numérico. Referencie normalmente com `\refcomp{}{<rótulo>}` ou `\autoref{<rótulo>}` — resolvem para "Apêndice A"/"Anexo A" automaticamente, sem precisar de um comando de referência dedicado. Figuras, tabelas e outras ilustrações dentro de um apêndice/anexo continuam a sequência numérica normal do documento.
+
+  ```latex
+  \backmatter
+
+  \apendices
+  \apendice{ape:questionario}{Questionário aplicado na pesquisa}
+  Conteúdo do apêndice, de autoria do próprio autor do relatório...
+
+  \anexos
+  \anexo{ane:certificado}{Certificado de participação no evento}
+  Conteúdo do anexo, reproduzindo um documento de terceiros...
+  ```
+
+  Apêndice (§3.4) é de autoria do próprio autor; anexo (§3.3) reproduz um documento de terceiros. É essa autoria — não o formato do conteúdo — que decide entre os dois.
 - `\fonte{texto}` — insere a informação de fonte abaixo de figuras/tabelas; alinha automaticamente à borda esquerda do último gráfico/tabela (usa internamente `\LastGraphicWidth`). Chame-o como último elemento **dentro** do ambiente: fora dele, a fonte se descola do float e fica perdida no corpo do texto.
 - `\quote{<bibkey>}{<texto>}` — insere uma citação longa formatada (útil para citações diretas extensas); a chave `bibkey` aparece como citação à direita.
 - `\makeabstracts` — imprime resumos (usado no driver `modelo-relatorio.tex`).
