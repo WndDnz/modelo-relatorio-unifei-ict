@@ -510,6 +510,49 @@
 % --- Defaults ---
 \newcommand{\@subtitle}{}
 \providecommand{\subtitle}[1]{\renewcommand{\@subtitle}{#1}}
+
+% --- Trio \title / \subtitle / \fulltitle ---
+%
+% \fulltitle é a composição: título + dois-pontos + subtítulo. Os dois-pontos
+% são exigidos pela NBR 14724:2024 §4.1.1, alínea d): "subtítulo: se houver,
+% deve ser precedido de dois-pontos, evidenciando a sua subordinação ao
+% título".
+%
+% Os dois-pontos são do MODELO, não do autor: \subtitle{} recebe só o texto do
+% subtítulo, e a pontuação aparece sozinha sempre que houver subtítulo. Assim
+% não existe documento com título e subtítulo sem a marca de subordinação, nem
+% dois-pontos duplicado por quem já digitou um. Sem subtítulo, \fulltitle é
+% apenas o título, sem dois-pontos órfão.
+%
+% A norma enuncia a regra explicitamente só em 4.1.1 (capa); em 4.2.1.1.1(c)
+% (folha de rosto) e 4.2.1.3 (folha de aprovação) ela apenas lista "subtítulo,
+% se houver", sem repetir a pontuação. Este modelo aplica nas três, porque os
+% dois-pontos são a marca da própria subordinação — não um enfeite da capa —,
+% e é o que fazem tanto os modelos publicados pela UFV quanto a NBR 6023, que
+% separa título e subtítulo por dois-pontos nas referências. Use \@title cru
+% se algum dia for preciso o título sem essa marca.
+%
+% Usa \ifx...\else...\fi em vez de \ifdefempty (usado no resto do arquivo) de
+% propósito: assim \fulltitle é totalmente expansível e pode ir para dentro de
+% um \edef, de metadados de PDF ou de uma referência cruzada sem se quebrar.
+\newcommand{\fulltitle}{%
+    \@title\ifx\@subtitle\@empty\else: \@subtitle\fi
+}
+
+% Versão diagramada do mesmo conteúdo, para as folhas que exibem o título em
+% destaque. Título e subtítulo formam um BLOCO CONTÍNUO — sem quebra de
+% parágrafo entre eles, fluindo como um texto só — e o que distingue as duas
+% partes é o peso: título em negrito, subtítulo sem negrito. Por isso não há
+% mudança de corpo entre um e outro; quem chama define o tamanho do bloco
+% inteiro.
+%
+% #1 é a transformação de caixa aplicada às duas partes: \MakeUppercase na
+% capa e na folha de rosto, \@firstofone (identidade, caixa normal) no
+% restante do documento.
+\newcommand{\Unifei@FullTitleBloco}[1]{%
+    {\bfseries#1{\@title}\ifx\@subtitle\@empty\else:\fi}%
+    \ifx\@subtitle\@empty\else\ #1{\@subtitle}\fi
+}
 \newcommand{\@institution}{Universidade Federal de Itajubá}
 \providecommand{\institution}[1]{\renewcommand{\@institution}{#1}}
 \newcommand{\@faculty}{Instituto de Ciências Tecnológicas}
@@ -855,13 +898,10 @@
         \vfill
         \begin{minipage}{\textwidth}
             \centering
-            {\unifeifont\color{unifeiblue}\Huge\bfseries\@title\par}
-            \ifcsdef{@subtitle}{%
-                \ifdefempty{\@subtitle}{}%
-                {%
-                    {\setstretch{1.0}\par\vspace{1cm}\LARGE\unifeifont\@subtitle}%
-                }
-            }{}
+            % Título e subtítulo em bloco contínuo, ambos em caixa alta; só o
+            % título em negrito (ver \Unifei@FullTitleBloco).
+            {\setstretch{1.0}\unifeifont\color{unifeiblue}\Huge
+                \Unifei@FullTitleBloco{\MakeUppercase}\par}
         \end{minipage}
         \vfill\vfill
         {\unifeifont\large\parbox{\textwidth}{\centering\MakeUppercase{\@location}\par\the\year}\par}
@@ -897,15 +937,11 @@
             {\color{unifeiblue}\hrule width \hsize height 2pt \kern 0.5mm \color{unifeired}\hrule width \hsize}
             \vspace{5mm}
             % Título
-            {\setstretch{1.0}\LARGE\bfseries\color{unifeiblue}\unifeifont\@title\par}
-            % Subtítulo (opcional)
-            \ifcsdef{@subtitle}{%
-                \ifdefempty{\@subtitle}{%
-                    \vspace{5mm}
-                }{%
-                    {\setstretch{1.0}\par\vspace{5mm}\Large\unifeifont\@subtitle\vspace{5mm}}%
-                }
-            }{}
+            % Título e subtítulo em bloco contínuo, ambos em caixa alta; só o
+            % título em negrito (ver \Unifei@FullTitleBloco).
+            {\setstretch{1.0}\LARGE\color{unifeiblue}\unifeifont
+                \Unifei@FullTitleBloco{\MakeUppercase}\par}
+            \vspace{5mm}
             % Réguas
             {\color{unifeired}\hrule width \hsize \kern 0.5mm \color{unifeiblue}\hrule width \hsize height 2pt}
             \vspace{1cm}
