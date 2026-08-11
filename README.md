@@ -62,6 +62,45 @@ configuração de `biblatex` usar `bibtex` em vez de `biber`, troque o comando c
 
 Atenção: neste fluxo manual os arquivos auxiliares e o PDF ficam na raiz do projeto, não em `build/`.
 
+## Tipo de documento
+
+O tipo é declarado **uma vez**, como opção do pacote, e governa o modelo inteiro — natureza, folha de aprovação, resumos e metadados exigidos:
+
+```latex
+\usepackage[tipo=tcc1]{UnifeiICTReport}
+```
+
+| tipo | documento | norma | grau |
+|---|---|---|---|
+| `generico` *(padrão)* | relatório de disciplina | NBR 14724 *no que couber* | — |
+| `estagio` | relatório de estágio | NBR 14724 *"e similares"* | — |
+| `tcc1` | projeto de pesquisa | **NBR 15287:2025** | Bacharel |
+| `tcc2` | monografia | NBR 14724:2024 | Bacharel |
+| `dissertacao` | monografia | NBR 14724:2024 | Mestre |
+| `tese` | monografia | NBR 14724:2024 | Doutor |
+
+O que muda entre eles:
+
+| | folha de aprovação | abstract | área de concentração | quem consta na folha |
+|---|---|---|---|---|
+| `generico` | obrigatória | opcional | — | professor(es) da disciplina |
+| `estagio` | obrigatória | opcional | — | estagiário + orientador + supervisor de campo |
+| `tcc1` | **só se houver banca** | opcional | — | orientador + membros externos |
+| `tcc2` | obrigatória | opcional | opcional | orientador + membros externos |
+| `dissertacao` · `tese` | obrigatória | **obrigatório** | **obrigatória** | orientador + membros externos |
+
+`tcc2`, `dissertacao` e `tese` produzem o mesmo layout de monografia, mas **não são apelidos idênticos**: mudam o grau e a obrigatoriedade de abstract e de área de concentração. Um metadado obrigatório que falte interrompe a compilação nomeando o que falta, em vez de gerar uma folha incompleta em silêncio.
+
+O tipo vai como **chave** (`tipo=...`), nunca solto. As opções que o pacote não reconhece são repassadas ao babel como idioma, então `[tcc11]` viraria um erro de idioma confuso; com `tipo=tcc11` o erro é do próprio pacote e nomeia os valores aceitos. Idiomas continuam funcionando normalmente ao lado: `\usepackage[tipo=tese,spanish]{UnifeiICTReport}`.
+
+### Estrutura textual do projeto de pesquisa (tcc1)
+
+A NBR 15287 §4.2.2 prescreve o que a parte textual do projeto deve conter: **tema**, **problema**, **hipóteses** (quando couberem), **objetivos**, **justificativa**, **referencial teórico**, **metodologia**, **recursos** e **cronograma**.
+
+O modelo **não gera esses capítulos** — a estrutura não altera a configuração do sumário, então criar os arquivos ficaria no seu caminho sem benefício. Organize os capítulos como preferir, cobrindo esses elementos.
+
+Desde o PPC de 2023 o TCC do ICT é dividido em duas etapas, e o TCC1 é requisito parcial para o título: estrutura de projeto de pesquisa, finalidade de monografia. Por isso a natureza dele declara o grau pretendido, coisa que a 15287 não prevê.
+
 ## Metadados da capa / folha de rosto
 
 Edite `modelo-relatorio.tex` para preencher os metadados:
@@ -83,8 +122,16 @@ Metadados adicionais, usados apenas pela folha de aprovação (todos opcionais):
 
 - `\aprovacaodata{...}` — data de aprovação. Sem ela, a folha simplesmente não imprime essa linha (em vez de um campo em branco estranho).
 - `\notaaprovacao{...}` — nota, quando a instituição usa esse campo. Mesmo comportamento se omitida.
-- `\empresasupervisor{...}` — supervisor de estágio na empresa; só usado pelo tipo `estagio`.
-- `\bancamembro{Nome}{Titulação}{Instituição}` — adiciona um membro à banca examinadora; só usado pelos tipos `tcc`/`dissertacao`. Chame uma vez por membro esperado — inclusive com os três campos em branco, se os nomes ainda não forem conhecidos: o resultado é um bloco de assinatura corretamente formatado, mas em branco (a folha é impressa para ser assinada depois), não um erro.
+- `\empresasupervisor{...}` — supervisor de campo na empresa; só usado pelo tipo `estagio`.
+- `\areaconcentracao{...}` — área de concentração. **Obrigatória** em `dissertacao` e `tese`; opcional em `tcc2` (rara, só quando o trabalho integra um projeto maior); ignorada nos demais tipos.
+- `\linhapesquisa{...}` — linha de pesquisa. Sempre opcional.
+- `\bancamembro{Nome}{Titulação}{Instituição}` — adiciona um membro à banca examinadora; usado por `tcc1`, `tcc2`, `dissertacao` e `tese`. Chame uma vez por membro; a banca tem tamanho variável (orientador mais no mínimo dois externos). Campos em branco rendem um bloco corretamente formatado e vazio, para a folha preparada antes de os nomes serem conhecidos.
+
+  **Declare apenas os membros externos:** o orientador já vem de `\supervisor` e entra na banca sozinho — repeti-lo aqui duplicaria o nome.
+
+  No `tcc1` a defesa é facultativa, a critério do orientador. Sem nenhum `\bancamembro`, a folha de aprovação simplesmente não é emitida, e nenhuma página em branco fica no lugar.
+
+A folha **não traz linhas de assinatura**, em nenhum tipo. A NBR 14724 §4.2.1.3 pede o contrário, mas a assinatura passou a viver apenas na Ata de Defesa desde que as defesas se tornaram digitais — as teses recentes no repositório da Unifei não trazem assinatura na folha. Aqui ela registra composição da banca e data de aprovação.
 
 ## Macros e comandos personalizados (resumo rápido)
 
@@ -121,7 +168,9 @@ O pacote `UnifeiICTReport.sty` fornece várias macros úteis. Abaixo há uma lis
 
   Depois disso, `\begin{fluxogramaabnt}{flu:rotulo}{Legenda}` e `\reffluxograma{flu:rotulo}` funcionam como os tipos que já vêm no pacote.
 
-- `\folhaaprovacao` ou `\folhaaprovacao[<tipo>]` — folha de aprovação (NBR 14724:2024 §4.2.1.3), elemento obrigatório. Chame logo depois de `\maketitle`, antes de `\makeabstracts`. `<tipo>` é opcional e vale `disciplina` (padrão), `estagio`, `tcc` ou `dissertacao`; um tipo desconhecido é erro de compilação, não renderiza o padrão silenciosamente. Reaproveita `\title`/`\subtitle`/`\author`/`\supervisor`/`\subject` já declarados para a capa — não precisam ser redeclarados. `disciplina` e `estagio` assinam com `\supervisor`/`\empresasupervisor`; `tcc`/`dissertacao` assinam com a banca declarada via `\bancamembro` (veja acima).
+- `\folhaaprovacao` — folha de aprovação (NBR 14724:2024 §4.2.1.3). Chame logo depois de `\maketitle`, antes de `\makeabstracts`, **sem argumento**: a forma dela vem do `tipo=` declarado no `\usepackage` (veja "Tipo de documento" acima). Reaproveita `\title`/`\subtitle`/`\author`/`\supervisor`/`\subject` já declarados para a capa — não precisam ser redeclarados. Quem consta varia por tipo: professor(es) no `generico`; estagiário, orientador e supervisor de campo no `estagio`; orientador mais os `\bancamembro` externos nos tipos com banca. No `tcc1` sem banca declarada, a folha não é emitida.
+
+  Passar o tipo por argumento (`\folhaaprovacao[tcc]`) é erro de compilação, com mensagem indicando a forma nova — a interface antiga não sobrevive como forma depreciada porque o antigo `tcc` virou dois documentos regidos por normas diferentes, e adivinhar entre eles produziria um trabalho inteiro sob a norma errada sem erro visível.
 - `\apendices` / `\anexos` — abrem o grupo de apêndices/anexos pós-textuais (NBR 14724:2024 §4.2.3.3/§4.2.3.4), com uma entrada coletiva no sumário ("APÊNDICES"/"ANEXOS", não uma por letra). Chame uma vez, depois de `\backmatter`, antes do primeiro `\apendice`/`\anexo` do respectivo grupo.
 - `\apendice{<rótulo>}{<título>}` / `\anexo{<rótulo>}{<título>}` — abre um apêndice/anexo, lettered A, B, ... independentemente (dois grupos, duas sequências). Título centralizado, com a mesma ênfase visual da seção primária, sem indicativo numérico. Referencie normalmente com `\refcomp{}{<rótulo>}` ou `\autoref{<rótulo>}` — resolvem para "Apêndice A"/"Anexo A" automaticamente, sem precisar de um comando de referência dedicado. Figuras, tabelas e outras ilustrações dentro de um apêndice/anexo continuam a sequência numérica normal do documento.
 
@@ -138,9 +187,11 @@ O pacote `UnifeiICTReport.sty` fornece várias macros úteis. Abaixo há uma lis
   ```
 
   Apêndice (§3.4) é de autoria do próprio autor; anexo (§3.3) reproduz um documento de terceiros. É essa autoria — não o formato do conteúdo — que decide entre os dois.
+
+  Servem a **todos os tipos de documento**, sem ajuste: a NBR 15287 §4.2.3.3/§4.2.3.4, que rege o `tcc1`, usa exatamente a mesma regra da 14724 — palavra designativa, letras maiúsculas consecutivas, travessão, título e o destaque tipográfico da seção primária.
 - `\fonte{texto}` — insere a informação de fonte abaixo de figuras/tabelas; alinha automaticamente à borda esquerda do último gráfico/tabela (usa internamente `\LastGraphicWidth`). Chame-o como último elemento **dentro** do ambiente: fora dele, a fonte se descola do float e fica perdida no corpo do texto.
 - `\quote{<bibkey>}{<texto>}` — insere uma citação longa formatada (útil para citações diretas extensas); a chave `bibkey` aparece como citação à direita.
-- `\makeabstracts` — imprime resumos (usado no driver `modelo-relatorio.tex`).
+- `\makeabstracts` — imprime os resumos (usado no driver `modelo-relatorio.tex`). O resumo na língua do texto sai sempre; o abstract sai quando `\abstractseclang{}` foi declarado. Em `dissertacao` e `tese` ele é obrigatório e sua ausência interrompe a compilação (§4.2.1.8); nos demais tipos é opcional, e sem declaração nenhuma página ou cabeçalho é emitido no lugar.
 
 Notas rápidas sobre referências:
 
