@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-08-10
+goal: "Tornar o tipo de documento uma opção de pacote que governa o modelo
+  inteiro: relatório genérico, relatório de estágio, TCC1 (projeto de pesquisa,
+  ABNT NBR 15287:2025) e monografia (ABNT NBR 14724:2024, com os aliases tcc2,
+  dissertacao e tese), cada um determinando natureza, folha de aprovação,
+  resumos e metadados exigidos."
