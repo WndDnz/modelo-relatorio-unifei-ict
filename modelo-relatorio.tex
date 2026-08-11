@@ -2,7 +2,21 @@
 % Extensão Code Spell Checker no VS Code (muito útil!)
 
 \documentclass[12pt,a4paper,oneside]{book}
-\usepackage{UnifeiICTReport}
+% O TIPO DE DOCUMENTO é opção deste pacote e governa o modelo inteiro:
+% natureza, folha de aprovação, resumos e metadados exigidos. Seis valores:
+%
+%   generico     relatório de disciplina (padrão)      NBR 14724 no que couber
+%   estagio      relatório de estágio                  NBR 14724 "e similares"
+%   tcc1         projeto de pesquisa                   NBR 15287:2025
+%   tcc2         monografia, grau Bacharel             NBR 14724:2024
+%   dissertacao  monografia, grau Mestre               NBR 14724:2024
+%   tese         monografia, grau Doutor               NBR 14724:2024
+%
+% Troque o valor abaixo para mudar de tipo. Sem a opção, vale generico.
+% O tipo vai como CHAVE (tipo=...), e não solto: assim um valor digitado
+% errado dá erro deste pacote, nomeando os aceitos, em vez de virar erro de
+% idioma do babel — que é para onde vão as opções que o pacote não reconhece.
+\usepackage[tipo=generico]{UnifeiICTReport}
 %\usepackage[utf8]{inputenc} % Removido pois XeLaTeX usa UTF-8 nativo
 \usepackage{csquotes}
 \usepackage{fontspec}
@@ -55,14 +69,23 @@
 % \aprovacaodata{15 de dezembro de 2025}
 % \notaaprovacao{9,5}
 
-% Membros da banca examinadora — só usados pelos tipos tcc/dissertacao.
-% Chame uma vez por membro esperado; campos em branco ainda reservam um bloco
-% de assinatura corretamente formatado (a folha é impressa para assinar).
+% Só para os tipos de monografia (tcc2, dissertacao, tese).
+% A área de concentração é EXIGIDA em dissertacao e tese — sem ela a
+% compilação para, nomeando o que falta. No tcc2 ela é opcional e rara: só
+% quando o trabalho integra um projeto maior. A linha de pesquisa é sempre
+% opcional.
+% \areaconcentracao{Sistemas de Computação}
+% \linhapesquisa{Engenharia de Software}
+
+% Membros da banca examinadora — usados por tcc1 (quando há defesa), tcc2,
+% dissertacao e tese. Declare apenas os membros EXTERNOS: o orientador já vem
+% de \supervisor e entra na banca sozinho, sem precisar ser repetido aqui.
+% Campos em branco ainda rendem um bloco corretamente formatado, para a folha
+% preparada antes de os nomes serem conhecidos.
+% No tcc1 a defesa é facultativa: sem nenhum \bancamembro declarado, a folha
+% de aprovação simplesmente não é emitida.
 % \bancamembro{Prof. Dr. Fulano de Tal}{Doutor em Engenharia}{Unifei}
 % \bancamembro{Prof. Dra. Beltrana de Tal}{Doutora em Engenharia}{Unifei}
-% \bancamembro{}{}{}
-% \bancamembro{Prof. Dra. Beltrana de Tal}{Doutora em Engenharia}{Unifei}
-% \bancamembro{}{}{}
 
 
 % Resumo na língua principal
@@ -97,11 +120,9 @@
 \maketitle
 
 % ---
-% Folha de aprovação (NBR 14724:2024 §4.2.1.3) — elemento obrigatório.
-% Padrão é o tipo "disciplina"; para os outros, passe o tipo explicitamente:
-%   \folhaaprovacao[estagio]      -- relatório de estágio
-%   \folhaaprovacao[tcc]          -- trabalho de conclusão de curso
-%   \folhaaprovacao[dissertacao]  -- dissertação de mestrado
+% Folha de aprovação (NBR 14724:2024 §4.2.1.3) — sem argumento: a forma dela
+% vem do tipo declarado lá em cima, no \usepackage.
+% No tcc1 ela só sai se houver banca declarada; nos demais tipos é obrigatória.
 % ---
 \folhaaprovacao
 

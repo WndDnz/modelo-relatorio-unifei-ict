@@ -22,9 +22,104 @@
 \DeclareOption{roman}{\@romantrue}
 \DeclareOption{sans}{\@romanfalse}
 
+%-------------------------------------------------
+% TIPO DE DOCUMENTO
+%-------------------------------------------------
+% O tipo é declarado UMA vez, no carregamento do pacote, e governa o modelo
+% inteiro: natureza, existência da folha de aprovação, quantos resumos, quais
+% metadados são exigidos e qual norma rege o trabalho.
+%
+%   \usepackage[tipo=tcc1]{UnifeiICTReport}
+%
+% Seis valores, cobrindo os quatro documentos que este modelo gera:
+%
+%   generico     relatório de disciplina (padrão)      NBR 14724 no que couber
+%   estagio      relatório de estágio                  NBR 14724 "e similares"
+%   tcc1         projeto de pesquisa                   NBR 15287:2025
+%   tcc2         monografia, grau Bacharel             NBR 14724:2024
+%   dissertacao  monografia, grau Mestre               NBR 14724:2024
+%   tese         monografia, grau Doutor               NBR 14724:2024
+%
+% tcc2/dissertacao/tese produzem o MESMO layout (monografia), mas não são
+% aliases puros: diferem no grau e na obrigatoriedade de abstract e de área de
+% concentração. Ver openspec/specs/document-type.
+%
+% POR QUE "tipo=" E NÃO A FORMA CURTA [tcc1]: o \DeclareOption* logo abaixo
+% acumula toda opção desconhecida e a repassa ao babel como idioma. Com a
+% forma curta, os seis valores certos funcionam, mas um ERRO DE DIGITAÇÃO é
+% indistinguível de um idioma que o pacote não conhece — e sai como
+% "Package babel Error: Unknown option 'tcc11'", longe da causa. Verificado
+% por compilação. Com "tipo=", a chave torna a intenção inequívoca e o erro
+% pode ser nosso, nomeando os seis valores aceitos.
+\def\Unifei@doctype{generico}
+\newif\if@unifei@doctypeset\@unifei@doctypesetfalse
+\newcommand{\Unifei@SetDocType}[1]{%
+    \if@unifei@doctypeset
+        \PackageError{UnifeiICTReport}%
+            {Mais de um tipo de documento informado ('\Unifei@doctype' e '#1')}%
+            {Informe um único tipo em \string\usepackage[tipo=<valor>]{UnifeiICTReport}.
+             Valores: generico, estagio, tcc1, tcc2, dissertacao, tese.}%
+    \fi
+    \def\Unifei@doctype{#1}%
+    \@unifei@doctypesettrue
+}
+
+% Marcadores dos valores válidos. Via \@namedef, que constrói o nome por
+% \csname e portanto ACEITA dígitos — ao contrário de um \def\...tcc1 direto,
+% onde o "1" não faria parte do nome (ver o comentário na cadeia de \ifx
+% adiante, que já foi mordida por isso).
+\@namedef{Unifei@istipo@generico}{}
+\@namedef{Unifei@istipo@estagio}{}
+\@namedef{Unifei@istipo@tcc1}{}
+\@namedef{Unifei@istipo@tcc2}{}
+\@namedef{Unifei@istipo@dissertacao}{}
+\@namedef{Unifei@istipo@tese}{}
+
+% A forma curta antiga é recusada com redirecionamento, em vez de silenciosa:
+% é o engano mais provável de quem viu um rascunho anterior.
+\newcommand{\Unifei@ErroFormaCurta}[1]{%
+    \PackageError{UnifeiICTReport}%
+        {Use tipo=#1 em vez de #1 sozinho}%
+        {O tipo do documento é passado como chave:
+         \string\usepackage[tipo=#1]{UnifeiICTReport}.}%
+}
+\DeclareOption{generico}{\Unifei@ErroFormaCurta{generico}}
+\DeclareOption{estagio}{\Unifei@ErroFormaCurta{estagio}}
+\DeclareOption{tcc1}{\Unifei@ErroFormaCurta{tcc1}}
+\DeclareOption{tcc2}{\Unifei@ErroFormaCurta{tcc2}}
+\DeclareOption{dissertacao}{\Unifei@ErroFormaCurta{dissertacao}}
+\DeclareOption{tese}{\Unifei@ErroFormaCurta{tese}}
+
+% Separa "chave=valor". O sentinela duplo "==" garante três argumentos mesmo
+% quando a opção não tem "=" nenhum: "brazilian" -> chave=brazilian, valor
+% vazio; "tipo=tcc1" -> chave=tipo, valor=tcc1.
+\def\Unifei@SplitOpt#1=#2=#3\@nil{%
+    \def\Unifei@optchave{#1}%
+    \def\Unifei@optvalor{#2}%
+}
+\def\Unifei@chavetipo{tipo}
+
 % Acumula opções fornecidas ao pacote para processamento posterior
 \def\UnifeiICTReport@rawopts{}
 \DeclareOption*{%
+    \expandafter\Unifei@SplitOpt\CurrentOption==\@nil
+    \ifx\Unifei@optchave\Unifei@chavetipo
+        % É tipo: valida contra os seis e falha com mensagem própria.
+        \@ifundefined{Unifei@istipo@\Unifei@optvalor}{%
+            \PackageError{UnifeiICTReport}%
+                {Tipo de documento desconhecido: '\Unifei@optvalor'}%
+                {Valores aceitos em tipo=<valor>: generico, estagio, tcc1,
+                 tcc2, dissertacao, tese.
+                 Atenção: tcc1 (projeto de pesquisa, NBR 15287) e tcc2
+                 (monografia, NBR 14724) são documentos distintos.}%
+        }{%
+            \expandafter\Unifei@SetDocType\expandafter{\Unifei@optvalor}%
+        }%
+    \else
+        \Unifei@AcumulaOpt
+    \fi
+}
+\newcommand{\Unifei@AcumulaOpt}{%
     % concatena, separado por vírgula
     \ifx\UnifeiICTReport@rawopts\@empty
         \edef\UnifeiICTReport@rawopts{\CurrentOption}%
@@ -36,6 +131,81 @@
 % Defaults: roman font family (mantido) e brazilian como comportamento padrão
 \ExecuteOptions{roman}
 \ProcessOptions\relax
+
+%-------------------------------------------------
+% PARÂMETROS DERIVADOS DO TIPO
+%-------------------------------------------------
+% Tudo que varia por tipo é resolvido aqui, uma vez, em booleanos e macros que
+% o resto do arquivo consulta. Assim nenhum comando precisa reinterpretar o
+% tipo, e acrescentar um tipo novo é preencher esta tabela.
+%
+%   \if@unifei@monografia  layout de monografia (tcc2/dissertacao/tese)
+%   \if@unifei@projeto     layout de projeto de pesquisa (tcc1)
+%   \if@unifei@relatorio   layout de relatório (generico/estagio)
+%   \if@unifei@combanca    a folha de aprovação traz banca examinadora
+%   \if@unifei@folhaopc    a folha de aprovação é opcional (só tcc1)
+%   \if@unifei@absobrig    o resumo em língua estrangeira é obrigatório
+%   \if@unifei@areaobrig   a área de concentração é exigida
+%   \Unifei@grau           grau pretendido, vazio quando não há
+%   \Unifei@papel          rótulo do papel do professor, singular
+%   \Unifei@papelplural    idem, plural
+\newif\if@unifei@monografia \@unifei@monografiafalse
+\newif\if@unifei@projeto    \@unifei@projetofalse
+\newif\if@unifei@relatorio  \@unifei@relatoriofalse
+\newif\if@unifei@combanca   \@unifei@combancafalse
+\newif\if@unifei@folhaopc   \@unifei@folhaopcfalse
+\newif\if@unifei@absobrig   \@unifei@absobrigfalse
+\newif\if@unifei@areaobrig  \@unifei@areaobrigfalse
+\def\Unifei@grau{}
+\def\Unifei@papel{Orientador}
+\def\Unifei@papelplural{Orientadores}
+
+% ATENÇÃO aos nomes: SEM DÍGITOS. Nome de sequência de controle em TeX só
+% aceita letras, então um nome como "...tcc1" não é um token — é "...tcc"
+% seguido do caractere "1". Escrito assim, o \def define "...tcc" com "1"
+% como PARÂMETRO, e a linha seguinte (tcc2)
+% sobrescreve o mesmo comando. O \ifx nunca casa para esses dois tipos, e o
+% documento compila limpo, sem natureza e sem folha de aprovação — verificado.
+% Daí "tccum"/"tccdois" por extenso.
+\def\Unifei@tmpgenerico{generico}
+\def\Unifei@tmpestagio{estagio}
+\def\Unifei@tmptccum{tcc1}
+\def\Unifei@tmptccdois{tcc2}
+\def\Unifei@tmpdissertacao{dissertacao}
+\def\Unifei@tmptese{tese}
+
+\ifx\Unifei@doctype\Unifei@tmpgenerico
+    \@unifei@relatoriotrue
+    % No relatório de disciplina não há orientação, há responsabilidade
+    % docente — daí o rótulo ser "Professor", e não "Orientador".
+    \def\Unifei@papel{Professor}%
+    \def\Unifei@papelplural{Professores}%
+\else\ifx\Unifei@doctype\Unifei@tmpestagio
+    \@unifei@relatoriotrue
+\else\ifx\Unifei@doctype\Unifei@tmptccum
+    \@unifei@projetotrue
+    \@unifei@combancatrue
+    % Defesa facultativa, a critério do orientador: sem banca declarada a
+    % folha não é emitida (D3).
+    \@unifei@folhaopctrue
+    \def\Unifei@grau{Bacharel}%
+\else\ifx\Unifei@doctype\Unifei@tmptccdois
+    \@unifei@monografiatrue
+    \@unifei@combancatrue
+    \def\Unifei@grau{Bacharel}%
+\else\ifx\Unifei@doctype\Unifei@tmpdissertacao
+    \@unifei@monografiatrue
+    \@unifei@combancatrue
+    \@unifei@absobrigtrue
+    \@unifei@areaobrigtrue
+    \def\Unifei@grau{Mestre}%
+\else\ifx\Unifei@doctype\Unifei@tmptese
+    \@unifei@monografiatrue
+    \@unifei@combancatrue
+    \@unifei@absobrigtrue
+    \@unifei@areaobrigtrue
+    \def\Unifei@grau{Doutor}%
+\fi\fi\fi\fi\fi\fi
 
 % --- Lógica para decidir quais opções de língua passar ao babel ---
 % Regras implementadas:
@@ -553,6 +723,60 @@
     {\bfseries#1{\@title}\ifx\@subtitle\@empty\else:\fi}%
     \ifx\@subtitle\@empty\else\ #1{\@subtitle}\fi
 }
+
+% Rótulo do papel do professor na capa e na folha de rosto. Deriva do tipo
+% (\Unifei@papel/\Unifei@papelplural, resolvidos no topo do arquivo) e vai ao
+% plural quando \supervisor traz mais de um nome — usando exatamente a mesma
+% detecção que a capa já faz para alternar entre "Autor" e "Autores": procurar
+% \\ no valor detokenizado. Não é uma segunda convenção, é a mesma.
+%
+% Resolvido de uma vez em \AtBeginDocument, quando \supervisor já foi
+% declarado, deixando \Unifei@papelrotulo como macro simples. Isso NÃO é
+% preciosismo: o rótulo é usado dentro de \unifeismallcaps, que aplica
+% \MakeUppercase ao argumento, e fazer \begingroup/\IfSubStr/\endgroup lá
+% dentro trava a compilação em laço infinito — verificado.
+\def\Unifei@papelrotulo{\Unifei@papel}
+\def\Unifei@rotuloestagiario{Aluno estagiário}
+\AtBeginDocument{%
+    \edef\Unifei@PRdetok{\detokenize\expandafter{\@supervisor}}%
+    \IfSubStr{\Unifei@PRdetok}{\string\\}%
+        {\let\Unifei@papelrotulo\Unifei@papelplural}%
+        {\let\Unifei@papelrotulo\Unifei@papel}%
+    % Mesma pluralização para o bloco do estagiário na folha de estágio: o
+    % rótulo é campo de \Unifei@RegistroBloco, que faz \edef no argumento, e
+    % \IfSubStr não sobrevive a \edef — por isso resolvido aqui também, e não
+    % no ponto de uso.
+    \edef\Unifei@PAdetok{\detokenize\expandafter{\@author}}%
+    \IfSubStr{\Unifei@PAdetok}{\string\\}%
+        {\def\Unifei@rotuloestagiario{Alunos estagiários}}%
+        {\def\Unifei@rotuloestagiario{Aluno estagiário}}%
+}
+
+% Natureza da folha de rosto, por tipo. Mesmo texto que a folha de aprovação
+% usa, mantido em um só lugar para os dois não divergirem com o tempo.
+\newcommand{\Unifei@NaturezaFolhaRosto}{%
+    \if@unifei@relatorio
+        \ifdefstring{\Unifei@doctype}{estagio}%
+            {Relatório de estágio supervisionado apresentado como requisito
+             parcial para aprovação na disciplina de \@subject.}%
+            {Relatório apresentado ao professor da disciplina de \@subject,
+             como requisito parcial para aprovação no semestre.}%
+    \fi
+    \if@unifei@projeto
+        Projeto de pesquisa apresentado como requisito parcial para obtenção
+        do título de \Unifei@grau\ em \@subject, sendo o cumprimento das duas
+        etapas do trabalho de conclusão de curso condição para a titulação.%
+        \Unifei@NaturezaComplemento
+    \fi
+    \if@unifei@monografia
+        \ifdefstring{\Unifei@doctype}{tcc2}{Trabalho de Conclusão de Curso}{%
+            \ifdefstring{\Unifei@doctype}{dissertacao}{Dissertação}{Tese}%
+        }%
+        \ apresentada como requisito parcial para obtenção do título de
+        \Unifei@grau\ em \@subject.%
+        \Unifei@NaturezaComplemento
+    \fi
+}
 \newcommand{\@institution}{Universidade Federal de Itajubá}
 \providecommand{\institution}[1]{\renewcommand{\@institution}{#1}}
 \newcommand{\@faculty}{Instituto de Ciências Tecnológicas}
@@ -598,18 +822,60 @@
 \newcommand{\@empresasupervisor}{}
 \providecommand{\empresasupervisor}[1]{\renewcommand{\@empresasupervisor}{#1}}
 
+% Área de concentração e linha de pesquisa: só fazem sentido na monografia.
+% A área é EXIGIDA em dissertação e tese (o programa sempre tem uma) e apenas
+% aceita no tcc2, onde é rara — aparece quando o trabalho integra um projeto
+% maior. A linha de pesquisa é opcional nos três. A cobrança da obrigatória
+% está em \Unifei@ChecarMetadados, disparada no início do documento.
+\newcommand{\@areaconcentracao}{}
+\providecommand{\areaconcentracao}[1]{\renewcommand{\@areaconcentracao}{#1}}
+
+\newcommand{\@linhapesquisa}{}
+\providecommand{\linhapesquisa}[1]{\renewcommand{\@linhapesquisa}{#1}}
+
 % Banca examinadora: cada membro precisa de nome, titulação e instituição —
 % não cabe no padrão \supervisor{<nome>} de um único valor. Em vez de um
 % pacote de chave-valor, um comando repetível que ACUMULA (via
 % \g@addto@macro, mecanismo padrão do núcleo do LaTeX2e) uma lista de chamadas
-% a \Unifei@AssinaturaBloco, disparada de uma vez na hora de renderizar a
-% folha. Chame uma vez por membro esperado — inclusive com campos em branco,
-% se os nomes ainda não forem conhecidos: o resultado é um bloco de
-% assinatura corretamente formatado, mas em branco, não um erro (§4.2.1.3: a
-% folha é impressa para ser assinada depois).
+% a \Unifei@RegistroBloco, disparada de uma vez na hora de renderizar a folha.
+% Chame uma vez por membro esperado — inclusive com campos em branco, se os
+% nomes ainda não forem conhecidos: o resultado é um bloco corretamente
+% formatado, mas vazio, não um erro (a folha é preparada antes da defesa).
+%
+% O ORIENTADOR NÃO ENTRA AQUI: ele é membro da banca (tipicamente presidente),
+% mas já foi declarado em \supervisor para a capa, e a folha o inclui a partir
+% dali. Declará-lo de novo produziria o nome duplicado.
 \newcommand{\Unifei@BancaLista}{}
+\newif\if@unifei@bancadeclarada\@unifei@bancadeclaradafalse
 \providecommand{\bancamembro}[3]{% #1=nome #2=titulação #3=instituição
-    \g@addto@macro\Unifei@BancaLista{\Unifei@AssinaturaBloco{#1}{#2}{#3}}%
+    \g@addto@macro\Unifei@BancaLista{\Unifei@RegistroBloco{#1}{#2}{#3}}%
+    \@unifei@bancadeclaradatrue
+}
+
+% Cobrança do que o tipo exige. Roda em \AtBeginDocument, depois de o preâmbulo
+% inteiro ter sido lido — cobrar antes acusaria falta de um metadado que o autor
+% ainda vai declarar duas linhas abaixo. Falhar é melhor que emitir a folha ou o
+% resumo silenciosamente incompletos, que é o modo como esse tipo de defeito
+% costuma passar despercebido até a versão impressa.
+\AtBeginDocument{%
+    \if@unifei@areaobrig
+        \ifdefempty{\@areaconcentracao}{%
+            \PackageError{UnifeiICTReport}%
+                {Falta a área de concentração}%
+                {O tipo '\Unifei@doctype' exige \string\areaconcentracao{...}.
+                 A NBR 14724:2024 \string\S 4.2.1.1.1(e) inclui a área de
+                 concentração na natureza do trabalho.}%
+        }{}%
+    \fi
+    \if@unifei@absobrig
+        \ifdefempty{\@abstractseclang}{%
+            \PackageError{UnifeiICTReport}%
+                {Falta o resumo em língua estrangeira}%
+                {O tipo '\Unifei@doctype' exige \string\abstractseclang{...}.
+                 A NBR 14724:2024 \string\S 4.2.1.8 torna o resumo em língua
+                 estrangeira elemento obrigatório.}%
+        }{}%
+    \fi
 }
 
 \newcommand{\@abstract}{}
@@ -1005,7 +1271,7 @@
                     \begin{minipage}[t]{0.40\textwidth}
                         \setstretch{1.0}
                         \begin{flushright}
-                            {\color{unifeiblue}\unifeismallcaps{\Large Orientador}}\\
+                            {\color{unifeiblue}\unifeismallcaps{\Large\Unifei@papelrotulo}}\\
                             \vspace{0.25\baselineskip}
                             \large\@supervisor
                             \if@cosupervisorpresent
@@ -1023,7 +1289,7 @@
         \begin{parbox}{0.5\textwidth}{
                 \setstretch{1.0}
                 \normalsize
-                Relatório apresentado ao professor da disciplina de \@subject, como requisito parcial para aprovação no semestre.
+                \Unifei@NaturezaFolhaRosto
             }
         \end{parbox}
         \vfill\vfill\vfill%
@@ -1058,38 +1324,69 @@
 % \@supervisor/\@subject já declarados para a capa — não precisam ser
 % redeclarados.
 %
-% Tipos suportados e base normativa de cada um — não "corrija" o de estágio
-% removendo o supervisor de empresa por julgar não-normativo, é exatamente o
-% ponto:
-%   disciplina    (padrão) — §1 Escopo ("aplica-se... a trabalhos acadêmicos
-%                  e similares, intra e extraclasse") + §4.2.1.1.1(e), que
-%                  nomeia "aprovação em disciplina" como objetivo válido da
-%                  natureza. Caso previsto pela norma, não uma adaptação.
-%   estagio       — coberto apenas por "e similares" do §1; não há cláusula
-%                  específica para relatório de estágio. Adaptação
-%                  institucional.
-%   tcc           — trabalho de conclusão de curso, banca examinadora.
-%   dissertacao   — dissertação de mestrado, banca examinadora.
+% O tipo NÃO é mais parâmetro deste comando: vem da opção de pacote
+% (\usepackage[<tipo>]{UnifeiICTReport}) e é consultado pelos booleanos
+% derivados no topo do arquivo. Ver openspec/specs/document-type.
+%
+% DESVIOS DELIBERADOS DA NORMA — não "corrija" nenhum deles achando que é
+% descuido; cada um tem base institucional registrada em
+% openspec/changes/.../design.md, "Registro de desvios da norma":
+%
+%   D1  A folha NÃO tem linha de assinatura, em nenhum tipo. O §4.2.1.3 manda
+%       o contrário ("as assinaturas dos componentes da banca examinadora
+%       devem ser colocadas após a aprovação do trabalho"), mas a assinatura
+%       passou a viver só na Ata de Defesa desde que as defesas se tornaram
+%       inteiramente digitais. Verificado contra as teses recentes no
+%       repositório institucional da Unifei: nenhuma traz assinatura na folha.
+%       Aqui a folha REGISTRA composição da banca e data de aprovação.
+%   D2  O tcc1 tem capa e resumo, que a NBR 15287 não exige (capa opcional no
+%       §4.1.1, resumo ausente dos pré-textuais §4.2.1.1–6) — uniformidade
+%       entre os modelos do ICT.
+%   D3  O tcc1 pode ter folha de aprovação, que a NBR 15287 não prevê: no ICT
+%       a defesa do projeto é facultativa, a critério do orientador.
+%   D4  A natureza do tcc1 declara grau pretendido, contra o §4.2.1.1(e) da
+%       15287, que pede só "tipo de projeto de pesquisa e nome da entidade".
+%       Desde o PPC de 2023 o TCC do ICT é dividido em duas etapas e o TCC1 é
+%       requisito parcial para o título: estrutura de projeto, finalidade de
+%       monografia.
+%
 % #1/#2/#3 podem chegar como texto literal (de \bancamembro, digitado pelo
-% autor) OU como uma referência de macro (\@supervisor, de disciplina/
-% estágio) — \ifblank{#1} sozinho só detecta o segundo caso corretamente por
-% acidente: uma referência de macro é sempre "1 token", nunca vazio, mesmo
-% quando a macro referenciada está vazia. \edef normaliza os dois casos para
-% texto já expandido antes de testar, então um \supervisor{} nunca declarado
-% também produz um bloco corretamente em branco, não uma linha \textbf{} vazia.
-\newcommand{\Unifei@AssinaturaBloco}[3]{% #1=nome #2=titulação #3=instituição
+% autor) OU como uma referência de macro (\@supervisor) — \ifblank{#1} sozinho
+% só detecta o segundo caso corretamente por acidente: uma referência de macro
+% é sempre "1 token", nunca vazio, mesmo quando a macro referenciada está
+% vazia. \edef normaliza os dois casos para texto já expandido antes de testar,
+% então um \supervisor{} nunca declarado também produz um bloco corretamente
+% em branco, não uma linha \textbf{} vazia.
+%
+% Nome antigo \Unifei@AssinaturaBloco abandonado de propósito: o bloco não
+% reserva mais espaço para assinar, e manter o nome induziria ao erro de
+% recolocar a régua (D1).
+\newcommand{\Unifei@RegistroBloco}[3]{% #1=nome #2=titulação #3=instituição
     \par\vspace{2em}
     \begingroup
-    \edef\Unifei@ABnome{#1}%
-    \edef\Unifei@ABtitulacao{#2}%
-    \edef\Unifei@ABinstituicao{#3}%
+    \edef\Unifei@RBnome{#1}%
+    \edef\Unifei@RBtitulacao{#2}%
+    \edef\Unifei@RBinstituicao{#3}%
     \begin{center}
-        \rule{7cm}{0.4pt}\\[0.3em]
-        \ifdefempty{\Unifei@ABnome}{}{\textbf{\Unifei@ABnome}\\}%
-        \ifdefempty{\Unifei@ABtitulacao}{}{\Unifei@ABtitulacao\\}%
-        \ifdefempty{\Unifei@ABinstituicao}{}{\Unifei@ABinstituicao}%
+        \ifdefempty{\Unifei@RBnome}{\mbox{}\\}{\textbf{\Unifei@RBnome}\\}%
+        \ifdefempty{\Unifei@RBtitulacao}{}{\Unifei@RBtitulacao\\}%
+        \ifdefempty{\Unifei@RBinstituicao}{}{\Unifei@RBinstituicao}%
     \end{center}
     \endgroup
+}
+
+% Um bloco por professor, quando \supervisor traz vários separados por \\.
+% Reaproveita a mesma convenção que a capa já usa para vários autores.
+\newcommand{\Unifei@RegistroPorProfessor}[2]{% #1=lista \\ #2=papel
+    \begingroup
+    \def\Unifei@RPPpapel{#2}%
+    \expandafter\Unifei@RPPloop#1\\\@nil
+    \endgroup
+}
+\def\Unifei@RPPloop#1\\#2\@nil{%
+    \Unifei@RegistroBloco{#1}{\Unifei@RPPpapel}{}%
+    \def\Unifei@RPPresto{#2}%
+    \ifx\Unifei@RPPresto\@empty\else\Unifei@RPPloop#2\@nil\fi
 }
 
 \newcommand{\Unifei@FolhaAprovacaoCabecalho}{%
@@ -1120,65 +1417,113 @@
     \par
 }
 
-\newcommand{\Unifei@FolhaAprovacao@disciplina}{%
-    \Unifei@FolhaAprovacaoCabecalho
-    \Unifei@FolhaAprovacaoNatureza{%
-        Relatório apresentado ao professor da disciplina de \@subject,
-        como requisito parcial para aprovação no semestre.%
-    }%
-    \vfill
-    \Unifei@AssinaturaBloco{\@supervisor}{Professor da disciplina}{}%
-    \vfill
+% Complemento da natureza comum aos três tipos de monografia: área de
+% concentração (exigida em dissertação/tese) e linha de pesquisa (opcional
+% sempre). Nada aparece quando não declarados.
+\newcommand{\Unifei@NaturezaComplemento}{%
+    \ifdefempty{\@areaconcentracao}{}{\par\vspace{0.5em}Área de concentração: \@areaconcentracao.}%
+    \ifdefempty{\@linhapesquisa}{}{\par\vspace{0.5em}Linha de pesquisa: \@linhapesquisa.}%
 }
 
-\newcommand{\Unifei@FolhaAprovacao@estagio}{%
+\newcommand{\Unifei@FolhaAprovacaoCorpo}{%
     \Unifei@FolhaAprovacaoCabecalho
-    \Unifei@FolhaAprovacaoNatureza{%
-        Relatório de estágio supervisionado apresentado como requisito
-        parcial para aprovação na disciplina de \@subject.%
-    }%
-    \vfill
-    \Unifei@AssinaturaBloco{\@supervisor}{Orientador acadêmico}{}%
-    \Unifei@AssinaturaBloco{\@empresasupervisor}{Supervisor de estágio}{}%
-    \vfill
+    \if@unifei@relatorio
+        \ifdefstring{\Unifei@doctype}{estagio}{%
+            \Unifei@FolhaAprovacaoNatureza{%
+                Relatório de estágio supervisionado apresentado como requisito
+                parcial para aprovação na disciplina de \@subject.%
+            }%
+            \vfill
+            % Três partes assinam o estágio: o próprio estagiário, o professor
+            % orientador e o supervisor de campo.
+            \Unifei@RegistroBloco{\@author}{\Unifei@rotuloestagiario}{}%
+            \Unifei@RegistroPorProfessor{\@supervisor}{Orientador acadêmico}%
+            \Unifei@RegistroBloco{\@empresasupervisor}{Supervisor de campo}{}%
+            \vfill
+        }{%
+            \Unifei@FolhaAprovacaoNatureza{%
+                Relatório apresentado ao professor da disciplina de \@subject,
+                como requisito parcial para aprovação no semestre.%
+            }%
+            \vfill
+            % Disciplina compartilhada tem mais de um professor responsável:
+            % um bloco para cada.
+            \Unifei@RegistroPorProfessor{\@supervisor}{\Unifei@papel\ da disciplina}%
+            \vfill
+        }%
+    \fi
+    \if@unifei@projeto
+        % D4: declara grau, contra o §4.2.1.1(e) da 15287 — o TCC1 do ICT é
+        % requisito parcial para o título, não projeto autônomo.
+        \Unifei@FolhaAprovacaoNatureza{%
+            Projeto de pesquisa apresentado como requisito parcial para
+            obtenção do título de \Unifei@grau\ em \@subject, sendo o
+            cumprimento das duas etapas do trabalho de conclusão de curso
+            condição para a titulação.%
+            \Unifei@NaturezaComplemento
+        }%
+        \vfill
+        \Unifei@RegistroBanca
+        \vfill
+    \fi
+    \if@unifei@monografia
+        \Unifei@FolhaAprovacaoNatureza{%
+            \ifdefstring{\Unifei@doctype}{tcc2}{Trabalho de Conclusão de Curso}{%
+                \ifdefstring{\Unifei@doctype}{dissertacao}{Dissertação}{Tese}%
+            }%
+            \ apresentada como requisito parcial para obtenção do título de
+            \Unifei@grau\ em \@subject.%
+            \Unifei@NaturezaComplemento
+        }%
+        \vfill
+        \Unifei@RegistroBanca
+        \vfill
+    \fi
 }
 
-\newcommand{\Unifei@FolhaAprovacao@tcc}{%
-    \Unifei@FolhaAprovacaoCabecalho
-    \Unifei@FolhaAprovacaoNatureza{%
-        Trabalho de Conclusão de Curso apresentado como requisito parcial
-        para obtenção do título de Bacharel em \@subject.%
-    }%
-    \vfill
+% A banca é o orientador MAIS os membros externos declarados. O orientador
+% entra a partir de \supervisor, sem exigir um \bancamembro que o repita.
+\newcommand{\Unifei@RegistroBanca}{%
+    \Unifei@RegistroPorProfessor{\@supervisor}{Orientador}%
     \Unifei@BancaLista
-    \vfill
 }
 
-\newcommand{\Unifei@FolhaAprovacao@dissertacao}{%
-    \Unifei@FolhaAprovacaoCabecalho
-    \Unifei@FolhaAprovacaoNatureza{%
-        Dissertação apresentada como requisito parcial para obtenção do
-        título de Mestre em \@subject.%
+% Uso: \folhaaprovacao, sem argumento. O tipo vem da opção de pacote.
+%
+% No tcc1 a folha só sai se houve banca (D3) — sem banca declarada o texto foi
+% avaliado individualmente e a folha não existe, sem deixar página em branco.
+% Nos demais tipos ela é sempre emitida.
+%
+% O argumento opcional continua na assinatura só para RECUSAR a forma antiga
+% com mensagem útil. Aceitar 'tcc' seria pior que falhar: ele se divide em
+% tcc1 e tcc2, regidos por normas diferentes, e escolher um produziria um
+% documento inteiro sob a norma errada, sem erro visível.
+\NewDocumentCommand{\folhaaprovacao}{o}{%
+    \IfNoValueTF{#1}{%
+        \if@unifei@folhaopc
+            \if@unifei@bancadeclarada
+                \Unifei@FolhaAprovacaoEmitir
+            \fi
+        \else
+            \Unifei@FolhaAprovacaoEmitir
+        \fi
+    }{%
+        \PackageError{UnifeiICTReport}%
+            {\string\folhaaprovacao\space não recebe mais o tipo como argumento}%
+            {O tipo do documento agora é opção de pacote:
+             \string\usepackage[<tipo>]{UnifeiICTReport}, com <tipo> em
+             generico, estagio, tcc1, tcc2, dissertacao, tese.
+             Chame \string\folhaaprovacao\space sem argumento.
+             Atenção: o antigo 'tcc' virou DOIS tipos, tcc1 (projeto de
+             pesquisa, NBR 15287) e tcc2 (monografia, NBR 14724) — escolha
+             qual descreve o seu trabalho.}%
     }%
-    \vfill
-    \Unifei@BancaLista
-    \vfill
 }
 
-% Uso: \folhaaprovacao ou \folhaaprovacao[<tipo>], tipo em
-% {disciplina,estagio,tcc,dissertacao}. Um tipo desconhecido é erro de
-% compilação (não renderiza o padrão silenciosamente).
-\NewDocumentCommand{\folhaaprovacao}{O{disciplina}}{%
+\newcommand{\Unifei@FolhaAprovacaoEmitir}{%
     \clearpage
     \thispagestyle{empty}%
-    \@ifundefined{Unifei@FolhaAprovacao@#1}{%
-        \PackageError{UnifeiICTReport}%
-            {Tipo de folha de aprovação desconhecido: '#1'}%
-            {Tipos suportados por \string\folhaaprovacao:
-             disciplina, estagio, tcc, dissertacao.}%
-    }{%
-        \csname Unifei@FolhaAprovacao@#1\endcsname
-    }%
+    \Unifei@FolhaAprovacaoCorpo
     \clearpage
 }
 
@@ -1203,20 +1548,28 @@
     %----------------------------
     %   ABSTRACT (SECOND LANGUAGE)
     %----------------------------
-    \thispagestyle{empty}
-    % Abstract title: center properly (usar mesma aparência dos títulos)
-    {\centering\large\bfseries\unifeifont\color{unifeiblue}\MakeUppercase{Abstract}\par}
-    \vspace{1.5cm}
-    % abstract body (normal paragraph formatting)
-    {\par\normalsize\setstretch{1.5}\@abstractseclang\par}
-    \vspace{0.5\baselineskip}
-    {\par\noindent\textbf{Keywords:} \@keywordsseclang\par}
-    \vfill
-    \if@openright
-        \cleardoublepage
-    \else
-        \clearpage
-    \fi
+    % O resumo em língua estrangeira é obrigatório em dissertação e tese
+    % (§4.2.1.8) e opcional nos demais tipos deste modelo. Quando é opcional e
+    % não foi declarado, nada é emitido — nem página, nem cabeçalho — em vez de
+    % uma página com título e corpo vazio. A cobrança do caso obrigatório está
+    % no \AtBeginDocument junto com a da área de concentração, para o autor
+    % descobrir a falta no começo da compilação e não no meio.
+    \ifdefempty{\@abstractseclang}{}{%
+        \thispagestyle{empty}
+        % Abstract title: center properly (usar mesma aparência dos títulos)
+        {\centering\large\bfseries\unifeifont\color{unifeiblue}\MakeUppercase{Abstract}\par}
+        \vspace{1.5cm}
+        % abstract body (normal paragraph formatting)
+        {\par\normalsize\setstretch{1.5}\@abstractseclang\par}
+        \vspace{0.5\baselineskip}
+        {\par\noindent\textbf{Keywords:} \@keywordsseclang\par}
+        \vfill
+        \if@openright
+            \cleardoublepage
+        \else
+            \clearpage
+        \fi
+    }%
 }
 
 % Capítulo: "Número~NomeCapítulo" no mesmo parágrafo
