@@ -16,19 +16,19 @@ avaliadores além de transmitir profissionalismo e enriquecer a experiência do 
 
 \section{Preparação do ambiente de compilação}\label{sec:preparacao-ambiente}
 
-Este modelo foi desenvolvido em instalação local completa do \LaTeX\, usando a distribuição TeX Live
+Este modelo foi desenvolvido em instalação local completa do \LaTeX, usando a distribuição TeX Live
 (\url{https://www.tug.org/texlive/}) e ambientes de compilação modernos, notadamente
 \texttt{xelatex} ou \texttt{lualatex}. Ele foi construído usando pacotes e fontes tipográficas
-normalmente disponíveis na instalação completa do TeX Live . Adaptações podem ser necessárias para o
-uso com outros ambientes. As fontes utilizadas no modulo são:
+normalmente disponíveis na instalação completa do TeX Live. Adaptações podem ser necessárias para o
+uso com outros ambientes. As fontes utilizadas no modelo são:
 \begin{itemize}
       \item \textbf{Exo 2}: Fonte \emph{sans-serif} moderna e destacada, usada nos títulos e elementos e destaque. É a fonte institucional recomendada no Manual de Identidade visual da Unifei.
       \item \textbf{Heuristica}: Fonte \emph{serif} elegante e legível, utilizada para o corpo do texto.
-      \item \textbf{IBM Plex Sans}: Fonte \emph{sans-serif} da famíla Plex, humanística e com boa legibilidade em tamanhos pequenos, utilizada para legendas.
+      \item \textbf{IBM Plex Sans}: Fonte \emph{sans-serif} da família Plex, humanística e com boa legibilidade em tamanhos pequenos, utilizada para legendas.
       \item \textbf{IBM Plex Mono}: Fonte monoespaçada utilizada para trechos de código e elementos técnicos.
 \end{itemize}
 
-Caso esteja utilizando uma distribuição diferente do \LaTeX\, é possível que as fontes originais não
+Caso esteja utilizando uma distribuição diferente do \LaTeX, é possível que as fontes originais não
 sejam carregadas corretamente. Exceto pela fonte Exo 2, que é fornecida com o modelo, as outras
 fontes são carregadas usando o sistema de fontes do seu sistema operacional. Certifique-se de que as
 fontes estão instaladas corretamente em seu sistema, caso deseje manter o documento em sua forma
@@ -59,35 +59,46 @@ de forma clara e lógica. Isso facilita a leitura e compreensão do texto, além
 navegar pelo documento. Lembre-se que seu trabalho também servirá como referência para futuros
 alunos e pesquisadores, portanto, uma boa estruturação é essencial.
 
-Este modelo é baseado na classe \texttt{book}, que organiza o conteúdo em uma estrutura hierárquica
-de capítulos, seções e subseções. A seguir, apresentamos algumas diretrizes para a estruturação
-adequada do conteúdo:
+Este modelo é baseado na classe \texttt{book} do \LaTeX. A ABNT NBR 14724:2024 (4.2.2), porém, não
+admite que um trabalho acadêmico seja dividido em \emph{capítulos}: suas divisões chamam-se seções. O
+modelo concilia as duas coisas \textbf{rebaixando cada nível um degrau} --- você digita o comando da
+classe \texttt{book}, e o documento imprime o nome que a norma exige:
 
 \begin{itemize}
-    \item \textbf{Capítulos}: Cada capítulo deve abordar um tema específico do trabalho. Utilize o
-          comando \verb|\chapter{}| para criar novos capítulos. Lembre-se de que os capítulos são numerados
-          automaticamente. Acrescente um rótulo ao capítulo para facilitar autorreferências dentro do
-          documento, usando o comando \verb|\label{}| logo após o título do capítulo. Por convenção, é
-          interessante nomear os rótulos dos capítulos com o prefixo \texttt{cap:}, seguido de uma
-          palavra-chave relacionada ao conteúdo do capítulo (por exemplo, \texttt{cap:introducao} para o
-          capítulo de introdução).
-    \item \textbf{Seções}: Dentro de cada capítulo, utilize o comando \verb|\section{}| para criar
-          seções que dividem o conteúdo em partes menores e mais gerenciáveis. As seções também são
-          numeradas automaticamente. Use o prefixo \texttt{sec:} para os rótulos das seções (por exemplo,
-          \texttt{sec:objetivos} para a seção de objetivos).
-    \item \textbf{Subseções}: Caso seja necessário dividir ainda mais o conteúdo dentro de uma seção,
-          utilize o comando \verb|\subsection{}|. Isso ajuda a organizar o texto em tópicos específicos e
-          facilita a leitura. Como prefixo para os rótulos das subseções, utilize \texttt{ssc:} (por exemplo,
-          \texttt{ssc:sua-subseção} para a subseção de metodologia).
-\item \textbf{Subsubseções}: Para uma divisão ainda mais detalhada, é possível utilizar o comando \linebreak
-          \verb|\subsubsection{}|. Isso é útil para tópicos que exigem uma explicação mais aprofundada. Use o
-          prefixo \texttt{sss:} para
-          os rótulos das subsubseções (por exemplo, \texttt{sss:detalhes-tecnicos} para uma subsubseção
-          chamada detalhes técnicos). Normalmente, é raro o uso de subsubseções, já que o nível de detalhamento
-          excessivo pode dificultar a leitura do texto. Use com parcimônia.
-    \item \textbf{Consistência}: Mantenha uma estrutura consistente ao longo do documento. Use os mesmos
-          níveis de seções e subseções para temas semelhantes, garantindo que o leitor possa seguir o fluxo
-          do texto facilmente.
+    \item \verb|\chapter| imprime \textbf{Seção} (divisão primária);
+    \item \verb|\section| imprime \textbf{Subseção};
+    \item \verb|\subsection| imprime \textbf{Subsubseção};
+    \item \verb|\subsubsection| imprime \textbf{Parágrafo} (nível mais baixo numerado).
+\end{itemize}
+
+Guarde essa correspondência: ela vale para os títulos, para o sumário e para as referências cruzadas.
+Ao escrever ``conforme a seção anterior'', lembre-se de que o comando que produziu aquela divisão foi
+o \verb|\chapter|. É a única tradução mental que o modelo pede de você.
+
+A seguir, as diretrizes para cada nível. Os prefixos de rótulo sugeridos são mnemônicos do
+\textbf{comando}, e não do nome impresso --- por isso \texttt{ssc:} marca aquilo que o documento
+chama de Subsubseção:
+
+\begin{itemize}
+    \item \textbf{Seções} (\verb|\chapter{}|): cada seção deve abordar um tema específico do trabalho.
+          Lembre-se de que elas são numeradas automaticamente. Acrescente um rótulo logo após o título,
+          com o comando \verb|\label{}|, para facilitar autorreferências dentro do documento. Por
+          convenção, use o prefixo \texttt{cap:}, seguido de uma palavra-chave relacionada ao conteúdo
+          (por exemplo, \texttt{cap:introducao} para a seção de introdução).
+    \item \textbf{Subseções} (\verb|\section{}|): dentro de cada seção, dividem o conteúdo em partes
+          menores e mais gerenciáveis. Também são numeradas automaticamente. Use o prefixo
+          \texttt{sec:} para os rótulos (por exemplo, \texttt{sec:objetivos} para a subseção de
+          objetivos).
+    \item \textbf{Subsubseções} (\verb|\subsection{}|): caso seja necessário dividir ainda mais o
+          conteúdo, organizam o texto em tópicos específicos e facilitam a leitura. Use o prefixo
+          \texttt{ssc:} (por exemplo, \texttt{ssc:metodologia} para a subsubseção de metodologia).
+    \item \textbf{Parágrafos} (\verb|\subsubsection{}|): a divisão mais detalhada, útil para tópicos
+          que exigem explicação mais aprofundada. Use o prefixo \texttt{sss:} (por exemplo,
+          \texttt{sss:detalhes-tecnicos}). É o nível mais baixo que o modelo numera, e seu uso é raro:
+          detalhamento excessivo dificulta a leitura. Use com parcimônia.
+    \item \textbf{Consistência}: mantenha uma estrutura consistente ao longo do documento. Use os
+          mesmos níveis para temas semelhantes, garantindo que o leitor possa seguir o fluxo do texto
+          facilmente.
 \end{itemize}
 
 Na sequência, veja como se parecem as subsubseções e os parágrafos.
@@ -98,21 +109,12 @@ Esta é uma subsubseção de exemplo. Note que ela é numerada automaticamente e
 referenciada no texto usando o comando \verb|\ref{}| com o rótulo correspondente. Este modelo
 também fornece o comando \verb|\refcomp{}{}|, que imprime o nome da divisão e seu título junto com o
 número, no formato \emph{Divisão N - Título}. O nome da divisão é determinado automaticamente a
-partir do rótulo, não pelo primeiro argumento --- ou seja, você não precisa (nem deve) digitá-lo. Por
-exemplo, veja a seguir a referência para a divisão atual: \refcomp{}{ssc:exemplo}. Note a formatação
-da saída e o \emph{hyperlink} criado automaticamente para o elemento referenciado. O comando
-\verb|\ref{}| padrão do \LaTeX\ também funciona normalmente.
-
-Como este modelo segue a ABNT NBR 14724:2024, que não admite a divisão do trabalho em capítulos, os
-níveis são nomeados um degrau abaixo do comando \LaTeX\ correspondente. A correspondência é a
-seguinte:
-
-\begin{itemize}
-    \item \verb|\chapter| --- \textbf{Seção} (divisão primária);
-    \item \verb|\section| --- \textbf{Subseção};
-    \item \verb|\subsection| --- \textbf{Subsubseção};
-    \item \verb|\subsubsection| --- \textbf{Parágrafo} (nível mais baixo numerado).
-\end{itemize}
+partir do \textbf{contador} do elemento referenciado, e não do primeiro argumento nem do texto do
+rótulo --- ou seja, você não precisa (nem deve) digitá-lo, e renomear um rótulo não muda o nome
+impresso. É por aqui que o rebaixamento de níveis se manifesta: um \verb|\subsection| referenciado
+sai como \emph{Subsubseção}. Por exemplo, veja a seguir a referência para a divisão atual:
+\refcomp{}{ssc:exemplo}. Note a formatação da saída e o \emph{hyperlink} criado automaticamente para
+o elemento referenciado. O comando \verb|\ref{}| padrão do \LaTeX\ também funciona normalmente.
 
 Existe ainda a forma com asterisco, \verb|\refcomp*{Nome}{rótulo}|, que imprime literalmente o nome
 informado no primeiro argumento. Use-a apenas para rótulos fora da hierarquia acima --- contadores
@@ -131,10 +133,13 @@ a seguir a referência para o parágrafo atual: \refcomp{}{sss:exemplo}.
 
 Nenhum trabalho acadêmico está realmente completo sem uma discussão adequada sobre as fontes que o
 sustentam. Sendo assim, citações de trabalhos da literatura associada ao tema são fundamentais para
-que o trabalho tenha credibilidade e rigor acadêmico. As citações em texto devem seguir as normas da
-Associação Brasileira de Normas Técnicas (ABNT), especificamente a NBR
-6023:2018~\cite{nbr6023:2018}, que estabelecem diretrizes claras para a formatação
-e apresentação das referências bibliográficas. Este modelo utiliza o pacote \texttt{biblatex}%
+que o trabalho tenha credibilidade e rigor acadêmico. Duas normas da Associação Brasileira de Normas
+Técnicas (ABNT) governam esse terreno, e convém não as confundir: a NBR
+10520:2023~\cite{nbr10520:2023} trata da \textbf{citação no documento} --- a forma como o autor
+remete, no corpo do texto, à obra que sustenta o que ele afirma ---, enquanto a NBR
+6023:2018~\cite{nbr6023:2018} trata da \textbf{elaboração das referências} --- a lista, ao final do
+trabalho, que descreve cada obra citada. Uma diz como citar; a outra, como descrever o que foi
+citado. Este modelo utiliza o pacote \texttt{biblatex}%
 %
 \footnote{Este modelo descreve de forma muito sucinta o uso do pacote \texttt{biblatex}.
     Recomenda-se a consulta à documentação do pacote para completo entendimento de como utilizá-lo}%
@@ -166,7 +171,7 @@ finais por dois apóstrofos (\texttt{''}). Aspas simples são representadas por 
 para uma citação dentro de outra citação.
 
 Citações diretas com mais de três linhas devem ser formatadas em um bloco separado, com recuo na
-margem esquerda, sem apas e com a mesma tipografia do corpo do texto, porém em tamanho menor.
+margem esquerda, sem aspas e com a mesma tipografia do corpo do texto, porém em tamanho menor.
 Supressões (quando você inicia a citação no meio de uma frase) devem ser indicadas por reticências entre colchetes
 (\texttt{[\ldots]}) e acréscimos (quando você insere palavras para esclarecer o sentido da citação)
 devem ser indicados por colchetes simples (\texttt{[texto adicional]}). Este modelo fornece o
@@ -360,7 +365,7 @@ legenda principal --- esta última continua sendo o argumento do ambiente. Veja 
 
 Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
 detalhes sobre como utilizá-lo de forma eficaz. Ele pode ser encontrado no diretório oficial do
-\LaTeX\, na \gls{ctan}, no endereço eletrônico (\url{https://ctan.org/pkg/subcaption}).
+\LaTeX, na \gls{ctan}, no endereço eletrônico (\url{https://ctan.org/pkg/subcaption}).
 
 \subsection{Outros tipos de ilustração}\label{sec:tipos-ilustracao}
 

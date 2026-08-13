@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-08-13
+skip_specs: true
+goal: "Corrigir os erros do texto-guia atual (Capitulos/cap2/cap2.tex) antes que
+  a reescrita do manual os herde: a norma errada atribuída às citações em texto,
+  a vocabulário de divisões que contradiz o próprio pacote, o comando de espaço
+  fino engolindo vírgulas, e os erros de digitação."
