@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-08-13
+skip_specs: true
+goal: "Popular openspec/config.yaml com o contexto e as regras que este projeto
+  já aprendeu na prática, para que cada change nova não precise redescobrir a
+  norma que rege, o idioma dos artefatos e o fato de que compilação limpa não
+  prova saída correta."

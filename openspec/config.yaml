@@ -1,32 +1,97 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Contexto do projeto — mostrado a quem redige os artefatos de uma change.
+context: |
+  MODELO ABNT DO ICT/UNIFEI
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Modelo LaTeX de trabalhos acadêmicos do Instituto de Ciências Tecnológicas da
+  Universidade Federal de Itajubá, empacotado em UnifeiICTReport.sty. Compila
+  com XeLaTeX; build por latexmk (.latexmkrc: $pdf_mode = 5, saída em build/).
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+  IDIOMA: os artefatos OpenSpec são escritos em PORTUGUÊS desde 2026-08-10. Os
+  specs anteriores a essa data estão em inglês e aguardam migração — a mistura
+  é conhecida e esperada, não é defeito a corrigir de passagem.
+
+  SEIS TIPOS DE DOCUMENTO, declarados por opção de pacote, na forma
+  \usepackage[tipo=<valor>]{UnifeiICTReport}:
+
+    generico     relatório de disciplina (padrão)   NBR 14724, no que couber
+    estagio      relatório de estágio               NBR 14724 e similares
+    tcc1         projeto de pesquisa                NBR 15287:2025
+    tcc2         monografia, grau Bacharel          NBR 14724:2024
+    dissertacao  monografia, grau Mestre            NBR 14724:2024
+    tese         monografia, grau Doutor            NBR 14724:2024
+
+  O tipo governa o modelo inteiro: natureza, folha de aprovação, resumos e
+  metadados exigidos. Ver openspec/specs/document-type/spec.md.
+
+  NORMAS, E O QUE CADA UMA COBRE. Atribuir comportamento à norma errada já
+  aconteceu mais de uma vez neste repositório:
+
+    NBR 14724:2024   trabalhos acadêmicos — apresentação
+    NBR 15287:2025   projeto de pesquisa — apresentação (só tcc1)
+    NBR 6023:2018    ELABORAÇÃO DAS REFERÊNCIAS (+ Emenda 1, de 21.05.2025)
+    NBR 10520:2023   CITAÇÕES EM DOCUMENTOS — apresentação
+    NBR 6027:2012    sumário
+    NBR 6034:2004    índice
+
+  O par 6023/10520 é o que mais se confunde: a 6023 rege a referência — a lista
+  ao final, que descreve cada obra; a 10520 rege a citação — a remissão feita no
+  corpo do texto.
+
+  COMPILAÇÃO LIMPA NÃO PROVA SAÍDA CORRETA. É o modo de falha característico
+  deste projeto, e o mais caro. Casos já pagos:
+
+    - \, é o comando de espaço fino: "\LaTeX\, usando" engole a vírgula
+      pretendida e imprime um espaço no lugar dela
+    - XeLaTeX/fontspec desliga ligaduras de texto, então -- não vira travessão
+    - código não-expansível dentro de \the<contador> corrompe o .aux
+    - nomes de sequência de controle aceitam SÓ LETRAS; dígitos (\Unifei@tcc1)
+      não dão erro de sintaxe, quebram longe da causa — daí os nomes
+      \Unifei@tmptccum e \Unifei@tmptccdois no .sty, que sem esta nota parecem
+      arbitrários e convidam a "simplificação"
+
+  Verificar saída significa LER A PÁGINA: rasterizar com gswin64c e ler, ou
+  extrair com pdftotext. O log não serve para isso.
+
+  BUILD: se o PDF estiver aberto num visualizador, xdvipdfmx falha ao escrever.
+  Depois de destravado, latexmk ainda responde "Nothing to do", porque o
+  .fdb_latexmk já registrou os fontes como processados e só o passo de escrita
+  havia falhado. Use `latexmk -g` para forçar as regras.
+
+  MATERIAL RESTRITO: os PDFs em .refs/ são normas ABNT PAGAS, com marca d'água
+  de instituição terceira, e este repositório é público. Permanecem no
+  .gitignore e NUNCA são versionados, reproduzidos em artefato, nem citados por
+  trecho longo. Ficam disponíveis para consulta local — a tentação aparece
+  justamente quando se quer precisão normativa.
+
+  FERRAMENTAL: o CLI `openspec` NÃO está instalado nesta máquina. Os fluxos
+  /opsx:* rodam à mão contra a árvore openspec/.
+
+# Regras por artefato.
+rules:
+  proposal:
+    - Nomear a norma — e o parágrafo, quando houver — que rege o comportamento proposto.
+    - Declarar desvios deliberados da norma na própria proposta, em vez de deixá-los implícitos na implementação.
+    - Dizer o que NÃO entra no escopo sempre que a fronteira não for óbvia.
+  design:
+    - Numerar cada desvio da norma (D1, D2, ...), citando o que a norma exige e por que o modelo diverge.
+    - Espelhar cada desvio em comentário no ponto correspondente do .sty, para que ninguém "corrija" depois o que está errado de propósito.
+    - Registrar as alternativas descartadas junto da evidência que as descartou, e não apenas a escolhida.
+  tasks:
+    - Toda tarefa que altera a saída do documento carrega a própria verificação.
+    - A verificação lê a página compilada — rasterizada, ou via pdftotext. Nunca o log: neste projeto os defeitos característicos compilam limpo.
+    - Ao concluir uma tarefa, registrar o que foi de fato verificado, não o que foi escrito.
+    - Marcar como CRÍTICO o que quebra de forma distante da causa.
+
+# Orientação por operação.
+operations:
+  apply:
+    guidance:
+      - Conduzir à mão, sem CLI, marcando - [ ] como - [x] em tasks.md com nota curta do que foi verificado.
+      - Divergir do plano é permitido quando a investigação mostra que ele estava errado, mas a divergência vai escrita no resultado da tarefa, junto da razão.
+  archive:
+    guidance:
+      - Sincronizar os deltas para openspec/specs/ à mão antes de mover a change para openspec/changes/archive/AAAA-MM-DD-<nome>/.
+      - Em delta RENAMED, conferir que o requisito renomeado ficou NA POSIÇÃO ORIGINAL. Renome aplicado como remoção mais adição é indistinguível no diff final e só se revela na ordem dos requisitos.
+      - Cenário do delta que não restata um cenário existente é decisão, não formatação. Manter — traduzindo, se o requisito hospedeiro mudou de idioma — quando o comportamento continua verdadeiro; descartar apenas quando um requisito novo o substitui. Registrar o destino de cada um no tasks.md da change.
