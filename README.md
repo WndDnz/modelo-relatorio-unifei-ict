@@ -86,7 +86,7 @@ O que muda entre eles:
 | `generico` | obrigatória | opcional | — | professor(es) da disciplina |
 | `estagio` | obrigatória | opcional | — | estagiário + orientador + supervisor de campo |
 | `tcc1` | **só se houver banca** | opcional | — | orientador + membros externos |
-| `tcc2` | obrigatória | opcional | opcional | orientador + membros externos |
+| `tcc2` | obrigatória | **obrigatório** | opcional | orientador + membros externos |
 | `dissertacao` · `tese` | obrigatória | **obrigatório** | **obrigatória** | orientador + membros externos |
 
 `tcc2`, `dissertacao` e `tese` produzem o mesmo layout de monografia, mas **não são apelidos idênticos**: mudam o grau e a obrigatoriedade de abstract e de área de concentração. Um metadado obrigatório que falte interrompe a compilação nomeando o que falta, em vez de gerar uma folha incompleta em silêncio.
@@ -191,7 +191,7 @@ O pacote `UnifeiICTReport.sty` fornece várias macros úteis. Abaixo há uma lis
   Servem a **todos os tipos de documento**, sem ajuste: a NBR 15287 §4.2.3.3/§4.2.3.4, que rege o `tcc1`, usa exatamente a mesma regra da 14724 — palavra designativa, letras maiúsculas consecutivas, travessão, título e o destaque tipográfico da seção primária.
 - `\fonte{texto}` — insere a informação de fonte abaixo de figuras/tabelas; alinha automaticamente à borda esquerda do último gráfico/tabela (usa internamente `\LastGraphicWidth`). Chame-o como último elemento **dentro** do ambiente: fora dele, a fonte se descola do float e fica perdida no corpo do texto.
 - `\quote{<bibkey>}{<texto>}` — insere uma citação longa formatada (útil para citações diretas extensas); a chave `bibkey` aparece como citação à direita.
-- `\makeabstracts` — imprime os resumos (usado no driver `modelo-relatorio.tex`). O resumo na língua do texto sai sempre; o abstract sai quando `\abstractseclang{}` foi declarado. Em `dissertacao` e `tese` ele é obrigatório e sua ausência interrompe a compilação (§4.2.1.8); nos demais tipos é opcional, e sem declaração nenhuma página ou cabeçalho é emitido no lugar.
+- `\makeabstracts` — imprime os resumos (usado no driver `modelo-relatorio.tex`). O resumo na língua do texto sai sempre; o abstract sai quando `\abstractseclang{}` foi declarado. Nos três tipos de monografia — `tcc2`, `dissertacao` e `tese` — ele é obrigatório e sua ausência interrompe a compilação (§4.2.1.8); nos demais tipos é opcional, e sem declaração nenhuma página ou cabeçalho é emitido no lugar. O `tcc1` fica de fora por ser regido pela NBR 15287:2025, que não prevê resumo entre os elementos do projeto de pesquisa.
 
 Notas rápidas sobre referências:
 

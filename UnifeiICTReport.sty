@@ -189,9 +189,19 @@
     % folha não é emitida (D3).
     \@unifei@folhaopctrue
     \def\Unifei@grau{Bacharel}%
+    % SEM \@unifei@absobrigtrue, ao contrário do tcc2 logo abaixo, e isso é
+    % deliberado: o TCC1 é projeto de pesquisa, regido pela NBR 15287:2025 —
+    % não pela 14724. A palavra "resumo" NÃO OCORRE no texto da 15287
+    % (verificado nas 13 páginas): seus elementos pré-textuais são folha de
+    % rosto, listas e sumário. Não há resumo a exigir, nem vernáculo nem
+    % estrangeiro. Não "uniformize" com o ramo seguinte.
 \else\ifx\Unifei@doctype\Unifei@tmptccdois
     \@unifei@monografiatrue
     \@unifei@combancatrue
+    % O TCC2 é monografia completa, e a NBR 14724:2024 §4.1 marca o resumo em
+    % língua estrangeira como obrigatório sem qualificar por tipo de trabalho:
+    % monografia de graduação, dissertação e tese ficam sob o mesmo regime.
+    \@unifei@absobrigtrue
     \def\Unifei@grau{Bacharel}%
 \else\ifx\Unifei@doctype\Unifei@tmpdissertacao
     \@unifei@monografiatrue
