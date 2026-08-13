@@ -1,6 +1,13 @@
 ## 0. Ao arquivar
 
-- [ ] 0.1 Conferir que o sync aplicou os três `RENAMED` de `approval-sheet` como renome, e não como remoção mais adição — é o primeiro delta `MODIFIED`/`RENAMED` deste repositório, então esse caminho do fluxo de sync nunca rodou aqui. Depois do sync, `approval-sheet` fica com três requisitos em português e dois em inglês; a mistura é esperada e só some na migração geral (ver design.md, "Idioma dos artefatos").
+- [x] 0.1 Conferir que o sync aplicou os três `RENAMED` de `approval-sheet` como renome, e não como remoção mais adição — é o primeiro delta `MODIFIED`/`RENAMED` deste repositório, então esse caminho do fluxo de sync nunca rodou aqui. Depois do sync, `approval-sheet` fica com três requisitos em português e dois em inglês; a mistura é esperada e só some na migração geral (ver design.md, "Idioma dos artefatos").
+
+  **Resultado.** Sem CLI `openspec` nesta máquina, o sync foi feito à mão. Os três renomes casaram na posição de cada requisito original (1, 2 e 5), e `approval-sheet` terminou com os cinco requisitos previstos — três em português, dois em inglês — sem nenhum órfão sob nome antigo. Dois cenários do delta não restatavam cenários existentes, e cada um teve um destino:
+
+  - `Multiple authors` foi mantido, traduzido para o idioma do requisito que passou a hospedá-lo. Nada nesta change removeu o comportamento — a folha ainda imprime `\@author` inteiro —, então descartá-lo perderia cobertura de algo que continua verdadeiro.
+  - `Command not invoked` foi descartado por substituição, não por omissão: esta change moveu o controle da emissão da invocação do autor para o tipo do documento, e o requisito novo já governa quando a folha sai. Mantê-lo deixaria duas regras concorrentes para a mesma decisão.
+
+  O `## Purpose` de `approval-sheet` também foi atualizado: descrevia seleção por parâmetro e omitia TCC1 e tese. Ficou em inglês de propósito, junto dos dois requisitos que aguardam a migração.
 
 ## 1. Seleção do tipo por opção de pacote
 

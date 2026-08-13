@@ -1,0 +1,7 @@
+schema: spec-driven
+created: 2026-08-13
+goal: "Transformar o texto de exemplo no manual do modelo, assumidamente, e
+  acompanhá-lo de seis esqueletos — um por tipo de documento — que compilam sem
+  edição e servem de ponto de partida limpo. O manual passa a documentar tudo o
+  que o pacote oferece ao autor, incluindo o que duas changes entregaram sem
+  documentar; o README introduz e direciona."

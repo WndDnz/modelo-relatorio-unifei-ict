@@ -2,55 +2,62 @@
 
 ## Purpose
 
-Provides the folha de aprovação required by ABNT NBR 14724:2024 §4.2.1.3 — a single command whose layout is selected by work type, covering the range of documents this template serves: course reports, internship reports, undergraduate final projects and master's dissertations.
+Provides the folha de aprovação required by ABNT NBR 14724:2024 §4.2.1.3 — a single command whose form derives from the document type declared when the package is loaded, covering the documents this template serves: course reports, internship reports, TCC1 research projects, TCC2 monographs, master's dissertations and doctoral theses. The sheet records who approves the work and when; signatures live in the Ata de Defesa, not on the sheet.
 
 ## Requirements
 
-### Requirement: A single command renders the approval sheet, selected by work type
-The template SHALL provide one command that emits the folha de aprovação, taking the work type as a parameter and defaulting to the course-report type when none is given.
+### Requirement: A folha de aprovação é emitida conforme o tipo do documento
+A folha de aprovação SHALL derivar sua forma do tipo declarado no carregamento do pacote, sem receber o tipo como parâmetro próprio, e SHALL não ser emitida quando o tipo do documento admite ausência de banca e nenhuma foi declarada.
 
-#### Scenario: Default type
+#### Scenario: Forma derivada do tipo
 
-- **WHEN** an author invokes the approval-sheet command with no type argument
-- **THEN** the course-report layout is rendered, since that is the most common use of this template
+- **WHEN** o autor invoca a folha de aprovação num documento cujo tipo já foi declarado
+- **THEN** a folha correspondente àquele tipo é emitida, sem que o autor repita a informação
 
-#### Scenario: Explicit type
+#### Scenario: TCC1 sem banca
 
-- **WHEN** an author invokes the command naming one of the supported types — course report, internship report, undergraduate final project, master's dissertation
-- **THEN** the layout for that type is rendered, with the fields and signature blocks that type requires
+- **WHEN** o tipo é TCC1 e nenhuma banca foi declarada
+- **THEN** nenhuma folha de aprovação é emitida e nenhuma página em branco fica em seu lugar — no TCC1 a defesa é facultativa, e sem ela o texto é avaliado individualmente, com a nota informada diretamente ao orientador
 
-#### Scenario: Unknown type
+#### Scenario: TCC1 com banca
 
-- **WHEN** an author names a type the template does not support
-- **THEN** the build fails with a message naming the command and listing the supported types, rather than silently rendering the default
+- **WHEN** o tipo é TCC1 e uma banca foi declarada
+- **THEN** a folha é emitida, ainda que a NBR 15287 não preveja o elemento — trata-se da adaptação institucional registrada como D3 em design.md
 
-#### Scenario: Command not invoked
+#### Scenario: Demais tipos
 
-- **WHEN** a document does not invoke the command at all
-- **THEN** no approval sheet is emitted and the document compiles exactly as before this capability existed
+- **WHEN** o tipo é relatório genérico, relatório de estágio, TCC2, dissertação ou tese
+- **THEN** a folha é sempre emitida; nesses tipos a banca ou os signatários não são facultativos
 
-### Requirement: The sheet carries the content the norm requires
-The rendered sheet SHALL present the author's name, the work's title and its subtitle when one exists, the natureza, the approval date, and for each approving party their name, titulação, institution and a signature rule — per §4.2.1.3.
+#### Scenario: Tipo desconhecido
 
-#### Scenario: Content drawn from existing metadata
+- **WHEN** o documento declara um tipo que o modelo não admite
+- **THEN** a falha ocorre no carregamento do pacote, nomeando os tipos aceitos, e não no ponto em que a folha seria emitida
 
-- **WHEN** the document has already declared title, subtitle, author and supervisor for the cover and title page
-- **THEN** the approval sheet reuses those declarations rather than requiring them to be restated
+### Requirement: A folha registra a aprovação, sem espaço para assinatura
+A folha SHALL apresentar o nome do autor, o título e o subtítulo quando houver, a natureza, a data de aprovação e, para cada componente, seu nome, titulação e instituição. Ela SHALL NOT apresentar linhas de assinatura.
 
-#### Scenario: Multiple authors
+A NBR 14724 §4.2.1.3 determina que as assinaturas dos componentes da banca sejam colocadas na folha após a aprovação. Este modelo se afasta disso deliberadamente: a assinatura passou a ser registrada apenas na Ata de Defesa, prática consolidada nas universidades desde que as defesas passaram a ser inteiramente digitais, e verificada contra as teses recentes publicadas no repositório institucional da Unifei, nenhuma das quais traz assinaturas na folha. Ver D1 em design.md.
 
-- **WHEN** the document declares more than one author
-- **THEN** all authors appear on the approval sheet, consistent with how the cover and title page already present them
+#### Scenario: Composição sem linha de assinatura
 
-#### Scenario: Examining board
+- **WHEN** a folha é renderizada com componentes declarados
+- **THEN** cada componente aparece com nome, titulação e instituição, e nenhuma linha, traço ou espaço reservado para assinatura é desenhado
 
-- **WHEN** the work type is one that is defended before a board and the author has declared its members
-- **THEN** each member appears with a signature rule, their name, their titulação and their institution
+#### Scenario: Data de aprovação
 
-#### Scenario: Board members not yet known
+- **WHEN** a data de aprovação foi declarada
+- **THEN** ela aparece na folha; sem declaração, a linha não aparece, em vez de deixar um campo vazio
 
-- **WHEN** the author has not declared board members for a type that expects them
-- **THEN** the sheet still renders with the correct number of blank signature blocks, since §4.2.1.3 requires the date and signatures to be filled in after approval — a sheet printed for signing is the normal case, not an error
+#### Scenario: Conteúdo herdado da capa
+
+- **WHEN** o documento já declarou título, subtítulo, autor e orientador para a capa e a folha de rosto
+- **THEN** a folha de aprovação reaproveita essas declarações, sem exigir que sejam repetidas
+
+#### Scenario: Mais de um autor
+
+- **WHEN** o documento declara mais de um autor
+- **THEN** todos aparecem na folha de aprovação, do mesmo modo que a capa e a folha de rosto já os apresentam
 
 ### Requirement: A subtitle is subordinated to the title by a colon
 When the work has a subtitle, the sheet SHALL present it preceded by a colon, marking its subordination to the title, per §4.1.1 alínea d) — "subtítulo: se houver, deve ser precedido de dois-pontos, evidenciando a sua subordinação ao título". The colon SHALL be supplied by the template, not typed by the author.
@@ -95,25 +102,40 @@ The sheet SHALL be rendered without a title and without a numeric indicative per
 - **WHEN** the sheet is rendered in a document that also has a title page
 - **THEN** it appears immediately after the title page and before any dedication, acknowledgements or abstract, per §4.2.1.3 and the pre-textual order of §4.2.1
 
-### Requirement: Layout varies by work type
-Each supported work type SHALL determine which fields appear and who signs, so that a type is a meaningful selection rather than a cosmetic label.
+### Requirement: A composição da folha corresponde ao tipo do documento
+Cada tipo SHALL determinar quem consta da folha, de modo que o tipo seja uma seleção com consequência e não um rótulo.
 
-#### Scenario: Course report
+#### Scenario: Relatório genérico
 
-- **WHEN** the course-report type is selected
-- **THEN** the sheet presents the discipline, the responsible professor and a signature rule, and the natureza names approval in the discipline as its objetivo — the case §4.2.1.1.1(e) contemplates
+- **WHEN** o tipo é relatório genérico
+- **THEN** constam o professor ou os professores responsáveis pela disciplina — o modelo aceita mais de um, para as disciplinas compartilhadas — e a natureza declara a aprovação na disciplina como objetivo, caso que o §4.2.1.1.1(e) contempla
 
-#### Scenario: Internship report
+#### Scenario: Relatório de estágio
 
-- **WHEN** the internship-report type is selected
-- **THEN** the sheet additionally accommodates the company supervisor alongside the academic supervisor
+- **WHEN** o tipo é relatório de estágio
+- **THEN** constam três partes: o aluno estagiário, o professor orientador e o supervisor de campo
 
-#### Scenario: Final project and dissertation
+#### Scenario: Monografia e projeto com banca
 
-- **WHEN** the undergraduate-final-project or master's-dissertation type is selected
-- **THEN** the sheet presents an examining board with one signature block per member, each with name, titulação and institution
+- **WHEN** o tipo é TCC1 com banca, TCC2, dissertação ou tese
+- **THEN** consta a banca examinadora, composta pelo orientador e pelos membros externos declarados
 
-#### Scenario: Arrangement of board members is not fixed by the norm
+#### Scenario: O orientador não é redeclarado
 
-- **WHEN** a layout arranges board members on the page
-- **THEN** either a stacked or a side-by-side arrangement satisfies this capability, since the norm prescribes the information but not its disposition
+- **WHEN** o documento declara o orientador para a capa e declara os membros externos da banca
+- **THEN** o orientador aparece na composição da banca a partir daquela declaração, sem que o autor precise declará-lo uma segunda vez como membro
+
+#### Scenario: Banca de tamanho variável
+
+- **WHEN** o autor declara três, cinco ou sete membros
+- **THEN** todos aparecem, na ordem declarada — a banca do ICT é orientador mais no mínimo dois membros externos, sem número fixo, e o mesmo vale na pós-graduação
+
+#### Scenario: Componentes ainda não conhecidos
+
+- **WHEN** o autor ainda não conhece os nomes e declara componentes em branco
+- **THEN** a folha é emitida com os blocos correspondentes vazios, sem erro nem aviso, já que a folha é preparada antes da defesa
+
+#### Scenario: Arranjo dos membros não é fixado pela norma
+
+- **WHEN** um layout dispõe os membros na página
+- **THEN** tanto o empilhamento quanto a disposição lado a lado satisfazem esta capability, já que a norma prescreve a informação e não a sua disposição
