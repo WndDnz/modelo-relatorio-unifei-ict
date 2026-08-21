@@ -1,11 +1,19 @@
 ## 0. Antes de começar
 
-- [ ] 0.1 Confirmar que `add-type-skeletons` já foi aplicada. O manual referencia os seis arquivos de partida como exemplo da organização em arquivo único, e a tarefa 5.4 remete a eles quem quiser ver as capas dos outros tipos. Sem eles, essas passagens ficam sem referente.
+- [x] 0.1 Confirmar que `add-type-skeletons` já foi aplicada. O manual referencia os seis arquivos de partida como exemplo da organização em arquivo único, e a tarefa 5.4 remete a eles quem quiser ver as capas dos outros tipos. Sem eles, essas passagens ficam sem referente.
+
+  **Resultado.** Aplicada e arquivada em 2026-08-21, em `changes/archive/2026-08-21-add-type-skeletons/`. Os seis arquivos estão versionados e compilam; `openspec/specs/usage-guide/spec.md` existe, com o requisito dos arquivos de partida.
 - [ ] 0.2 Levantar o inventário do que o pacote oferece ao autor, lendo `UnifeiICTReport.sty` — todo comando, ambiente, opção e metadado público, ignorando os prefixados `\Unifei@` e `\@`. Esse inventário é o critério de completude do manual e a evidência da tarefa 6.1. Sem ele, "documentar tudo" não é verificável.
+
+  CRÍTICO: **expandir as chamadas de `\novotipoilustracao` antes de contar.** `quadroabnt`, `\refquadro`, `\refquadrocomp`, `\listofquadros` e os quatro equivalentes de `grafico` não existem como definição no `.sty` — são montados por `\csname` dentro do gerador. Um inventário lido das definições não vê nenhum dos oito, e dois deles, `\refquadrocomp` e `\refgraficocomp`, não são citados hoje em parte alguma do repositório.
+
+  **Escrever o critério de fronteira junto do inventário, e não deixá-lo implícito.** "Ignorar os prefixados `\Unifei@` e `\@`" não separa o que se pretende: 65 comandos passam nesse filtro, e cerca de quinze não são do pacote para documentar — `\hrule`, `\HRule`, `\headrulewidth`, `\baselinestretch`, `\csname`, `\conditionalvspace`, `\theanexosec`, `\theapendicesec`, `\glossarysection` e sete `\...autorefname`, que são configuração do `hyperref`. Sem o critério escrito, a tarefa 6.1 vira julgamento não registrado.
 
 ## 1. Reorganização
 
 - [ ] 1.1 Renomear `modelo-relatorio.tex` para `manual.tex`, com `git mv` para preservar histórico. O nome é o que separa o documento que se lê dos seis que se copiam (design.md, decisão 1).
+
+- [ ] 1.1a Tirar do preâmbulo do manual a instrução que é de arquivo de partida. Hoje `modelo-relatorio.tex:5–19` traz a tabela dos seis tipos e a linha "Troque o valor abaixo para mudar de tipo" — instrução de quem vai copiar, que os seis esqueletos já dão cada um no próprio cabeçalho, e que no manual contradiz a tarefa 2.2. No lugar, um cabeçalho que diga o que o arquivo é e que apontar para os arquivos de partida é papel do capítulo 1. O `tipo=generico` já está declarado (`:19`) e permanece — é a decisão 1 do design, e não precisa de mudança.
 - [ ] 1.2 Criar a árvore dos sete capítulos em `Capitulos/`, substituindo `cap1`/`cap2`/`cap3`. Manter a convenção de uma pasta por capítulo — é ela que o manual apresenta como organização recomendada, então precisa continuar sendo o que o manual de fato faz.
 - [ ] 1.3 Mover o conteúdo de ilustrações, tabelas e equações (`cap2` §2.5–2.6) para o capítulo 5 **preservando-o**. É a parte boa do texto atual; mover não é pretexto para refazer. Conferir por diff que só mudaram cabeçalhos de seção e referências cruzadas.
 - [ ] 1.4 Distribuir o restante do `cap2` atual: ambiente e organização de arquivos → capítulo 2; divisões, rótulos, `\refcomp`, citações → capítulo 4; abreviaturas, siglas e símbolos → capítulo 6.
@@ -23,6 +31,8 @@
 
 - [ ] 3.1 Documentar a ordem dos elementos pré-textuais e a divisão `\frontmatter` / `\mainmatter` / `\backmatter`.
 - [ ] 3.2 Documentar capa e folha de rosto: título, subtítulo (escrito **sem** os dois-pontos, que o modelo insere), múltiplos autores, múltiplos professores em `\supervisor`, coorientador, e o rótulo do papel que deriva do tipo.
+
+  Incluir os seis metadados de instituição — `\institution`, `\faculty`, `\course`, `\location`, `\state` e `\stateacronym` (`UnifeiICTReport.sty:790–801`) —, hoje **não documentados em lugar algum** e não declarados por nenhum dos seis arquivos de partida. CRÍTICO: todos têm padrão embutido, e os do campus estão certos (Unifei, ICT, Itabira, MG); `\course` está fixo em "Engenharia de Computação", que é um curso entre vários do ICT. O padrão certo é o que esconde o defeito — a capa sai plausível para qualquer leitor e correta só para parte deles. Verificado por `pdftotext` na página 1 de `build/modelo-tese.pdf`, que imprime "ITABIRA 2026" sem que o arquivo declare coisa alguma.
 - [ ] 3.3 Documentar a folha de aprovação: `\folhaaprovacao` sem argumento, a composição por tipo, `\bancamembro` só para os membros externos (o orientador já entra por `\supervisor`), `\aprovacaodata`, `\notaaprovacao`, e o fato de ela não ser emitida no `tcc1` sem banca.
 - [ ] 3.4 Declarar, ao documentar a folha, que a **ausência de linhas de assinatura é deliberada** — desvio D1, registrado em `add-document-types`. É o desvio mais visível ao leitor, e sem a explicação ele parece defeito e alguém "conserta".
 - [ ] 3.5 Documentar `\areaconcentracao` e `\linhapesquisa`, com a obrigatoriedade que varia por tipo e a mensagem de erro que o modelo emite quando a área falta em `dissertacao` ou `tese`.
@@ -44,7 +54,7 @@
 
 ## 6. Verificação
 
-- [ ] 6.1 Conferir o inventário de 0.2 contra o manual: todo comando público documentado, com forma de chamada, efeito e obrigatoriedade por tipo quando ela variar. Listar no fechamento desta tarefa o que ficou de fora e por quê — "tudo documentado" sem a lista não é verificação.
+- [ ] 6.1 Conferir o inventário de 0.2 contra o manual: todo comando público documentado, com forma de chamada, efeito e obrigatoriedade por tipo quando ela variar. Listar no fechamento desta tarefa o que ficou de fora e por quê, **citando o critério de fronteira escrito em 0.2** em vez de justificar caso a caso — "tudo documentado" sem a lista não é verificação, e a lista sem o critério é quinze justificativas soltas.
 - [ ] 6.2 Conferir que nenhuma passagem atribui exigência à norma errada, e que toda norma citada no corpo tem entrada em `referencias.bib`.
 - [ ] 6.3 Compilar `manual.tex` do zero e ler o PDF inteiro rasterizado. É o artefato principal desta change e o único jeito de saber que os sete capítulos se leem como um documento, e não como três textos costurados.
 - [ ] 6.4 Conferir o sumário do manual contra a estrutura prevista em design.md: a estrutura do manual é o exemplo da organização em pastas, então ela precisa estar defensável como estrutura de trabalho, e não só como índice.

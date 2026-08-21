@@ -2,7 +2,7 @@
 
 ### Requirement: O manual documenta todo comando que o pacote oferece ao autor
 
-Todo comando, ambiente, opção de pacote e metadado que `UnifeiICTReport.sty` expõe ao autor de um documento SHALL estar documentado no manual, com a forma de chamada, o efeito e a condição de obrigatoriedade quando ela variar por tipo. Comandos internos do pacote (prefixados `\Unifei@` ou `\@`) não são oferecidos ao autor e não entram.
+Todo comando, ambiente, opção de pacote e metadado que `UnifeiICTReport.sty` expõe ao autor de um documento SHALL estar documentado no manual, com a forma de chamada, o efeito e a condição de obrigatoriedade quando ela variar por tipo. O que entra é o que o pacote oferece ao autor, e o prefixo não basta para decidir: além dos internos (`\Unifei@`, `\@`), ficam de fora os comandos que o pacote apenas redefine para si — parâmetros de layout herdados do LaTeX ou de outro pacote, e nomes de referência cruzada do `hyperref`. Entram os nomes gerados em tempo de execução por `\novotipoilustracao`, que não existem como definição no `.sty` e são igualmente do autor. A change que documentar SHALL registrar o critério aplicado, para que a fronteira seja verificável.
 
 Uma change que acrescente, remova ou altere a forma de chamada de qualquer um deles SHALL atualizar o manual no mesmo escopo — a documentação não é trabalho posterior.
 

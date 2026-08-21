@@ -10,7 +10,9 @@ O modelo passou a atender seis tipos de documento, regidos por duas normas difer
 
 Mantê-lo chamado `modelo-relatorio.tex` ao lado de seis `modelo-*.tex` faria dele o sétimo arquivo de partida aos olhos de quem chega — e é o único da raiz que ninguém deve copiar. O nome carrega a distinção que o README teria de explicar.
 
-`manual.tex` compila com `tipo=generico`: o manual precisa de um tipo, e o genérico é o que menos promete sobre si mesmo.
+`manual.tex` compila com `tipo=generico`: o manual precisa de um tipo, e o genérico é o que menos promete sobre si mesmo. Isso já é verdade hoje — `modelo-relatorio.tex:19` declara a opção —, então a decisão não pede mudança alguma no que o arquivo carrega.
+
+O nome, porém, não é a única coisa a mudar. O preâmbulo traz a tabela dos seis tipos e a linha "Troque o valor abaixo para mudar de tipo", que é instrução de arquivo de partida — os seis esqueletos já a dão, cada um no próprio cabeçalho, e o de `modelo-tese.tex` já remete a `manual.pdf`. Mantida ali, ela convida exatamente a cópia que o nome novo existe para desestimular. Sai a instrução em volta da opção; a opção fica.
 
 ### 2. O manual descreve as seis formas; não as desenha
 
