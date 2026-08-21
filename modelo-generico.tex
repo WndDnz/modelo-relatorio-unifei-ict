@@ -1,0 +1,145 @@
+% =====================================================================
+%  RELATÓRIO DE DISCIPLINA — arquivo de partida
+%  Modelo ABNT do ICT/Unifei — segue a NBR 14724:2024 no que couber.
+%
+%  Copie este arquivo, renomeie e escreva seu trabalho aqui mesmo: todas
+%  as divisões do texto ficam neste único arquivo. Se preferir dividir o
+%  texto em vários arquivos, veja o manual (manual.pdf) — ele próprio é
+%  organizado assim e mostra como fazer.
+%
+%  Compile com:  latexmk modelo-generico.tex
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{book}
+
+% O tipo governa o modelo inteiro: natureza, folha de aprovação, resumos e
+% metadados exigidos. Para outro tipo de trabalho, copie o arquivo de
+% partida correspondente (modelo-tcc2.tex, modelo-dissertacao.tex, ...)
+% em vez de trocar o valor abaixo.
+\usepackage[tipo=generico]{UnifeiICTReport}
+
+\usepackage{csquotes}
+\usepackage{fontspec}
+
+% --- Referências bibliográficas --------------------------------------
+% Para citar trabalhos e produzir a lista de referências, crie o SEU
+% arquivo .bib (por exemplo, referencias.bib, nesta mesma pasta) e
+% descomente as duas linhas abaixo e o \printbibliography lá embaixo.
+%
+% ATENÇÃO: não aponte para o referencias.bib deste repositório. Ele é
+% fictício — traz referências inventadas que servem apenas aos exemplos
+% do manual. Um trabalho entregue com ele tem bibliografia falsa, e isso
+% não salta aos olhos ao folhear o PDF.
+%
+%\usepackage[style=abnt]{biblatex}
+%\bibliography{referencias.bib}
+
+% --- Siglas e símbolos ------------------------------------------------
+% Declare aqui as siglas do seu trabalho. Depois de declarar ao menos
+% uma, descomente também o \printglossary correspondente lá embaixo.
+% Sem nenhuma declaração, a lista sairia como uma página de título
+% seguida de nada.
+%
+%\makeglossaries
+%\newacronym{ict}{ICT}{Instituto de Ciências e Tecnologia}
+
+%----------------------------------------------------------------------
+% Dados da capa e da folha de rosto
+%----------------------------------------------------------------------
+
+\title{Título do seu relatório}
+
+% Escreva só o texto do subtítulo, sem os dois-pontos: a NBR 14724:2024
+% §4.1.1(d) exige que ele venha "precedido de dois-pontos", e o modelo
+% insere essa pontuação sozinho. Comente a linha se não houver subtítulo.
+%\subtitle{Subtítulo, se houver}
+
+% Mais de um autor: separe os nomes com \\
+\author{Seu Nome Completo}
+
+% Professor responsável pela disciplina. Disciplina compartilhada tem mais
+% de um: separe com \\ e o modelo emite um bloco para cada.
+\supervisor{Prof. Dr. Nome do Professor}
+
+% Disciplina para a qual o relatório está sendo entregue.
+\subject{Nome da Disciplina}
+
+% Opcionais na folha de aprovação. Sem elas, a folha sai sem essas linhas,
+% em vez de com campos em branco.
+%\aprovacaodata{15 de dezembro de 2026}
+%\notaaprovacao{9,5}
+
+%----------------------------------------------------------------------
+% Resumo
+%----------------------------------------------------------------------
+
+\abstract{%
+    Escreva aqui o resumo do seu trabalho: objetivos, metodologia,
+    resultados e conclusões, em um único parágrafo.
+}
+\keywords{primeira palavra-chave; segunda; terceira.}
+
+% Resumo em língua estrangeira. Opcional neste tipo de trabalho;
+% descomente as duas linhas se quiser incluí-lo.
+%\abstractseclang{%
+%    Write the abstract in the foreign language here.
+%}
+%\keywordsseclang{first keyword; second; third.}
+
+%======================================================================
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\folhaaprovacao
+
+\makeabstracts
+
+% --- Listas -----------------------------------------------------------
+% Descomente cada lista DEPOIS de o trabalho ter o que listar. Chamada
+% sem conteúdo produz uma página com o título e nada abaixo.
+%\listoffigures
+%\listoftables
+%\listofquadros
+%\listofgraficos
+%\printglossary[type=\acronymtype,title={\acronymlistname}]
+%\printglossary[type=symbols,title={\symbolslistname}]
+
+\tableofcontents
+
+\mainmatter
+
+% Atenção ao vocabulário: você digita \chapter, e o documento imprime
+% "Seção". A NBR 14724:2024 §4.2.2 não admite dividir o trabalho em
+% capítulos, então o modelo rebaixa cada nível um degrau:
+%   \chapter -> Seção          \subsection    -> Subsubseção
+%   \section -> Subseção       \subsubsection -> Parágrafo
+% O manual explica isso em detalhe.
+
+\chapter{Introdução}\label{cap:introducao}
+
+Apresente aqui o tema, a motivação e os objetivos do relatório.
+
+\chapter{Desenvolvimento}\label{cap:desenvolvimento}
+
+Desenvolva aqui o conteúdo do trabalho.
+
+\chapter{Conclusão}\label{cap:conclusao}
+
+Retome os objetivos e apresente os resultados alcançados.
+
+% Descomente junto com o bloco de bibliografia do preâmbulo.
+%\printbibliography
+
+\backmatter
+
+% Apêndices são de sua autoria; anexos são documentos de terceiros.
+% Descomente o grupo que for usar (veja o manual para os detalhes).
+%\apendices
+%\apendice{ape:rotulo}{Título do apêndice}
+%
+%\anexos
+%\anexo{ane:rotulo}{Título do anexo}
+
+\end{document}

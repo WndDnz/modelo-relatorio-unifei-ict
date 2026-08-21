@@ -1,0 +1,178 @@
+% =====================================================================
+%  TCC1 — PROJETO DE PESQUISA — arquivo de partida
+%  Modelo ABNT do ICT/Unifei — segue a NBR 15287:2025, e NÃO a 14724.
+%
+%  Copie este arquivo, renomeie e escreva seu trabalho aqui mesmo: todas
+%  as divisões do texto ficam neste único arquivo. Se preferir dividir o
+%  texto em vários arquivos, veja o manual (manual.pdf) — ele próprio é
+%  organizado assim e mostra como fazer.
+%
+%  Compile com:  latexmk modelo-tcc1.tex
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{book}
+
+% O tipo governa o modelo inteiro: natureza, folha de aprovação, resumos e
+% metadados exigidos. O TCC2 é outro documento, regido por outra norma —
+% ao concluir o trabalho, comece de modelo-tcc2.tex em vez de trocar o
+% valor abaixo.
+\usepackage[tipo=tcc1]{UnifeiICTReport}
+
+\usepackage{csquotes}
+\usepackage{fontspec}
+
+% --- Referências bibliográficas --------------------------------------
+% Para citar trabalhos e produzir a lista de referências, crie o SEU
+% arquivo .bib (por exemplo, referencias.bib, nesta mesma pasta) e
+% descomente as duas linhas abaixo e o \printbibliography lá embaixo.
+%
+% ATENÇÃO: não aponte para o referencias.bib deste repositório. Ele é
+% fictício — traz referências inventadas que servem apenas aos exemplos
+% do manual. Um trabalho entregue com ele tem bibliografia falsa, e isso
+% não salta aos olhos ao folhear o PDF.
+%
+%\usepackage[style=abnt]{biblatex}
+%\bibliography{referencias.bib}
+
+% --- Siglas e símbolos ------------------------------------------------
+% Declare aqui as siglas do seu trabalho. Depois de declarar ao menos
+% uma, descomente também o \printglossary correspondente lá embaixo.
+% Sem nenhuma declaração, a lista sairia como uma página de título
+% seguida de nada.
+%
+%\makeglossaries
+%\newacronym{ict}{ICT}{Instituto de Ciências e Tecnologia}
+
+%----------------------------------------------------------------------
+% Dados da capa e da folha de rosto
+%----------------------------------------------------------------------
+
+\title{Título do seu projeto de pesquisa}
+
+% Escreva só o texto do subtítulo, sem os dois-pontos: o modelo insere
+% essa pontuação sozinho. Comente a linha se não houver subtítulo.
+%\subtitle{Subtítulo, se houver}
+
+\author{Seu Nome Completo}
+
+\supervisor{Prof. Dr. Nome do Orientador}
+
+%\cosupervisor{Prof. Dra. Nome da Coorientadora}
+
+% Curso de graduação. Entra na natureza do trabalho.
+\subject{Nome do seu Curso}
+
+% --- Banca examinadora ------------------------------------------------
+% No TCC1 a defesa é FACULTATIVA. Sem nenhum \bancamembro declarado, a
+% folha de aprovação simplesmente não é emitida — nenhuma página em
+% branco, nenhuma entrada no sumário.
+%
+% Se houver defesa, declare apenas os membros EXTERNOS: o orientador já
+% entra pela linha \supervisor acima e não deve ser repetido aqui.
+%\bancamembro{Prof. Dr. Nome do Membro}{Doutor em Área}{Unifei}
+%\bancamembro{Prof. Dra. Nome da Membra}{Doutora em Área}{Unifei}
+
+%\aprovacaodata{15 de dezembro de 2026}
+%\notaaprovacao{9,5}
+
+%----------------------------------------------------------------------
+% Resumo
+%----------------------------------------------------------------------
+
+\abstract{%
+    Escreva aqui o resumo do projeto: o problema, os objetivos, a
+    metodologia prevista e os resultados esperados, em um único parágrafo.
+}
+\keywords{primeira palavra-chave; segunda; terceira.}
+
+% Resumo em língua estrangeira. Opcional aqui — a NBR 15287:2025 não
+% prevê resumo entre os elementos do projeto de pesquisa, nem em língua
+% vernácula nem estrangeira. Descomente se quiser incluí-lo.
+%\abstractseclang{%
+%    Write the abstract in the foreign language here.
+%}
+%\keywordsseclang{first keyword; second; third.}
+
+%======================================================================
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+% Só é emitida se houver \bancamembro declarado acima.
+\folhaaprovacao
+
+\makeabstracts
+
+% --- Listas -----------------------------------------------------------
+% Descomente cada lista DEPOIS de o trabalho ter o que listar. Chamada
+% sem conteúdo produz uma página com o título e nada abaixo.
+%\listoffigures
+%\listoftables
+%\listofquadros
+%\listofgraficos
+%\printglossary[type=\acronymtype,title={\acronymlistname}]
+%\printglossary[type=symbols,title={\symbolslistname}]
+
+\tableofcontents
+
+\mainmatter
+
+% Atenção ao vocabulário: você digita \chapter, e o documento imprime
+% "Seção". As divisões do trabalho não se chamam capítulos, então o
+% modelo rebaixa cada nível um degrau:
+%   \chapter -> Seção          \subsection    -> Subsubseção
+%   \section -> Subseção       \subsubsection -> Parágrafo
+% O manual explica isso em detalhe.
+
+% A NBR 15287:2025 §4.2.2 prescreve o que a parte textual do projeto deve
+% conter. As divisões abaixo cobrem esses elementos; reorganize-as como
+% preferir, desde que todos apareçam.
+
+\chapter{Introdução}\label{cap:introducao}
+
+Apresente o tema, contextualize-o e delimite o problema de pesquisa.
+
+\section{Problema}\label{sec:problema}
+
+Enuncie com precisão a pergunta que a pesquisa pretende responder.
+
+\section{Hipóteses}\label{sec:hipoteses}
+
+Formule as hipóteses, quando couberem ao tipo de pesquisa.
+
+\section{Objetivos}\label{sec:objetivos}
+
+Apresente o objetivo geral e, em seguida, os objetivos específicos.
+
+\section{Justificativa}\label{sec:justificativa}
+
+Explique por que o problema merece ser investigado.
+
+\chapter{Referencial teórico}\label{cap:referencial}
+
+Apresente os trabalhos e conceitos que fundamentam a pesquisa.
+
+\chapter{Metodologia}\label{cap:metodologia}
+
+Descreva como a pesquisa será conduzida.
+
+\chapter{Recursos e cronograma}\label{cap:recursos}
+
+Relacione os recursos necessários e distribua as etapas no tempo
+disponível.
+
+% Descomente junto com o bloco de bibliografia do preâmbulo.
+%\printbibliography
+
+\backmatter
+
+% Apêndices são de sua autoria; anexos são documentos de terceiros.
+% Descomente o grupo que for usar (veja o manual para os detalhes).
+%\apendices
+%\apendice{ape:rotulo}{Título do apêndice}
+%
+%\anexos
+%\anexo{ane:rotulo}{Título do anexo}
+
+\end{document}

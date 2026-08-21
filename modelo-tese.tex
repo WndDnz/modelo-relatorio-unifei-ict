@@ -1,0 +1,166 @@
+% =====================================================================
+%  TESE DE DOUTORADO — arquivo de partida
+%  Modelo ABNT do ICT/Unifei — segue a NBR 14724:2024.
+%
+%  Copie este arquivo, renomeie e escreva seu trabalho aqui mesmo: todas
+%  as divisões do texto ficam neste único arquivo. Se preferir dividir o
+%  texto em vários arquivos, veja o manual (manual.pdf) — ele próprio é
+%  organizado assim e mostra como fazer.
+%
+%  Compile com:  latexmk modelo-tese.tex
+% =====================================================================
+\documentclass[12pt,a4paper,oneside]{book}
+
+% O tipo governa o modelo inteiro: natureza, folha de aprovação, resumos e
+% metadados exigidos. Dissertação e tese produzem o mesmo layout, mas
+% diferem no grau pretendido — para mestrado, use modelo-dissertacao.tex.
+\usepackage[tipo=tese]{UnifeiICTReport}
+
+\usepackage{csquotes}
+\usepackage{fontspec}
+
+% --- Referências bibliográficas --------------------------------------
+% Para citar trabalhos e produzir a lista de referências, crie o SEU
+% arquivo .bib (por exemplo, referencias.bib, nesta mesma pasta) e
+% descomente as duas linhas abaixo e o \printbibliography lá embaixo.
+%
+% ATENÇÃO: não aponte para o referencias.bib deste repositório. Ele é
+% fictício — traz referências inventadas que servem apenas aos exemplos
+% do manual. Um trabalho entregue com ele tem bibliografia falsa, e isso
+% não salta aos olhos ao folhear o PDF.
+%
+%\usepackage[style=abnt]{biblatex}
+%\bibliography{referencias.bib}
+
+% --- Siglas e símbolos ------------------------------------------------
+% Declare aqui as siglas do seu trabalho. Depois de declarar ao menos
+% uma, descomente também o \printglossary correspondente lá embaixo.
+% Sem nenhuma declaração, a lista sairia como uma página de título
+% seguida de nada.
+%
+%\makeglossaries
+%\newacronym{ict}{ICT}{Instituto de Ciências e Tecnologia}
+
+%----------------------------------------------------------------------
+% Dados da capa e da folha de rosto
+%----------------------------------------------------------------------
+
+\title{Título da sua tese}
+
+% Escreva só o texto do subtítulo, sem os dois-pontos: a NBR 14724:2024
+% §4.1.1(d) exige que ele venha "precedido de dois-pontos", e o modelo
+% insere essa pontuação sozinho. Comente a linha se não houver subtítulo.
+%\subtitle{Subtítulo, se houver}
+
+\author{Seu Nome Completo}
+
+\supervisor{Prof. Dr. Nome do Orientador}
+
+%\cosupervisor{Prof. Dra. Nome da Coorientadora}
+
+% Programa de pós-graduação. Entra na natureza do trabalho.
+\subject{Nome do Programa de Pós-Graduação}
+
+% OBRIGATÓRIA em dissertação e tese: a NBR 14724:2024 §4.2.1.1.1(e)
+% inclui a área de concentração na natureza do trabalho, e o modelo
+% interrompe a compilação se ela faltar.
+\areaconcentracao{Área de Concentração}
+
+%\linhapesquisa{Linha de Pesquisa}
+
+% --- Banca examinadora ------------------------------------------------
+% Declare apenas os membros EXTERNOS: o orientador já entra pela linha
+% \supervisor acima e não deve ser repetido aqui. Campos em branco ainda
+% produzem um bloco corretamente formatado, para a folha preparada antes
+% de os nomes serem conhecidos.
+\bancamembro{Prof. Dr. Nome do Membro}{Doutor em Área}{Unifei}
+\bancamembro{Prof. Dra. Nome da Membra}{Doutora em Área}{Instituição}
+
+%\aprovacaodata{15 de dezembro de 2026}
+
+%----------------------------------------------------------------------
+% Resumos
+%----------------------------------------------------------------------
+
+\abstract{%
+    Escreva aqui o resumo da sua tese: objetivos, metodologia,
+    resultados e conclusões, em um único parágrafo.
+}
+\keywords{primeira palavra-chave; segunda; terceira.}
+
+% OBRIGATÓRIO neste tipo de trabalho: a NBR 14724:2024 §4.2.1.8 torna o
+% resumo em língua estrangeira elemento obrigatório, e o modelo
+% interrompe a compilação se ele faltar.
+\abstractseclang{%
+    Write the abstract in the foreign language here.
+}
+\keywordsseclang{first keyword; second; third.}
+
+%======================================================================
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\folhaaprovacao
+
+\makeabstracts
+
+% --- Listas -----------------------------------------------------------
+% Descomente cada lista DEPOIS de o trabalho ter o que listar. Chamada
+% sem conteúdo produz uma página com o título e nada abaixo.
+%\listoffigures
+%\listoftables
+%\listofquadros
+%\listofgraficos
+%\printglossary[type=\acronymtype,title={\acronymlistname}]
+%\printglossary[type=symbols,title={\symbolslistname}]
+
+\tableofcontents
+
+\mainmatter
+
+% Atenção ao vocabulário: você digita \chapter, e o documento imprime
+% "Seção". A NBR 14724:2024 §4.2.2 não admite dividir o trabalho em
+% capítulos, então o modelo rebaixa cada nível um degrau:
+%   \chapter -> Seção          \subsection    -> Subsubseção
+%   \section -> Subseção       \subsubsection -> Parágrafo
+% O manual explica isso em detalhe.
+
+\chapter{Introdução}\label{cap:introducao}
+
+Contextualize o tema, delimite o problema, apresente os objetivos e
+descreva como o trabalho está organizado.
+
+\chapter{Referencial teórico}\label{cap:referencial}
+
+Apresente os conceitos e trabalhos que fundamentam a pesquisa.
+
+\chapter{Metodologia}\label{cap:metodologia}
+
+Descreva como a pesquisa foi conduzida.
+
+\chapter{Resultados e discussão}\label{cap:resultados}
+
+Apresente os resultados obtidos e discuta-os à luz do referencial.
+
+\chapter{Conclusão}\label{cap:conclusao}
+
+Retome os objetivos, destaque as contribuições e aponte trabalhos
+futuros.
+
+% Descomente junto com o bloco de bibliografia do preâmbulo.
+%\printbibliography
+
+\backmatter
+
+% Apêndices são de sua autoria; anexos são documentos de terceiros.
+% Descomente o grupo que for usar (veja o manual para os detalhes).
+%\apendices
+%\apendice{ape:rotulo}{Título do apêndice}
+%
+%\anexos
+%\anexo{ane:rotulo}{Título do anexo}
+
+\end{document}
