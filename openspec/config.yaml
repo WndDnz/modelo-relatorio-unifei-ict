@@ -65,10 +65,15 @@ context: |
   trecho longo. Ficam disponíveis para consulta local — a tentação aparece
   justamente quando se quer precisão normativa.
 
-  FERRAMENTAL: o CLI `openspec` NÃO está instalado nesta máquina. Os fluxos
-  /opsx:* rodam à mão contra a árvore openspec/.
+  FERRAMENTAL: o CLI `openspec` (1.9.0) está instalado e resolve este
+  repositório como root. Ele cobre status, validate e archive; não há comando
+  de apply. Ver operations, abaixo, para o que continua sendo trabalho de mão.
 
 # Regras por artefato.
+#
+# CUIDADO AO EDITAR: em item de lista, dois-pontos seguido de espaço faz o YAML
+# ler o item como mapa, e o CLI descarta o bloco de regras INTEIRO com um aviso
+# em stderr. Usar travessão ou ponto e vírgula no lugar. Aconteceu aqui.
 rules:
   proposal:
     - Nomear a norma — e o parágrafo, quando houver — que rege o comportamento proposto.
@@ -80,7 +85,7 @@ rules:
     - Registrar as alternativas descartadas junto da evidência que as descartou, e não apenas a escolhida.
   tasks:
     - Toda tarefa que altera a saída do documento carrega a própria verificação.
-    - A verificação lê a página compilada — rasterizada, ou via pdftotext. Nunca o log: neste projeto os defeitos característicos compilam limpo.
+    - A verificação lê a página compilada — rasterizada, ou via pdftotext —, nunca o log; neste projeto os defeitos característicos compilam limpo.
     - Ao concluir uma tarefa, registrar o que foi de fato verificado, não o que foi escrito.
     - Marcar como CRÍTICO o que quebra de forma distante da causa.
 
@@ -88,10 +93,12 @@ rules:
 operations:
   apply:
     guidance:
-      - Conduzir à mão, sem CLI, marcando - [ ] como - [x] em tasks.md com nota curta do que foi verificado.
+      - Marcar - [ ] como - [x] no tasks.md à mão, com nota curta do que foi verificado. O CLI não tem comando de apply; `openspec status --change <nome>` só relata o progresso.
       - Divergir do plano é permitido quando a investigação mostra que ele estava errado, mas a divergência vai escrita no resultado da tarefa, junto da razão.
   archive:
     guidance:
-      - Sincronizar os deltas para openspec/specs/ à mão antes de mover a change para openspec/changes/archive/AAAA-MM-DD-<nome>/.
+      - Arquivar com `openspec archive <change>`, que sincroniza os deltas para openspec/specs/ e move a change para openspec/changes/archive/AAAA-MM-DD-<nome>/. Verificado em cópia da árvore, com delta ADDED, texto e posição dos requisitos preservados.
+      - Capability nova nasce com um Purpose stub em inglês. Escrever o Purpose de verdade, em português, é trabalho de mão logo depois do archive — o CLI não o inventa.
+      - O archive não barra tarefa desmarcada; arquiva uma change 0/33 sem reclamar. O guarda é `openspec validate --archived`, comando à parte. As tarefas "ao arquivar" nunca chegam a [x], porque o tasks.md já está dentro do archive quando elas terminam.
       - Em delta RENAMED, conferir que o requisito renomeado ficou NA POSIÇÃO ORIGINAL. Renome aplicado como remoção mais adição é indistinguível no diff final e só se revela na ordem dos requisitos.
       - Cenário do delta que não restata um cenário existente é decisão, não formatação. Manter — traduzindo, se o requisito hospedeiro mudou de idioma — quando o comportamento continua verdadeiro; descartar apenas quando um requisito novo o substitui. Registrar o destino de cada um no tasks.md da change.
