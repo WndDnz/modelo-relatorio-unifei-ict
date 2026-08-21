@@ -55,7 +55,11 @@
 
 ## 4. Ao arquivar
 
-- [ ] 4.1 `usage-guide` é capability nova: o sync cria `openspec/specs/usage-guide/spec.md` a partir do delta `## ADDED`, convertendo o cabeçalho para `## Requirements`. `openspec archive add-type-skeletons` faz esse sync — ver `openspec/config.yaml`, `operations.archive`, para o que fica de mão depois dele.
+- [x] 4.1 `usage-guide` é capability nova: o sync cria `openspec/specs/usage-guide/spec.md` a partir do delta `## ADDED`, convertendo o cabeçalho para `## Requirements`. `openspec archive add-type-skeletons` faz esse sync — ver `openspec/config.yaml`, `operations.archive`, para o que fica de mão depois dele.
+
+  **Resultado.** `openspec archive add-type-skeletons` → `added: 1`, `specsUpdated: true`. O arquivo nasceu com o requisito íntegro, conferido contra o delta. O que ficou de mão foi o `## Purpose`, que o CLI emite como stub em inglês ("TBD - created by archiving change...") e que foi reescrito em português.
+
+  **Nota de método.** O comando foi exercido antes numa cópia da árvore no scratchpad, encadeando os dois archives, para ver o que ele faz com o delta `## ADDED` de `rewrite-usage-guide` caindo sobre uma capability que já existe: acrescenta ao final, seis requisitos, com o dos arquivos de partida intacto na primeira posição. É a tarefa 7.2 daquela change respondida por antecipação — mas ela continua valendo, porque o que foi verificado foi a cópia, não o repositório.
 - [x] 4.2 Registrar como dívida a guarda para lista vazia em `\listoffigures`/`\listoftables` (`UnifeiICTReport.sty:1595–1605`), contornada aqui por comentário e não resolvida (design.md, decisão 3). Ela pertence ao `.sty` e beneficiaria qualquer documento real.
 
   **Resultado.** O repositório não tinha registro de dívida algum — nem arquivo, nem convenção. Registrada como change própria, `add-empty-list-guard`, que é o único registro durável que este repositório tem: aparece em `openspec list` e não morre dentro de um `archive/`. A proposta cobre as **quatro** listas, não só as duas do `.sty:1605–1622` — `\listofquadros` e `\listofgraficos` herdam o mesmo bloco por `
