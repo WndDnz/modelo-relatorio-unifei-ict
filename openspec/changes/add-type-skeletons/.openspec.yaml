@@ -1,0 +1,6 @@
+schema: spec-driven
+created: 2026-08-13
+goal: "Dar a cada tipo de documento um arquivo de partida próprio — seis
+  esqueletos que compilam sem edição, trazem os metadados exigidos por seu tipo
+  e não importam nada, servindo ao mesmo tempo de ponto de partida limpo e de
+  demonstração do documento escrito em arquivo único."

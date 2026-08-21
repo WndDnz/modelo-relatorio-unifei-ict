@@ -42,45 +42,38 @@ Norma citada no corpo do manual SHALL ter entrada correspondente em `referencias
 - **WHEN** o modelo diverge da norma de propósito, de forma perceptível na saída
 - **THEN** o manual declara o desvio e sua razão, em vez de apresentar o comportamento como se fosse o que a norma exige
 
-### Requirement: Existe um esqueleto por tipo de documento, que compila sem edição
+#### Scenario: Conformidade obtida por meio indireto
 
-O repositório SHALL conter um arquivo de partida por tipo de documento admitido pela opção `tipo=`, com o tipo já declarado, os metadados exigidos por aquele tipo presentes e preenchidos com valor de exemplo, e os opcionais comentados com a explicação ao lado.
+- **WHEN** o modelo cumpre uma exigência da norma por um mecanismo interno que usa outro vocabulário
+- **THEN** o manual o apresenta como conformidade, e não como desvio, distinguindo-o dos desvios deliberados
 
-Cada esqueleto SHALL compilar sem edição e sem erro, e SHALL produzir apenas páginas com conteúdo — nenhum elemento cujo conteúdo dependa do texto que o autor ainda não escreveu pode emitir página de título vazia.
+### Requirement: O manual documenta o que o pacote não oferece
 
-Os esqueletos não importam arquivos externos: cada um é um documento completo em um arquivo só.
+Elemento que a norma aplicável liste e que o pacote não implemente SHALL ser declarado ausente no manual, em vez de omitido.
 
-#### Scenario: Esqueleto recém-copiado
+#### Scenario: Elemento previsto pela norma e não implementado
 
-- **WHEN** o autor copia um esqueleto e compila sem alterar nada
-- **THEN** a compilação termina sem erro e produz capa, folha de rosto e os elementos exigidos pelo tipo, sem nenhuma página de título seguida de vazio
-
-#### Scenario: Metadado exigido pelo tipo
-
-- **WHEN** um tipo exige um metadado que outro não exige
-- **THEN** o esqueleto daquele tipo já o traz preenchido com valor de exemplo, e não comentado
-
-#### Scenario: Tipo novo admitido pela opção de pacote
-
-- **WHEN** uma change acrescenta um valor à opção `tipo=`
-- **THEN** um esqueleto correspondente passa a existir na mesma change
+- **WHEN** a norma lista um elemento — obrigatório ou opcional — que o pacote não oferece comando algum para produzir
+- **THEN** o manual declara a ausência, para que o autor a descubra antes de escrever e não ao procurar o comando
 
 ### Requirement: O manual demonstra as duas formas de organizar os arquivos
 
-O modelo admite organizar as divisões do texto em arquivos separados ou escrever tudo em um arquivo só. Ambas SHALL estar demonstradas por artefato existente e compilável, e não apenas descritas: o próprio manual, organizado em arquivos importados, é a demonstração da primeira; os esqueletos, completos em um arquivo, são a demonstração da segunda.
+O modelo admite organizar as divisões do texto em arquivos separados ou escrever tudo em um arquivo só. Ambas SHALL estar demonstradas por artefato existente e compilável, e não apenas descritas: o próprio manual, organizado em arquivos importados, é a demonstração da primeira; os arquivos de partida, completos em um arquivo, são a demonstração da segunda.
 
 Nenhum artefato de exemplo SHALL existir só para ilustrar uma dessas formas.
 
 #### Scenario: Autor decide como organizar o trabalho
 
 - **WHEN** o autor procura no manual como dividir seu texto em arquivos
-- **THEN** o manual mostra o comando de importação em uso e aponta para si mesmo e para os esqueletos como os dois exemplos reais, ambos compiláveis
+- **THEN** o manual mostra o comando de importação em uso e aponta para si mesmo e para os arquivos de partida como os dois exemplos reais, ambos compiláveis
 
 ### Requirement: O README apresenta e direciona; o manual instrui
 
 O README SHALL apresentar o modelo, listar os tipos de documento, indicar qual arquivo copiar e como compilar, e apontar para o manual.
 
 Instrução detalhada de uso — forma de chamada, obrigatoriedade por tipo, justificativa normativa, exemplo comentado — SHALL viver apenas no manual. Nenhum conteúdo SHALL ser mantido em ambos: quando os dois precisarem tratar do mesmo assunto, o README o resume em uma frase e remete.
+
+Instrução mínima escrita como comentário dentro de um arquivo de partida, no ponto em que é acionável, não conta como duplicação: ela e o tratamento do manual são registros diferentes do mesmo assunto.
 
 #### Scenario: Assunto que interessa aos dois
 
