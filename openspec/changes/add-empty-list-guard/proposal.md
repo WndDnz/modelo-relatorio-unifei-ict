@@ -28,7 +28,7 @@ A decidir no design, e não aqui:
 
 - **Os arquivos de partida.** Continuam com as chamadas comentadas depois desta change; o comentário passa a ser cortesia e deixa de ser proteção. Se valerá descomentá-los é decisão de outra change, e depende de a guarda emitir aviso ou não.
 - **`\tableofcontents`**, que nunca está vazio num documento com uma divisão sequer.
-- **Os glossários**, cujo mecanismo é do pacote `glossaries` e tem guarda própria a investigar à parte.
+- **Os glossários**. A investigação foi feita: não falta guarda, falta o passo de compilação — o `makeglossaries` nunca roda, e os dois `\printglossary` do manual produzem uma página inteiramente em branco. Registrado como `fix-glossary-build`.
 
 ## Impact
 
