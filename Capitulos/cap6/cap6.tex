@@ -1,0 +1,138 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
+\chapter{Elementos pós-textuais}\label{cap:postextuais}
+
+\section{Referências bibliográficas}\label{sec:bibliografia}
+
+A lista de referências é impressa por \verb|\printbibliography|, chamado uma única vez, logo após o
+último capítulo do texto. Sua elaboração segue a ABNT NBR 6023:2018~\cite{nbr6023:2018} --- que rege
+a \emph{referência}, a descrição de cada obra --- e não a NBR 10520:2023~\cite{nbr10520:2023}, que
+rege a \emph{citação}, a remissão feita no corpo do texto. As duas são tratadas na
+\refcomp{}{sec:citacoes}.
+
+\subsection{Crie o seu próprio arquivo de referências}\label{ssc:proprio-bib}
+
+\textbf{O arquivo \texttt{referencias.bib} deste repositório é fictício.} Suas entradas descrevem
+obras que não existem, e estão ali para servir aos exemplos de citação deste manual. Um trabalho
+entregue apontando para ele tem bibliografia inventada --- e, ao contrário de uma lista vazia, esse
+defeito não salta aos olhos de quem folheia o PDF: a lista parece perfeitamente legítima.
+
+Crie o seu. É um arquivo de texto comum, com extensão \texttt{.bib}, na mesma pasta do arquivo
+principal, e ele começa vazio. Declare-o no preâmbulo:
+
+\begin{Verbatim}[fontsize=\small]
+\usepackage[style=abnt]{biblatex}
+\bibliography{minhas-referencias.bib}
+\end{Verbatim}
+
+Nos arquivos de partida as duas linhas acima vêm comentadas, e com elas a chamada da
+bibliografia, exatamente para que ninguém aponte para o arquivo de exemplo sem perceber.
+Descomente as três quando tiver o seu.
+
+Gerenciadores como o Zotero e o Mendeley exportam diretamente para \texttt{.bib}. Se usar um deles,
+revise o arquivo exportado: campos incompletos ou mal preenchidos produzem referências fora da
+norma sem que nada falhe na compilação.
+
+\section{Apêndices e anexos}\label{sec:apendices-anexos}
+
+Os dois se distinguem pela \textbf{autoria}, e não pelo conteúdo. Apêndice é material elaborado pelo
+próprio autor, para complementar sua argumentação. Anexo é documento de terceiro, incorporado como
+fundamentação, prova ou ilustração.
+
+Abra cada grupo uma vez e declare os elementos em seguida:
+
+\begin{Verbatim}[fontsize=\small]
+\apendices
+\apendice{ape:questionario}{Questionário aplicado na pesquisa}
+...
+
+\anexos
+\anexo{ane:certificado}{Certificado de participação no evento}
+...
+\end{Verbatim}
+
+O comando \verb|\apendices| abre o grupo e produz uma entrada coletiva no sumário; cada
+\verb|\apendice{<rótulo>}{<título>}| abre um apêndice, identificado por letra maiúscula consecutiva
+--- A, B, C. Os comandos \verb|\anexos| e \verb|\anexo{}{}| funcionam do mesmo modo, com sequência
+própria de letras. Ambos vêm depois do \verb|\backmatter|.
+
+Ilustrações dentro de um apêndice ou anexo continuam na mesma sequência numérica do restante do
+documento e aparecem normalmente nas listas. Este manual traz um exemplo de cada, ao final, com a
+distinção de autoria explicada no próprio texto.
+
+\section{Abreviaturas, siglas e símbolos}\label{sec:abreviaturas-siglas-simbolos}
+
+Caso seu documento utilize muitas abreviaturas, siglas ou símbolos técnicos, é recomendável incluir
+uma lista dedicada a esses elementos. Isso ajuda o leitor a entender rapidamente o significado de
+termos técnicos ou abreviados usados ao longo do texto. Também serve como referência rápida, caso o
+leitor não se lembre imediatamente do significado de uma sigla ou símbolo específico. A lista de
+abreviaturas pode ser construída manualmente ou utilizando pacotes específicos do \LaTeX, como o
+\texttt{nomencl} ou o \texttt{glossaries}. Este modelo inclui um arquivo de exemplo para a lista de
+abreviaturas e siglas, localizado em \texttt{Preambulo/lista-abreviaturas.tex}. Para
+incluir a lista no seu documento, descomente a linha correspondente no arquivo principal do
+documento. Para imprimir a lista de abreviaturas e a lista de símbolos, descomente os comandos
+\verb|\printglossary|, no arquivo principal do modelo. A lista de abreviaturas e a lista de símbolos
+serão geradas automaticamente com base nas definições fornecidas no arquivo de abreviaturas e no
+arquivo de símbolos.
+
+Para referenciar uma abreviatura ou símbolo no texto, utilize o comando \verb|\gls{}|, passando como
+argumento a chave definida para a abreviatura ou símbolo no arquivo de definições. Por exemplo, para
+referenciar a abreviatura \emph{Mínimo Múltiplo Comum}, definida com a chave \texttt{mmc}, utilize o
+comando \verb|\gls{mmc}|. Veja: \gls{mmc}. Na primeira vez que a abreviatura for referenciada, o
+nome completo será exibido junto com a abreviatura entre parênteses. Nas referências subsequentes,
+apenas a abreviatura será exibida, observe: \gls{mmc}. Isso garante que o leitor compreenda o
+significado da abreviatura desde a primeira menção. A lista de abreviaturas e símbolos será
+atualizada automaticamente com base nas referências feitas no texto, garantindo apenas abreviaturas
+que foram citadas no texto apareçam na lista. Um outro ponto importante, é que o pacote
+\texttt{glossaries} é integrado ao pacote \texttt{hyperref}, garantindo que todas as referências a
+abreviaturas e símbolos sejam \emph{hyperlinks} clicáveis, facilitando a navegação no documento.
+
+Símbolos funcionam de forma parecida, eles devem ser citados no texo para que apareçam na lista de
+símbolos. Use o comando \verb|\gls{}| também para referenciar os símbolos, veja: \gls{symb:pi}. Caso
+deseje imprimir a descrição do símbolo no texto, utilize o comando \verb|\glsdesc{}|, veja a
+descrição para o símbolo \gls{symb:pi}: \glsdesc{symb:pi}. Se seu trabalho possui muitas equações
+usando símbolos específicos, é uma boa prática mantê-los organizados em um arquivo de definições
+separado, como o fornecido neste modelo em \texttt{Preambulo/lista-simbolos.tex}.
+
+Um ponto importante: a lista de abreviaturas não é gerada automaticamente. Ao incluir uma nova
+abreviatura ou símbolo no arquivo de definições, você deve compilar o documento para gerar o
+documento auxiliar necessário para a lista de abreviaturas. Dependendo do ambiente de compilação que
+você está utilizando, pode ser necessário executar comandos adicionais para gerar a lista de
+abreviaturas corretamente. Consulte a documentação do pacote \texttt{glossaries}
+(\url{https://www.ctan.org/pkg/glossaries}) para mais detalhes sobre como gerar a lista de
+abreviaturas e a lista de símbolos. Geralmente, isto envolve uma chamada ao comando
+\texttt{makeglossaries} passando o nome do arquivo principal na linha de comando.
+
+\section{As listas, e quando não chamá-las}\label{sec:listas}
+
+Quatro listas de ilustrações estão disponíveis, além das listas de abreviaturas e de símbolos:
+
+\begin{itemize}
+    \item \verb|\listoffigures| --- a lista de ilustrações da norma, impressa por este modelo
+          sob o título ``LISTA DE FIGURAS'';
+    \item \verb|\listoftables| --- lista de tabelas;
+    \item \verb|\listofquadros| e \verb|\listofgraficos| --- listas próprias dos tipos Quadro e
+          Gráfico. Um tipo criado por \verb|\novotipoilustracao| ganha a sua automaticamente.
+\end{itemize}
+
+Todas são elementos \textbf{opcionais}, e devem ser chamadas apenas quando houver o que listar.
+
+\textbf{Uma lista vazia não deixa de ser emitida: ela sai como uma página de título seguida de
+nada.} O modelo não verifica se há itens antes de imprimir o cabeçalho. É por isso que, nos
+arquivos de partida, as quatro chamadas vêm comentadas, com a explicação ao lado --- um trabalho
+recém-começado não tem ilustração alguma, e a primeira compilação produziria uma página com o
+título ``LISTA DE FIGURAS'' e o resto em branco.
+
+Descomente cada uma quando o documento passar a ter o elemento correspondente. O mesmo vale para os
+glossários: \verb|\printglossary| sem nenhuma sigla citada no texto produz o mesmo tipo de página
+órfã.
+
+Os títulos das duas listas de glossário também são redefiníveis, no mesmo molde dos nomes tratados
+na \refcomp{}{sec:nomes-personalizaveis}: \texttt{\textbackslash acronymlistname} para a lista de
+abreviaturas e siglas, \texttt{\textbackslash symbolslistname} para a de símbolos. Ambos
+acompanham o idioma do \texttt{babel}, e ambos são passados explicitamente na chamada, o que
+permite trocar o título de uma chamada só sem redefinir o comando:
+
+\begin{Verbatim}[fontsize=\small]
+\printglossary[type=\acronymtype,title={\acronymlistname}]
+\end{Verbatim}

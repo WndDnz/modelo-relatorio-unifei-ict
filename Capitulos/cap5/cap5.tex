@@ -1,0 +1,245 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
+\chapter{Ilustrações, tabelas e equações}\label{cap:ilustracoes}
+
+\section{Figuras e Tabelas}\label{sec:figuras-tabelas}
+
+Assim como as citações, figuras e tabelas são elementos onipresentes em trabalhos acadêmicos e
+técnicos. Eles ajudam a ilustrar conceitos, apresentar dados e facilitar a compreensão do conteúdo.
+Figuras e tabelas devem ser inseridas no texto próximo ao local onde são mencionadas pela primeira
+vez, para facilitar a leitura e evitar que o leitor precise procurar por elas em outras partes do
+documento. Além disso, é importante numerar e rotular corretamente cada figura e tabela, utilizando
+os ambientes \texttt{figuraabnt} para figuras e \texttt{tabelaabnt} para tabelas, fornecidos por este
+modelo. Isso garante que as referências a esses elementos sejam atualizadas automaticamente, mesmo
+que a ordem ou o número de figuras e tabelas mude durante o processo de edição.
+
+A norma ABNT NBR 14724:2024~\cite{nbr14724:2024} estabelece diretrizes específicas para a
+formatação e apresentação de figuras e tabelas em trabalhos acadêmicos. De acordo com essa norma,
+as figuras devem ser numeradas consecutivamente em algarismos arábicos (Figura 1, Figura 2, etc.) e
+devem possuir uma legenda descritiva, localizada acima da figura. As tabelas também devem ser
+numeradas consecutivamente em algarismos arábicos (Tabela 1, Tabela 2, etc.) e devem possuir uma
+legenda descritiva, localizada acima da tabela. Além disso, é importante garantir que as figuras e
+tabelas estejam devidamente referenciadas no texto. Este modelo oferece os comandos
+\verb|\reffig{}| e \verb|\reftable{}| para autoreferências formatadas, bastando passar o rótulo da figura/tabela. Use os prefixos \texttt{fig:} para figuras (por exemplo, \texttt{fig:exemplo})
+e \texttt{tab:} para tabelas (por exemplo, \texttt{tab:exemplo}) ao criar os rótulos. Também existem
+os comandos \verb|\reffigcomp{}| e \verb|\reftablecomp{}| para citar uma figura junto com seu título. Esta não é uma prática padrão, mas pode ser interessante em alguns contextos.
+
+Figuras e tabelas devem referenciar suas fontes também, utilizando o comando \verb|\fonte{}|
+fornecido por este modelo, que posiciona a fonte de forma adequada conforme as normas ABNT.  Note
+que a fonte deve ser apresentada em fonte menor que o corpo do texto e alinhada à esquerda, conforme
+exemplificado a seguir. Caso a Figura ou Tabela sejam de autoria própria, utilize a expressão ``o
+próprio autor'' ou ``elaboração própria'' como fonte.
+
+Para que a legenda fique sempre acima do conteúdo, como a norma exige, use os ambientes
+\texttt{figuraabnt} e \texttt{tabelaabnt} deste modelo em vez dos ambientes \texttt{figure} e
+\texttt{table} do \LaTeX. Neles, o rótulo e a legenda são argumentos do próprio ambiente, e não
+comandos escritos no meio do corpo, de modo que não há ordem errada possível de digitar:
+
+\begin{verbatim}
+\begin{figuraabnt}[!htbp]{fig:rotulo}{Legenda da figura}[Legenda curta]
+    \includegraphics[width=0.9\textwidth]{arquivo}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+\end{verbatim}
+
+O primeiro argumento, entre colchetes, é a posição do float e pode ser omitido (o padrão é
+\texttt{[!htbp]}). Seguem o rótulo e a legenda, ambos obrigatórios. O próximo argumento, também entre
+colchetes e opcional, é uma legenda curta, usada apenas na Lista de Ilustrações quando a legenda
+principal for longa demais para caber ali. O ambiente \texttt{tabelaabnt} tem exatamente a mesma
+assinatura. Os ambientes \texttt{figure} e \texttt{table} continuam disponíveis, mas neles a posição
+da legenda volta a depender da ordem em que você escreve o código, sem nenhum aviso caso saia fora
+da norma.
+
+Há ainda um último argumento opcional, entre \texttt{<} e \texttt{>}: a largura declarada da
+ilustração. A norma exige que ``tipo, número de ordem, título, fonte, legenda e notas devem
+acompanhar as margens da ilustração'' (§5.8) — ou seja, quando o gráfico é mais estreito que o bloco
+de texto, a legenda e a fonte devem se alinhar à largura do gráfico, não à largura da página. Sem
+esse argumento, a legenda ocupa o bloco de texto inteiro e a fonte se alinha à largura medida do
+último gráfico incluído, como sempre foi. Repita nele o mesmo valor passado a
+\texttt{\textbackslash includegraphics}:
+
+\begin{verbatim}
+\begin{figuraabnt}{fig:rotulo}{Legenda}<0.9\textwidth>
+    \includegraphics[width=0.9\textwidth]{arquivo}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+\end{verbatim}
+
+Veja aqui uma referência à \reffig{fig:exemplo} e à \reftable{tab:exemplo}.
+
+\begin{figuraabnt}{fig:exemplo}{Figura de exemplo}<0.9\textwidth>
+    \caption*{Uma figura de exemplo, elaborada pelo próprio autor. Note o alinhamento da ``fonte'', abaixo da figura. Esta legenda adicional é opcional, usada quando é necessário fornecer uma descrição mais detalhada da figura, complementando a legenda principal. Note também que a legenda e a fonte acompanham a largura declarada da figura.}
+    \includegraphics[width=0.9\textwidth]{example-image}
+    \fonte{o próprio autor}
+\end{figuraabnt}
+
+\begin{tabelaabnt}{tab:exemplo}{Tabela de exemplo}
+    \caption*{A legenda da tabela deve conter uma descrição clara e concisa do conteúdo apresentado.}
+    \begin{tabular}{@{}lllll@{}}
+        \toprule
+        Coluna 1 & Coluna 2 & Coluna 3 & Coluna 4 & Coluna 5 \\ \midrule
+        1        & 2        & 2        & 1        & 3        \\
+        1        & 2        & 1        & 4        & 3        \\
+        5        & 3        & 4        & 3        & 5        \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{tabelaabnt}
+
+Usando o pacote \texttt{subcaption}, é possível incluir múltiplas figuras ou tabelas dentro de um
+mesmo ambiente \texttt{figuraabnt} ou \texttt{tabelaabnt}, cada uma com sua própria legenda, além da
+legenda principal --- esta última continua sendo o argumento do ambiente. Veja a \reffig{fig:exemplo-multiplo} como exemplo.
+
+\begin{figuraabnt}{fig:exemplo-multiplo}{Exemplo de figura múltipla}[Figura múltipla]
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{Subfigura A}
+        \label{fig:subfig-a}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{example-image-b}
+        \caption{Subfigura B}
+        \caption*{Cada subfigura pode ter sua própria legenda}
+        \label{fig:subfig-b}
+    \end{subfigure}
+    \fonte{(a): \cite{ibge2020}; (b): \cite{almeida2022}}
+\end{figuraabnt}
+
+Lembre-se que você pode sempre consultar a documentação do pacote \texttt{subcaption} para mais
+detalhes sobre como utilizá-lo de forma eficaz. Ele pode ser encontrado no diretório oficial do
+\LaTeX, na \gls{ctan}, no endereço eletrônico (\url{https://ctan.org/pkg/subcaption}).
+
+\subsection{Uma limitação do \texttt{tabular} neste modelo}\label{ssc:verb-tabular}
+
+\textbf{\texttt{\textbackslash verb} não funciona dentro de um \texttt{tabular} neste modelo.}
+Escrevê-lo numa célula interrompe a compilação com \texttt{\textbackslash verb illegal in
+argument}, e a mensagem aponta para o \texttt{\textbackslash end\{tabular\}} --- longe da célula
+que a causou.
+
+Não é defeito do \LaTeX{}, e sim consequência de o modelo redefinir o \texttt{tabular} para medir a
+largura da tabela: o corpo passa a ser lido como argumento, e \texttt{\textbackslash verb} é
+ilegal em argumento, por construção. Nada disso é visível de fora, e a limitação vale para toda
+tabela deste modelo.
+
+Para escrever código numa célula, use o \texttt{\textbackslash texttt} com o contrabarra
+explícito:
+
+\begin{Verbatim}[fontsize=\small]
+\texttt{\textbackslash comando}     % produz: \comando
+\end{Verbatim}
+
+\noindent Fora de tabelas, o \texttt{\textbackslash verb} continua disponível como sempre.
+
+\subsection{Outros tipos de ilustração}\label{sec:tipos-ilustracao}
+
+A norma não fala apenas em ``figura''. O §5.8 exige que toda ilustração venha precedida de sua
+palavra designativa específica — desenho, esquema, fluxograma, fotografia, gráfico, mapa,
+organograma, planta, quadro, retrato, figura, imagem, entre outros —, cada uma com sua própria
+sequência numérica e, quando conveniente, sua própria lista (§4.2.1.9). Além de \texttt{figuraabnt}
+e \texttt{tabelaabnt}, este modelo já fornece \texttt{quadroabnt} e \texttt{graficoabnt}, com
+exatamente a mesma assinatura — incluindo a largura declarada opcional \texttt{<largura>}. Veja o
+\refgrafico{gra:exemplo} como exemplo:
+
+\begin{graficoabnt}{gra:exemplo}{Gráfico de exemplo}<0.7\textwidth>
+    \includegraphics[width=0.7\textwidth]{example-image}
+    \fonte{o próprio autor}
+\end{graficoabnt}
+
+Um relatório que precise de um tipo não previsto aqui (Fluxograma, Organograma, ...) não precisa
+esperar uma atualização do pacote. Basta declarar o tipo no preâmbulo do próprio documento:
+
+\begin{verbatim}
+\novotipoilustracao{fluxograma}{Fluxograma}{fluxogramaabnt}
+\end{verbatim}
+
+Os três argumentos são o nome interno do contador (só ASCII), a palavra designativa como deve
+aparecer impressa, e o nome do ambiente que você vai usar no texto. A partir daí,
+\texttt{fluxogramaabnt} funciona exatamente como \texttt{quadroabnt} ou \texttt{graficoabnt} --- com
+contador, referências cruzadas (\verb|\reffluxograma{}|) e lista (\verb|\listoffluxogramas|)
+próprios. É a mesma máquina que gera os tipos que já vêm no pacote.
+
+Cada tipo tem o par completo de comandos de referência, como Figura e Tabela: \texttt{\textbackslash refquadro}
+e \texttt{\textbackslash refgrafico} citam o número, e \texttt{\textbackslash refquadrocomp} e
+\texttt{\textbackslash refgraficocomp} citam o número junto do título. Um tipo criado por
+\texttt{\textbackslash novotipoilustracao} ganha os dois na mesma hora.
+
+\subsubsection{Quadro não é Tabela}\label{sec:quadro-vs-tabela}
+
+Este é o erro mais comum: chamar de ``Tabela'' qualquer coisa organizada em linhas e colunas. A
+norma traça a fronteira pelo tipo de dado central, não pelo layout. Uma tabela é a forma não
+discursiva de apresentar informações das quais o \emph{dado numérico} se destaca como informação
+central (§5.9, vinculado às normas de apresentação tabular do IBGE); um quadro é uma ilustração
+comum (§5.8) cujo conteúdo central é \emph{textual}, ainda que organizado em linhas e colunas. Veja
+o \refquadro{qua:exemplo} e a \reftable{tab:exemplo-quadro} a seguir: é a mesma avaliação, uma vez
+qualitativa (Quadro) e outra numérica (Tabela).
+
+\begin{quadroabnt}{qua:exemplo}{Quadro de exemplo}
+    \caption*{Avaliação qualitativa: o dado central de cada célula é uma palavra, não um número — por isso é um Quadro, não uma Tabela.}
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Critério    & Avaliação \\ \midrule
+        Usabilidade & Boa       \\
+        Desempenho  & Regular   \\
+        Documentação & Boa      \\
+        Suporte     & Ruim      \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{quadroabnt}
+
+\begin{tabelaabnt}{tab:exemplo-quadro}{Tabela de exemplo (mesma avaliação, em números)}
+    \caption*{A mesma avaliação do \refquadro{qua:exemplo}, agora com o dado numérico como informação central — por isso é uma Tabela.}
+    \begin{tabular}{@{}ll@{}}
+        \toprule
+        Critério    & Nota (0--10) \\ \midrule
+        Usabilidade & 8            \\
+        Desempenho  & 6            \\
+        Documentação & 8           \\
+        Suporte     & 3            \\ \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{tabelaabnt}
+
+\section{Equações}\label{sec:equacoes}
+
+Equações também são elementos comuns em trabalhos acadêmicos, especialmente em áreas como
+matemática, física e engenharia. Equações podem ser apresentadas de duas formas, \emph{inline} ou
+em blocos separados. Equações \emph{inline} são inseridas diretamente no texto, enquanto equações em
+blocos separados são destacadas do texto, geralmente centralizadas e numeradas para referência. Veja
+um exemplo de equação \emph{inline}, usando a equação considerada por muitos, como a mais bela de
+todas, a \emph{Identidade de Euler}: \(e^{i\pi} + 1 = 0\). O \LaTeX\ provê uma maneira simples de
+formatar equações matemáticas, com uma variedade de símbolos e operadores disponíveis. Para equações
+em blocos separados, utilize o ambiente \texttt{equation}, como mostrado a seguir:
+
+\begin{equation}
+    a^2 + b^2 = c^2
+    \label{eq:pitagoras}
+\end{equation}
+
+Equações em blocos também podem ser referenciadas no texto. O modelo provê os comandos
+\verb|\refeq{}| e \verb|\refeqcomp{}| para referenciar equações com formatação consistente com o
+estilo do documento. Por exemplo, veja a referência à \refeq{eq:pitagoras}. E a referência
+completa à mesma: \refeqcomp{eq:pitagoras}[Equação do Teorema de Pitágoras]. Note que o nome
+customizado vai entre colchetes, por ser um argumento opcional; sem ele, basta
+\verb|\refeqcomp{eq:pitagoras}|.
+
+\section{Nomes que você pode trocar}\label{sec:nomes-personalizaveis}
+
+Duas palavras que o modelo imprime sozinho vêm de comandos que você pode redefinir no preâmbulo:
+
+\begin{itemize}
+    \item \texttt{\textbackslash figuresourcename} --- a palavra que precede a fonte de uma
+          ilustração. Padrão em português: \textit{Fonte}.
+    \item \texttt{\textbackslash eqname} --- a palavra designativa das equações, usada por
+          \texttt{\textbackslash refeq} e \texttt{\textbackslash refeqcomp}. Padrão:
+          \textit{Equação}.
+\end{itemize}
+
+As duas seguem o idioma declarado no \texttt{babel} --- em espanhol saem \textit{Fuente} e
+\textit{Ecuación}, e assim por diante. Redefina apenas se precisar de algo que o idioma não dá:
+
+\begin{Verbatim}[fontsize=\small]
+\renewcommand{\figuresourcename}{Elaborado a partir de}
+\end{Verbatim}
+
+A redefinição vale do ponto em que aparece em diante, então o lugar dela é o preâmbulo.

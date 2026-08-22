@@ -1,22 +1,202 @@
 % cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
 % Extensão Code Spell Checker no VS Code (muito útil!)
-\chapter{Conclusão}\label{cap:conclusao}
+\chapter{Estrutura do documento}\label{cap:estrutura}
 
-Chegamos ao capítulo final do modelo de relatório. Claro, no seu relatório real, este capítulo deve
-conter as conclusões do seu trabalho, resumindo os principais pontos abordados e destacando as
-contribuições mais relevantes. Aqui, apenas ilustramos a estrutura do documento. Utilizamos o pacote
-\texttt{lipsum} para gerar texto placeholder, como você pode ver a seguir.
+Esta é a seção que o tipo de documento governa. Tudo o que vem antes do texto propriamente dito ---
+capa, folha de rosto, folha de aprovação, resumos --- é montado pelo modelo a partir dos metadados
+que você declara no preâmbulo, e o que ele exige de você muda conforme o tipo declarado. Nada aqui
+precisa ser diagramado à mão.
 
-\lipsum[6-7]
+\section{As três divisões do arquivo e a ordem dos elementos}\label{sec:divisoes-arquivo}
 
-As instruções contidas neste modelo são apenas sugestões iniciais. Sinta-se à vontade para
-adaptá-las conforme as necessidades específicas do seu relatório e as diretrizes da instituição.
-O \LaTeX oferece uma flexibilidade enorme na formatação de documentos técnicos e científicos,
-permitindo que você crie um relatório que atenda exatamente às suas expectativas. Este modelo visa
-facilitar esse processo, fornecendo uma base sólida para o desenvolvimento do seu trabalho. No
-entanto, sinta-se livre para personalizá-lo conforme necessário. Apenas tenha em mente as boas
-práticas de redação técnica e científica, garantindo que seu relatório seja claro, conciso e bem
-estruturado e que siga as normas da ABNT. Estudar o código fonte deste modelo pode ser uma ótima
-forma de aprender mais sobre o \LaTeX e suas capacidades.
+O corpo do arquivo principal se divide em três partes, na ordem:
 
-Desejamos sucesso na elaboração do seu relatório técnico-científico!
+\begin{itemize}
+    \item \verb|\frontmatter| abre os \textbf{elementos pré-textuais}. É o que produz a numeração em
+          algarismos romanos e suprime a numeração das divisões.
+    \item \verb|\mainmatter| abre os \textbf{elementos textuais} --- o trabalho em si. A partir daqui
+          a paginação passa a arábica e as divisões voltam a ser numeradas.
+    \item \verb|\backmatter| abre os \textbf{elementos pós-textuais} --- apêndices, anexos e
+          glossários.
+\end{itemize}
+
+As referências bibliográficas, embora pós-textuais na norma, saem neste modelo \emph{antes} do
+\verb|\backmatter|, logo após o último capítulo do texto --- a chamada é o
+\texttt{\textbackslash printbibliography}. É onde o \texttt{biblatex} espera ser chamado, e a posição impressa continua
+sendo a que a norma pede.
+
+Dentro do \verb|\frontmatter|, a ordem dos elementos é a da ABNT NBR
+14724:2024~\cite{nbr14724:2024}, e o modelo a produz sozinho: capa, folha de rosto, folha de
+aprovação, resumo, resumo em língua estrangeira, listas de ilustrações e de tabelas, listas de
+abreviaturas e de símbolos e, por último, o sumário. Você não escolhe a ordem; você declara os
+metadados e chama \verb|\maketitle|, \verb|\folhaaprovacao|, \verb|\makeabstracts| e
+\verb|\tableofcontents| na sequência em que aparecem no arquivo de partida.
+
+\section{Capa e folha de rosto}\label{sec:capa-folha-rosto}
+
+Os dois elementos saem do mesmo conjunto de metadados, declarados no preâmbulo, antes de
+\verb|\begin{document}|. A \refcomp{}{tab:metadados-capa} lista o que cada comando faz.
+
+\begin{tabelaabnt}{tab:metadados-capa}{Metadados de capa e folha de rosto}
+    \begin{tabular}{@{}lp{0.60\textwidth}@{}}
+        \toprule
+        \textbf{Comando} & \textbf{O que declara} \\
+        \midrule
+        \texttt{\textbackslash title\{\}}             & Título do trabalho.                                     \\
+        \texttt{\textbackslash subtitle\{\}}          & Subtítulo, \textbf{sem} os dois-pontos.                 \\
+        \texttt{\textbackslash author\{\}}            & Autor. Vários, separados por \texttt{\textbackslash\textbackslash}.                 \\
+        \texttt{\textbackslash supervisor\{\}}        & Professor. Vários, separados por \texttt{\textbackslash\textbackslash}.             \\
+        \texttt{\textbackslash cosupervisor\{\}}      & Coorientador, quando houver.                            \\
+        \texttt{\textbackslash empresasupervisor\{\}} & Supervisor de campo. Só no \texttt{estagio}.            \\
+        \texttt{\textbackslash subject\{\}}           & Disciplina, curso ou programa, conforme o tipo.         \\
+        \texttt{\textbackslash institution\{\}}       & Instituição. Padrão: Universidade Federal de Itajubá.   \\
+        \texttt{\textbackslash faculty\{\}}           & Unidade. Padrão: Instituto de Ciências Tecnológicas.    \\
+        \texttt{\textbackslash course\{\}}            & Curso. Padrão: Engenharia de Computação.                \\
+        \texttt{\textbackslash location\{\}}          & Cidade. Padrão: Itabira.                                \\
+        \texttt{\textbackslash state\{\}}             & Estado por extenso. Padrão: Minas Gerais.               \\
+        \texttt{\textbackslash stateacronym\{\}}      & Sigla do estado. Padrão: MG.                            \\
+        \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{tabelaabnt}
+
+\subsection{Os metadados que já vêm preenchidos}\label{ssc:metadados-padrao}
+
+Os seis últimos da tabela --- de \verb|\institution| a \verb|\stateacronym| --- têm valor padrão. Se
+você não os declarar, o modelo os imprime assim mesmo, sem erro e sem aviso. Cinco desses padrões
+descrevem o ICT: a Unifei, o Instituto de Ciências Tecnológicas, Itabira, Minas Gerais, MG.
+
+\textbf{O \texttt{\textbackslash course} é a exceção que interessa.} Seu padrão é Engenharia de Computação, que é
+\emph{um} curso entre vários do instituto. Se o seu não é esse, declare-o --- caso contrário a capa
+sai com o curso errado, e esse é um defeito que não chama atenção: a página parece correta para
+quem a folheia.
+
+\subsection{O subtítulo e os dois-pontos}\label{ssc:subtitulo}
+
+Escreva o subtítulo \textbf{sem} pontuação inicial. A NBR 14724:2024 exige que ele venha ``precedido
+de dois-pontos, evidenciando a sua subordinação ao título'', e o modelo insere essa pontuação
+sozinho, na capa, na folha de rosto e na folha de aprovação. Digitar os dois-pontos você mesmo
+produz dois.
+
+Quando precisar do título e do subtítulo juntos numa frase corrida, use \verb|\fulltitle|, que
+devolve os dois já unidos pela pontuação correta.
+
+\subsection{O rótulo do professor vem do tipo}\label{ssc:rotulo-professor}
+
+Você declara o professor sempre pelo mesmo comando, \verb|\supervisor|, e o rótulo impresso ao lado
+dele muda conforme o tipo: no \texttt{generico} sai como professor responsável pela disciplina, e
+nos demais tipos como orientador. Não há relação de orientação num relatório de disciplina, há
+responsabilidade docente --- e o modelo diz uma coisa ou outra sem que você precise escolher.
+
+Havendo mais de um professor, separe os nomes com \verb|\\| e o rótulo vai para o plural sozinho,
+do mesmo modo que ``Autor'' vira ``Autores''.
+
+\section{Área de concentração e linha de pesquisa}\label{sec:area-linha}
+
+Dois metadados existem apenas para os tipos de monografia:
+
+\begin{itemize}
+    \item \verb|\areaconcentracao{}| é \textbf{exigida} em \texttt{dissertacao} e em \texttt{tese}.
+          Sem ela, a compilação para com uma mensagem deste pacote nomeando o que falta, em vez de
+          emitir uma folha silenciosamente incompleta. No \texttt{tcc2} ela é aceita, mas não
+          exigida: aparece só quando o trabalho integra um projeto maior, o que é raro.
+    \item \verb|\linhapesquisa{}| é sempre opcional, nos três. Declarada, aparece na natureza; não
+          declarada, não deixa rastro.
+\end{itemize}
+
+\section{A folha de aprovação}\label{sec:folha-aprovacao}
+
+Chame \verb|\folhaaprovacao| sem argumento algum. A forma da folha deriva do tipo declarado no
+preâmbulo, e não de um parâmetro seu --- é o mesmo tipo que já governou a capa e a natureza.
+
+\begin{itemize}
+    \item No \texttt{generico}, constam o professor ou os professores responsáveis pela disciplina,
+          e a natureza declara a aprovação na disciplina como objetivo.
+    \item No \texttt{estagio}, constam três partes: o aluno estagiário, o professor orientador e o
+          supervisor de campo, este último declarado por \verb|\empresasupervisor|.
+    \item No \texttt{tcc2}, na \texttt{dissertacao}, na \texttt{tese} e no \texttt{tcc1} com banca,
+          consta a banca examinadora.
+\end{itemize}
+
+\subsection{A banca}\label{ssc:banca}
+
+Declare com \verb|\bancamembro{}| \textbf{apenas os membros externos}. O orientador já foi declarado
+em \verb|\supervisor| e entra na banca a partir dali --- repeti-lo como membro o faz aparecer duas
+vezes. Não há número fixo: três, cinco ou sete membros aparecem todos, na ordem declarada.
+
+Como a folha costuma ser preparada antes da defesa, membros ainda desconhecidos podem ser
+declarados em branco. A folha sai com os blocos correspondentes vazios, sem erro e sem aviso.
+
+Dois metadados opcionais completam a folha: \verb|\aprovacaodata{}| e \verb|\notaaprovacao{}|. Sem
+eles, a folha simplesmente não traz essas linhas, em vez de trazer campos em branco.
+
+No \texttt{tcc1} sem nenhum \verb|\bancamembro| declarado, a folha \textbf{não é emitida} --- não sai
+página em branco nem entrada no sumário. Um projeto de pesquisa pode ou não ser defendido perante
+banca, e o modelo trata a ausência de banca como ausência de folha.
+
+\subsection{Por que não há linha para assinar}\label{ssc:sem-assinatura}
+
+A folha deste modelo \textbf{não traz linhas de assinatura}, e isso é deliberado. A NBR 14724:2024
+determina que as assinaturas dos componentes da banca sejam colocadas na folha após a aprovação; o
+modelo se afasta disso porque a assinatura passou a ser registrada apenas na Ata de Defesa, prática
+consolidada desde que as defesas passaram a ser inteiramente digitais.
+
+Está registrado aqui para que não pareça esquecimento. Se a sua banca exigir a folha assinada, é
+esta a passagem que explica de onde vem a diferença.
+
+\section{Os resumos}\label{sec:resumos}
+
+O resumo em língua vernácula se declara com \verb|\abstract{}| e \verb|\keywords{}|. O resumo em
+língua estrangeira usa \verb|\abstractseclang{}| e \verb|\keywordsseclang{}|. Os dois são impressos
+por \verb|\makeabstracts|, chamado uma única vez.
+
+O segundo resumo é \textbf{obrigatório nos três tipos de monografia} --- \texttt{tcc2},
+\texttt{dissertacao} e \texttt{tese} ---, e sua falta interrompe a compilação com mensagem deste
+pacote. Nos relatórios ele é opcional. O \texttt{tcc1} fica fora da regra por ser regido pela NBR
+15287:2025~\cite{nbr15287:2025}, que não prevê resumo.
+
+A apresentação do resumo segue a NBR 6028:2021~\cite{nbr6028:2021}: parágrafo único, sem recuo, e
+palavras-chave logo abaixo, separadas entre si por ponto e vírgula.
+
+\section{O que muda de um tipo para outro}\label{sec:o-que-muda}
+
+Este manual compila como \texttt{generico}, então tudo o que você vê nas páginas anteriores é a
+forma \emph{daquele} tipo. A \refcomp{}{tab:por-tipo} resume o que muda nos demais. Para ver a capa
+e a folha de outro tipo, compile o arquivo de partida correspondente: eles existem, são curtos, e a
+saída real é mais confiável do que qualquer reprodução feita aqui.
+
+\begin{tabelaabnt}{tab:por-tipo}{O que o tipo de documento governa}
+    \begin{tabular}{@{}lllcc@{}}
+        \toprule
+        \textbf{Tipo} & \textbf{Norma} & \textbf{Folha de aprovação} & \textbf{Área} &
+        \textbf{Abstract}                                                                        \\
+        \midrule
+        \texttt{generico}    & 14724 & professor da disciplina & ---               & opcional     \\
+        \texttt{estagio}     & 14724 & três partes            & ---               & opcional     \\
+        \texttt{tcc1}        & 15287 & banca, se houver       & ---               & ---          \\
+        \texttt{tcc2}        & 14724 & banca                  & opcional          & \textbf{sim} \\
+        \texttt{dissertacao} & 14724 & banca                  & \textbf{exigida}  & \textbf{sim} \\
+        \texttt{tese}        & 14724 & banca                  & \textbf{exigida}  & \textbf{sim} \\
+        \bottomrule
+    \end{tabular}
+    \fonte{o próprio autor}
+\end{tabelaabnt}
+
+Os três tipos de monografia produzem a \emph{mesma} diagramação. O que os separa é o grau declarado
+na natureza --- Bacharel, Mestre, Doutor --- e a obrigatoriedade da área de concentração.
+
+\section{O que este modelo não oferece}\label{sec:ausencias}
+
+A NBR 14724:2024 lista elementos que este pacote \textbf{não} implementa, e que portanto não têm
+comando algum:
+
+\begin{itemize}
+    \item \textbf{dedicatória}, \textbf{agradecimentos} e \textbf{epígrafe}, todos opcionais na
+          norma;
+    \item \textbf{errata}, \textbf{lombada} e \textbf{índice}.
+\end{itemize}
+
+A ausência está dita aqui de propósito. Quem precisa de agradecimentos numa dissertação precisa
+saber disso \emph{antes} de escrever, e não ao procurar o comando na véspera da entrega. Nada
+impede que você os componha à mão dentro do \verb|\frontmatter|; apenas não há apoio do modelo, e a
+formatação passa a ser sua responsabilidade.

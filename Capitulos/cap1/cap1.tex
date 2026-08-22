@@ -1,35 +1,90 @@
+% cSpell:locale en,pt-BR - Adicionado para suporte ao corretor ortográfico
+% Extensão Code Spell Checker no VS Code (muito útil!)
 \chapter{Introdução}\label{cap:introducao}
 
-Na Introdução, apresenta-se um resumo estendido do trabalho. Apresentam-se as motivações que levaram
-o(s) autor(es) a escolher o tema, o problema de pesquisa, os objetivos do trabalho, a metodologia aplicada,
-a estrutura do trabalho e uma breve descrição dos capítulos subsequentes.
+Este é o manual do modelo ABNT do Instituto de Ciências Tecnológicas da Universidade Federal de
+Itajubá. Ele descreve o pacote \texttt{UnifeiICTReport}, que formata trabalhos acadêmicos conforme
+as normas da ABNT, e se dirige a quem vai escrever um desses trabalhos --- não a quem mantém o
+pacote.
 
-A Introdução deve ser redigida de forma clara e objetiva, proporcionando ao leitor uma visão geral
-do conteúdo do trabalho. Deve-se evitar detalhes excessivos, que serão abordados nos capítulos
-seguintes. A Introdução deve ser escrita de forma a despertar o interesse do leitor pelo tema abordado.
-Além disso, é importante que a Introdução esteja alinhada com o restante do trabalho, refletindo os
-objetivos e a metodologia adotada.
+\textbf{Este arquivo não é para ser copiado.} O manual é um documento que se lê. Para começar a
+escrever, copie o arquivo de partida do seu tipo de trabalho, listado na
+\refcomp{}{sec:qual-arquivo}.
 
-A seguir, apresenta-se a estrutura sugerida para a Introdução:
+\section{Seis tipos de documento}\label{sec:seis-tipos}
+
+O modelo atende seis tipos de trabalho. O tipo é declarado uma única vez, como opção do pacote, e
+governa o documento inteiro: a natureza que aparece na folha de rosto, a forma da folha de
+aprovação, quantos resumos existem e quais metadados passam a ser exigidos.
+
+\begin{Verbatim}[fontsize=\small]
+\usepackage[tipo=tcc2]{UnifeiICTReport}
+\end{Verbatim}
+
+O valor vai como chave --- \texttt{tipo=}, nunca solto. Opção que o pacote não reconhece é
+repassada ao \texttt{babel} como idioma, então um valor escrito solto vira um erro de idioma
+confuso; com \texttt{tipo=} o erro é do próprio pacote e nomeia os valores aceitos. Idiomas
+continuam funcionando ao lado: \texttt{\textbackslash usepackage[tipo=tese,spanish]\{UnifeiICTReport\}}.
+
+Os seis valores:
+
 \begin{itemize}
-    \item \textbf{Contextualização do tema:} Os primeiros parágrafos da Introdução devem situar o leitor no contexto do tema abordado, apresentando motivações e justificativas para a escolha do tema. Pode também conter um resumo do estado da arte, destacando trabalhos relevantes na área.
-    \item \textbf{Problema de pesquisa e justificativas:} Nos parágrafos seguintes, definir claramente o problema que será abordado no trabalho, destacando sua relevância e impacto na área de estudo. Justificar a importância do problema e sua contribuição para o avanço do conhecimento.
-    \item \textbf{Objetivos:} Apresentar o objetivo geral e os objetivos específicos do trabalho em uma seção própria, indicando o que se pretende alcançar com a pesquisa.
-    \item \textbf{Estrutura do trabalho:} Apresentar a organização dos capítulos subsequentes, indicando o conteúdo abordado em cada um deles.
+    \item \texttt{generico} --- relatório de disciplina. É o padrão, usado quando nenhum tipo é
+          declarado.
+    \item \texttt{estagio} --- relatório de estágio.
+    \item \texttt{tcc1} --- projeto de pesquisa, a primeira etapa do trabalho de conclusão.
+    \item \texttt{tcc2} --- monografia de conclusão de curso, para o grau de Bacharel.
+    \item \texttt{dissertacao} --- monografia de mestrado, para o grau de Mestre.
+    \item \texttt{tese} --- monografia de doutorado, para o grau de Doutor.
 \end{itemize}
 
-\section{Objetivos}\label{sec:objetivos}
+\subsection{Qual norma rege qual tipo}\label{ssc:norma-por-tipo}
 
-O objetivo geral de seu trabalho deve estar destacado. É permitido fazer uma breve introdução de um ou dois parágrafos antes de apresentar o objetivo geral . Também é permitido destacá-lo utilizando ênfase (comando \verb"\emph{}"). Em seguida, devem ser listados os objetivos específicos do trabalho. O \LaTeX possui vários comandos para listas, como os ambientes \verb"itemize" e \verb"enumerate". Para este documento de exemplo, o objetivo geral é \emph{apresentar o modelo de relatório técnico-científico para os cursos do ICT}. Os objetivos específicos são:
+Não é uma norma só, e a diferença tem consequência prática. O \texttt{tcc1} é um projeto de
+pesquisa, e projetos de pesquisa são regidos pela ABNT NBR 15287:2025~\cite{nbr15287:2025} --- que
+não prevê resumo, e cuja estrutura textual é outra. Todos os demais tipos seguem a ABNT NBR
+14724:2024~\cite{nbr14724:2024}: integralmente nos três tipos de monografia e, nos dois relatórios,
+no que couber, conforme o escopo da própria norma, que a estende aos trabalhos acadêmicos e
+similares.
+
+\subsection{Escolher errado nem sempre dá erro}\label{ssc:escolher-errado}
+
+Alguns enganos falham na hora: pedir \texttt{dissertacao} sem declarar a área de concentração
+interrompe a compilação com uma mensagem deste pacote nomeando o metadado que falta.
+
+Outros não falham. Escrever uma monografia de mestrado sob \texttt{tcc2} produz um documento que
+compila perfeitamente e declara, na folha de rosto, o grau de Bacharel. Nada avisa, porque nada
+está tecnicamente errado --- apenas o trabalho está sob a natureza errada. Confira o tipo declarado
+antes de entregar; é uma linha do preâmbulo, e a \refcomp{}{cap:estrutura} descreve o que cada uma
+produz.
+
+\section{Qual arquivo copiar}\label{sec:qual-arquivo}
+
+Há um arquivo de partida por tipo, na raiz do repositório. Copie o seu, renomeie-o e escreva o
+trabalho ali:
 
 \begin{itemize}
-    \item \textbf{Fornecer diretrizes} para a formatação e estruturação de relatórios técnicos-científicos, alinhadas com as normas da Unifei ICT.
-    \item \textbf{Facilitar o processo de redação} para estudantes e pesquisadores, oferecendo um modelo padronizado que pode ser facilmente adaptado às suas necessidades.
-    \item \textbf{Promover a consistência} na apresentação de relatórios técnicos-científicos dentro do Instituto de Ciências Tecnológicas, garantindo que todos os documentos sigam um formato uniforme.
+    \item \texttt{modelo-generico.tex}
+    \item \texttt{modelo-estagio.tex}
+    \item \texttt{modelo-tcc1.tex}
+    \item \texttt{modelo-tcc2.tex}
+    \item \texttt{modelo-dissertacao.tex}
+    \item \texttt{modelo-tese.tex}
 \end{itemize}
 
-\section{Estrutura do trabalho}\label{sec:estrutura}
+Cada um já traz o tipo declarado, os metadados exigidos por aquele tipo preenchidos com valor de
+exemplo, e os opcionais comentados com a explicação ao lado. Todos compilam sem edição alguma ---
+compile o seu antes de escrever a primeira linha, só para ver a capa que vai sair.
 
-Nesta seção, faça uma breve descrição da estrutura do trabalho, em um ou dois parágrafos. Segue um exemplo.
+Os arquivos de partida não trazem conteúdo de demonstração: nada de texto de exemplo, figuras de
+amostra ou referências fictícias. É um ponto de partida, e não um documento pronto que precisa ser
+esvaziado antes de servir.
 
-Este modelo de relatório segue uma estrutura padrão que pode ser adaptada conforme as necessidades específicas do trabalho. A \refcomp{}{cap:introducao} apresenta a introdução ao tema, incluindo os objetivos e a estrutura do relatório. As seções seguintes são referentes ao desenvolvimento do tema. Geralmente, apresentam a fundamentação teórica, a metodologia de pesquisa, os experimentos realizados e a análise dos resultados. Em trabalhos de natureza de revisão, a estrutura pode seguir tópicos relacionados ao assunto pesquisado. Finalmente, a \refcomp{}{cap:conclusao} traz as conclusões do trabalho, destacando as contribuições e sugestões para trabalhos futuros.
+\section{Como este manual está organizado}\label{sec:organizacao-manual}
+
+A \refcomp{}{cap:ambiente} trata da instalação e da compilação, e de como distribuir o texto entre
+arquivos. A \refcomp{}{cap:estrutura} é a mais importante para quem já escreveu em \LaTeX{} antes:
+descreve os elementos pré-textuais e o que o tipo de documento governa em cada um. A
+\refcomp{}{cap:texto} trata das divisões do texto, das referências cruzadas e das citações; a
+\refcomp{}{cap:ilustracoes}, de figuras, tabelas, quadros, gráficos e equações; a
+\refcomp{}{cap:postextuais}, das referências bibliográficas, dos apêndices, dos anexos e das listas.
