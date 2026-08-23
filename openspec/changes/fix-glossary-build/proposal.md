@@ -26,9 +26,18 @@ O ciclo de compilação passa a gerar os glossários. O `.latexmkrc` ganha a reg
 
 A decidir no design, e não aqui:
 
-- **`makeglossaries` ou `makeglossaries-lite`.** O primeiro é um script Perl e depende de Perl instalado; o segundo é Lua e vem com o TeX Live. A escolha decide se o modelo compila numa instalação mínima, e o capítulo 2 do manual promete uma.
+- ~~**`makeglossaries` ou `makeglossaries-lite`.**~~ Decidido por evidência: `makeglossaries`. O argumento que estava aqui — que a escolha decidiria se o modelo compila numa instalação mínima, prometida pelo capítulo 2 — era falso nas duas pontas. O capítulo 2 promete o oposto (`cap2.tex:11`: "instalação local completa do LaTeX"), e o `-lite` **recusa a opção `-d`**, sem a qual não se alcança `$aux_dir = 'build'`. Ver `design.md`.
 - **Como declarar as três regras sem repetir três vezes.** O `glossaries` nomeia os alvos por convenção; o `.latexmkrc` pode derivá-los ou listá-los.
-- **O que fazer quando não há entrada alguma.** Medido em documento isolado, e não é o que se supunha aqui: sem `\gls` no texto o `.acn` **é** escrito, vazio. O `makeglossaries` avisa `File is empty` e sai com código 0 — a regra do latexmk não quebra por isso — e grava um `.acr` de sete bytes contendo `\null`. Como `\null` é uma caixa, cada `\printglossary` sem entrada custa **uma página em branco numerada**, sem título e sem item: o mesmo documento sai com 1 página sem as chamadas e com 3 com as duas chamadas vazias. O comportamento desejado continua sendo o de `add-empty-list-guard` — nada emitido, nada quebrado — mas alcançá-lo exige guarda, e não só a regra de compilação.
+- **O que fazer quando não há entrada alguma.** Medido, e em duas rodadas — a segunda corrigiu a primeira. Sem `\gls` no texto o `.acn` **é** escrito, vazio; o `makeglossaries` avisa `File is empty` e sai com código 0, de modo que a regra do latexmk não quebra; e o `.acr` resultante tem sete bytes, contendo `\null`. A primeira leitura atribuiu a página em branco a esse `\null`. **Está errado.** Medido no modelo real, com a `.sty` carregada: apagar o `.acr` e o `.sls` não muda a contagem de páginas. Qualquer número de `\printglossary` sem entrada custa **uma** página em branco, sem título e sem número — uma só, não uma por chamada:
+
+  ```
+  0 chamadas ............ 2 páginas
+  1 chamada  ............ 3 páginas
+  2 chamadas ............ 3 páginas
+  2 chamadas, sem .acr .. 3 páginas
+  ```
+
+  A consequência é de projeto: **nenhuma ação do lado do latexmk remove essa página**, porque ela não vem do arquivo gerado. A guarda tem de ser em LaTeX, em volta do `\printglossary`.
 
 - **A guarda do glossário vazio passa a ser desta change.** `add-empty-list-guard` pôs os glossários fora do seu escopo dizendo que não faltava guarda, faltava o passo de compilação. Está certo sobre o sintoma de hoje e é insuficiente: depois que o passo entrar, a página em branco **continua**, com causa nova — o `\null` de um `.acr` vazio, no lugar do `.acr` ausente. É o defeito de `add-empty-list-guard` num mecanismo que não é o do `.sty`, e hoje nenhuma das duas changes o cobre.
 - **`$clean_ext`**, que hoje não lista os auxiliares de glossário e vai deixá-los para trás.

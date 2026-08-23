@@ -44,7 +44,9 @@ A decidir no design, e não aqui:
 
 - **`tipo=`**, que funciona e é de `document-type`.
 - **O mecanismo de fontes** (`:492`, `:620`), que está correto e faz o *fallback* prometido.
-- **O manual.** Enquanto as três opções não tiverem comportamento definido, documentá-las é documentar um defeito. `rewrite-usage-guide` fecha a tarefa 6.1 apontando para esta change, e não escrevendo prosa sobre elas.
+**Nota:** o manual **não** está fora do escopo, ao contrário do que esta seção dizia enquanto as opções não tinham comportamento definido. Pela Regra de Platina do projeto — o manual instrui o uso do pacote, lista todos os comandos e exemplifica sempre que puder —, `roman` e `sans` entram documentadas **e exemplificadas** nesta change, e a remoção de `neverindent` entra declarada. `rewrite-usage-guide` fechou a tarefa 6.1 apontando para cá; é aqui que a dívida se paga.
+
+Exemplificar inversão tipográfica num manual que é ele próprio compilado significa mostrar as duas saídas, e não descrevê-las — como isso é feito sem compilar o manual duas vezes é questão do design.
 
 ## Impact
 
