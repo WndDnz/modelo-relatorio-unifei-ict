@@ -24,11 +24,22 @@ A flag vai ao `.aux`, que o latexmk já rerroda por conta própria.
 
 Isto também neutraliza o `$aux_dir = 'build'`: como nada é lido de arquivo auxiliar, não há caminho de pasta de saída para o `\openin` resolver.
 
-## Em aberto
+### 3. A guarda mora em `\listoffigures`, e cobre as quatro listas
 
-**Como alcançar `\listofquadros` e `\listofgraficos`.** Elas não são do modelo: vêm do newfloat, via `\DeclareFloatingEnvironment` (`:1131`), com `\float@listhead` indefinido e nenhum gancho do pacote sobre elas — confirmado por `\show`, que expande `\listofquadros` para `\@nameuse{listofquadro}`. Uma guarda escrita nos `\renewcommand` do modelo (`:1605`, `:1615`) cobre metade das listas.
+As quatro passam pelo mesmo código. `\listofquadros` expande para `\@nameuse{listofquadro}`, e `\newfloat@list@of@` (`newfloat.sty:138-148`) monta o ambiente do tipo e delega:
 
-As duas só *parecem* iguais às do modelo porque `\titleformat{\chapter}` (`:1586`) aplica versal, Exo2 e azul a todo `\chapter*`, inclusive ao que o newfloat emite.
+```
+  \let\listfigurename  →  \listquadroname     troca o título
+  \def\@starttoc       →  extensão do tipo     redireciona o auxiliar
+  \@nameuse{newfloat@listof quadro @hook}       gancho por tipo
+  \listoffigures                                 ← chama o do MODELO
+```
+
+Isto invalida as duas leituras anteriores desta change. A original supunha um bloco de estilo compartilhado em `:1116`, que não existe — é linha de comentário. A seguinte, escrita ao derrubar a primeira, supunha dois mecanismos independentes e concluía que uma guarda cobriria metade das listas. Também errada: há um mecanismo só, e o modelo já está no caminho de todos.
+
+A semelhança visual, que eu havia atribuído a `\titleformat{\chapter}` (`:1586`), tem causa mais simples: as listas do newfloat **são** a lista de figuras do modelo, com outro nome e outro arquivo auxiliar.
+
+Resta dar à guarda o contador certo. O `newfloat` expõe `\PrepareListOf{<tipo>}{<código>}` (`newfloat.sty:321-323`), preenchendo o gancho que roda antes da delegação — uma linha dentro de `\novotipoilustracao` declara qual contador aquele tipo testa, e `figure` e `table` ficam como padrão nos dois `\renewcommand` do modelo.
 
 ## Alternativas descartadas
 
