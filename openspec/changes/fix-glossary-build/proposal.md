@@ -28,7 +28,9 @@ A decidir no design, e não aqui:
 
 - **`makeglossaries` ou `makeglossaries-lite`.** O primeiro é um script Perl e depende de Perl instalado; o segundo é Lua e vem com o TeX Live. A escolha decide se o modelo compila numa instalação mínima, e o capítulo 2 do manual promete uma.
 - **Como declarar as três regras sem repetir três vezes.** O `glossaries` nomeia os alvos por convenção; o `.latexmkrc` pode derivá-los ou listá-los.
-- **O que fazer quando não há entrada alguma.** Sem `\gls` no texto o `.acn` nem chega a ser escrito, e a regra não pode falhar por isso. O comportamento desejado é o mesmo de `add-empty-list-guard`: nada emitido, nada quebrado.
+- **O que fazer quando não há entrada alguma.** Medido em documento isolado, e não é o que se supunha aqui: sem `\gls` no texto o `.acn` **é** escrito, vazio. O `makeglossaries` avisa `File is empty` e sai com código 0 — a regra do latexmk não quebra por isso — e grava um `.acr` de sete bytes contendo `\null`. Como `\null` é uma caixa, cada `\printglossary` sem entrada custa **uma página em branco numerada**, sem título e sem item: o mesmo documento sai com 1 página sem as chamadas e com 3 com as duas chamadas vazias. O comportamento desejado continua sendo o de `add-empty-list-guard` — nada emitido, nada quebrado — mas alcançá-lo exige guarda, e não só a regra de compilação.
+
+- **A guarda do glossário vazio passa a ser desta change.** `add-empty-list-guard` pôs os glossários fora do seu escopo dizendo que não faltava guarda, faltava o passo de compilação. Está certo sobre o sintoma de hoje e é insuficiente: depois que o passo entrar, a página em branco **continua**, com causa nova — o `\null` de um `.acr` vazio, no lugar do `.acr` ausente. É o defeito de `add-empty-list-guard` num mecanismo que não é o do `.sty`, e hoje nenhuma das duas changes o cobre.
 - **`$clean_ext`**, que hoje não lista os auxiliares de glossário e vai deixá-los para trás.
 
 ## Capabilities
@@ -40,11 +42,12 @@ A decidir no design, e não aqui:
 ## Fora de escopo
 
 - **`UnifeiICTReport.sty`**, que está correto: declara os glossários e os imprime como deve.
-- **A guarda de lista vazia**, que é de `add-empty-list-guard` e trata as quatro listas de ilustração.
+- **A guarda de lista vazia das ilustrações**, que é de `add-empty-list-guard` e trata `\listoffigures`, `\listoftables` e as listas de `\novotipoilustracao`. O caso análogo dos glossários é desta change, pela razão acima: o mecanismo é do pacote `glossaries`, não do bloco compartilhado em `UnifeiICTReport.sty:1116`, e as duas guardas não podem morar no mesmo lugar.
 - **A prosa do manual.** O capítulo 6 hoje avisa que `\printglossary` sem sigla alguma produz página órfã. Depois desta change esse aviso continua correto como comportamento previsto, mas o texto foi escrito sem saber que a causa real era outra; revisá-lo é tarefa desta change, no fim.
 
 ## Impact
 
 - `.latexmkrc`.
-- `build/manual.pdf` ganha o conteúdo da página 8. Todo documento que descomentar os `\printglossary` passa a imprimir o que declarou.
+- `build/manual.pdf` ganha o conteúdo da página 8.
+- Documento que declare glossário e não use entrada alguma deixa de gastar uma página em branco numerada por `\printglossary`. Todo documento que descomentar os `\printglossary` passa a imprimir o que declarou.
 - Quem compila fora do `latexmk` — direto pelo `xelatex`, ou por um editor com cadeia própria — continua sem os glossários. O manual precisa dizer isso.
