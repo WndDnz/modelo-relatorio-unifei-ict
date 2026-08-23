@@ -10,13 +10,19 @@ O defeito compila limpo — é o modo de falha característico deste repositóri
 
 ## What Changes
 
-Guarda de lista vazia nas quatro chamadas: quando o arquivo auxiliar correspondente (`.lof`, `.lot`, o do tipo) não tem entrada alguma, a lista não é emitida — nem título, nem página, nem entrada no sumário.
+Guarda de lista vazia nas quatro chamadas: quando o documento não tem item algum daquele tipo, a lista não é emitida — nem título, nem página, nem entrada no sumário.
+
+Três das decisões que esta seção adiava ao design foram fechadas por medição, em documentos de teste isolados. Ficam registradas aqui porque não são preferência, são o que a máquina faz:
+
+- **A guarda não pode pular o `\@starttoc`.** Ele faz duas coisas: dá `\@input` no auxiliar da rodada anterior *e* abre o stream de escrita (`\tf@lof`) que alimenta a rodada seguinte. `\addcontentsline` descarta em silêncio quando o stream não está aberto. Medido, em documento que **tem** uma figura: sem `\@starttoc`, o `.lof` continua ausente depois da primeira e da segunda passada; com ele, sai com 94 bytes já na primeira. A guarda ingênua trava a lista desligada para sempre.
+- **E não precisa pular.** `\@starttoc` sozinho, sobre um auxiliar sem `\contentsline`, não custa página nenhuma: o mesmo documento sai com uma página com a chamada e uma página sem ela. O custo inteiro está no `\cleardoublepage` e no título, que o modelo emite antes e sem condição. A guarda envolve esses; o `\@starttoc` fica fora dela.
+- **"Arquivo vazio" nunca é verdade.** O `book.cls` escreve um `\addvspace {10\p@ }` no `.lof` por capítulo. Um documento com um capítulo e nenhuma figura já tem `.lof` de 20 bytes; com uma figura, tem os mesmos 20 mais a linha de `\contentsline`. Testar emptiness dá falso positivo em qualquer documento com uma divisão sequer, e o teste correto por arquivo exigiria procurar `\contentsline` — parsing. Sai mais barato pelo contador: `\counterwithout{figure}{chapter}` e `{table}` (`:455-456`) e `within=none` nos tipos gerados (`:1131`) garantem que **nenhum dos quatro contadores zera**, então `\value{...}` no fim do documento é o total, o mesmo teste serve aos quatro sem caso especial, e a flag vai no `.aux`, que o latexmk já rerroda sozinho.
 
 A decidir no design, e não aqui:
 
 - **Silêncio ou aviso.** Não emitir e calar corre o risco oposto: o autor que esperava a lista não descobre por que ela sumiu. Um `\PackageWarning` nomeando a lista pulada parece o meio-termo certo, mas é decisão do design.
-- **Onde a guarda mora.** As quatro listas compartilham o bloco de estilo (`:1116`); a guarda deve ser escrita uma vez, no mesmo lugar, e não copiada quatro vezes.
-- **Como detectar a lista vazia.** O `.lof` só existe depois da primeira passada, e a decisão precisa sobreviver ao ciclo de compilação do latexmk sem oscilar entre passadas.
+- **Onde a guarda mora.** A premissa que estava aqui — as quatro listas compartilham o bloco de estilo em `:1116` — é falsa. `:1116` é linha de comentário, dentro do bloco de documentação de `\novotipoilustracao`, e não há bloco compartilhado. São dois mecanismos: `\listoffigures` (`:1605`) e `\listoftables` (`:1615`) são `\renewcommand` do próprio modelo; `\listofquadros` e `\listofgraficos` são geradas pelo newfloat em `\DeclareFloatingEnvironment` (`:1131`), com `\float@listhead` indefinido e nenhum gancho do modelo sobre elas. Confirmado por `\show`: `\listofquadros` expande para `\@nameuse{listofquadro}`, do newfloat. As quatro só *parecem* iguais porque `\titleformat{\chapter}` (`:1586`) aplica versal, Exo2 e azul a todo `\chapter*` — inclusive ao que o newfloat emite. Uma guarda escrita num lugar só cobre duas das quatro; a decisão é como alcançar as outras duas sem reimplementar o newfloat.
+- **`$aux_dir = 'build'`.** Os auxiliares não ficam ao lado do `.tex`. Se a detecção fosse por leitura de arquivo, o `\openin` teria de resolver o caminho da pasta de saída — risco que a detecção por contador não corre. É um argumento a mais pelo contador, e vale confirmá-lo antes de fechar o design.
 
 ## Capabilities
 

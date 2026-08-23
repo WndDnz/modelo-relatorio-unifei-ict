@@ -2,16 +2,16 @@
 
 O pacote declara quatro opções. Uma funciona. Das outras três, duas não fazem nada e a terceira quebra a compilação.
 
-**`neverindent` interrompe o build.** A linha 18 executa `\\neverindenttrue`, e não existe `\\newif\\if\\neverindent` em lugar algum do arquivo:
+**`neverindent` interrompe o build.** A linha 18 executa `\@neverindenttrue`, e não existe `\newif\if@neverindent` em lugar algum do arquivo:
 
 ```
 UnifeiICTReport.sty:18
-  \DeclareOption{neverindent}{\\neverindenttrue}
+  \DeclareOption{neverindent}{\@neverindenttrue}
 ```
 
-Verificado: `\usepackage[tipo=generico,neverindent]{UnifeiICTReport}` para com `! Undefined control sequence. \ds\neverindent ->\\neverindenttrue`, no `\ProcessOptions` da linha 133. Quem passar a opção não recebe um aviso — recebe um documento que não compila.
+Verificado: `\usepackage[tipo=generico,neverindent]{UnifeiICTReport}` para com `! Undefined control sequence. \ds@neverindent ->\@neverindenttrue`, no `\ProcessOptions` da linha 133. Quem passar a opção não recebe um aviso — recebe um documento que não compila.
 
-**`roman` e `sans` não fazem nada.** As duas alternam a flag `\\if\roman` (`:21–23`), e essa flag **nunca é consultada**: as três ocorrências no arquivo são a declaração e as duas opções que a acionam. A escolha de família tipográfica é decidida em outro lugar, por `\\if\unifei\sansset` (`:620`), que não tem relação com elas.
+**`roman` e `sans` não fazem nada.** As duas alternam a flag `\if@roman` (`:21–23`), e essa flag **nunca é consultada**: as três ocorrências no arquivo são a declaração e as duas opções que a acionam. A escolha de família tipográfica é decidida em outro lugar, por `\if@unifei@sansset` (`:620`), que não tem relação com elas.
 
 Verificado por compilação: `[tipo=generico,roman]` e `[tipo=generico,sans]` produzem texto idêntico ao do documento sem opção alguma, e embutem exatamente o mesmo conjunto de fontes — Exo2 Regular e Bold, Heuristica Regular e Bold, nos três casos.
 
@@ -19,13 +19,20 @@ O defeito veio à tona ao fechar a tarefa 6.1 de `rewrite-usage-guide`, que exig
 
 ## What Changes
 
-As três opções passam a ter comportamento definido: ou fazem o que o nome promete, ou deixam de ser declaradas.
+As três opções passam a ter comportamento definido, e o destino não é o mesmo para as três: `roman` e `sans` passam a fazer o que o nome promete; `neverindent` deixa de ser declarada. Ver `design.md`.
 
 A decidir no design, e não aqui:
 
-- **Implementar ou remover.** São decisões independentes uma da outra. `neverindent` tem nome autoexplicativo e um comportamento óbvio a implementar; `roman`/`sans` competem com o mecanismo de família que já existe e funciona, e implementá-las pode ser reimplementar o que `\\if\unifei\sansset` já faz.
-- **Se removidas, como falhar.** Opção não declarada é repassada ao babel como idioma — comportamento documentado do pacote. Quem hoje passa `sans` passaria a receber um erro de idioma confuso. Um `\DeclareOption` que emite `\PackageError` nomeando a remoção é mais honesto que o silêncio ou que o erro do babel.
-- **Se implementadas, qual é a saída certa.** `neverindent` afeta o recuo de primeira linha, que a NBR 14724:2024 não prescreve, mas o modelo hoje aplica. Mudar isso por opção precisa de uma posição sobre o que o padrão deve ser.
+- ~~**Implementar ou remover.**~~ Decidido: `roman`/`sans` implementadas, `neverindent` removida. O `design.md` traz o critério e a evidência normativa.
+- **Como a inversão de legenda se amarra à flag.** Hoje `:466` fixa `labelfont={bf,sf},textfont={sf}` literalmente, sem consultar `\if@roman`. Passar a consultá-la é o núcleo da implementação, e a forma — condicional no `\captionsetup`, ou dois `\captionsetup` sob `\if` — fica para o design detalhado.
+- **Se removidas, como falhar.** A previsão que estava aqui — opção não declarada vira idioma, e quem passa `sans` recebe um erro de babel confuso — **não se confirma**, porque há um terceiro sítio. O detector de idioma mantém uma lista de exclusão com os três nomes:
+
+  ```
+  :253  \edef\@skipA{roman}\edef\@skipB{sans}\edef\@skipC{neverindent}%
+  ```
+
+  Removidos os `\DeclareOption` e deixada essa lista, as três continuam engolidas em silêncio, tão silenciosamente quanto hoje — nem efeito, nem erro. Os três sítios têm de cair juntos, e a decisão continua de pé na forma certa: se removidas, um `\DeclareOption` que emite `\PackageError` nomeando a remoção é mais honesto que qualquer silêncio.
+- ~~**Se implementadas, qual é a saída certa.**~~ Resolvido para `neverindent` pela via oposta: nenhum elemento das normas pede supressão de recuo de primeira linha, então não há saída certa a implementar. Ver `design.md`.
 
 ## Capabilities
 
@@ -41,6 +48,7 @@ A decidir no design, e não aqui:
 
 ## Impact
 
-- `UnifeiICTReport.sty`, nas linhas 18 e 21–23.
+- `UnifeiICTReport.sty`, nas linhas 18, 21–23 e 253 — esta última é a lista de exclusão do detector de idioma, que nomeia as três e sem a qual a remoção não é remoção.
 - Nenhum documento deste repositório passa qualquer uma das três, então nada em uso muda de saída.
-- Documento de terceiro que passe `roman` ou `sans` hoje compila e ignora a opção; depois desta change, ou obtém o efeito, ou obtém um erro que explica.
+- Documento de terceiro que passe `roman` ou `sans` hoje compila e ignora a opção; depois desta change obtém o efeito. Quem passar `neverindent` obtém um erro que explica, em vez do `! Undefined control sequence` de hoje.
+- `:466` deixa de ser literal: a família da legenda passa a derivar da família do corpo.

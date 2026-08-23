@@ -29,7 +29,11 @@ Nos seis arquivos de partida:
 - `\course` passa a vir **declarado e preenchido com valor de exemplo**, como os demais metadados que o autor precisa trocar;
 - `\institution`, `\faculty`, `\location`, `\state` e `\stateacronym` vêm **comentados com o padrão ao lado**, para que o autor de outro campus ou de outra instituição saiba que pode trocá-los, e o do ICT saiba que não precisa.
 
-O critério que separa os dois grupos é o que o padrão faz com o autor típico: `\course` está errado para a maioria, os outros cinco estão certos para todos os que este modelo atende.
+O critério que separa os dois grupos é o que o padrão faz com o autor típico: `\course` está errado para a maioria, os outros estão certos para todos os que este modelo atende.
+
+**`\stateacronym` estava morto, e esta change o liga.** Estava declarado em `:800-801` e **não era impresso em lugar nenhum** — nem na capa, nem na folha de rosto, nem na data; a única coisa que usava o estado era `:1317`, com `\@state` por extenso. O manual já o documentava, em `Capitulos/cap3/cap3.tex:57`, com "Sigla do estado. Padrão: MG": o modelo prometia um botão desligado, e a promessa estava publicada.
+
+Passa a ser impresso na **capa**, ao lado da cidade; a folha de rosto continua com o estado por extenso. Ver `design.md`. Isso o devolve ao grupo dos cinco comentados com o padrão ao lado — comentá-lo deixa de ser instruir o autor a mexer em botão morto.
 
 ## Capabilities
 
@@ -46,4 +50,4 @@ O critério que separa os dois grupos é o que o padrão faz com o autor típico
 ## Impact
 
 - Os seis `modelo-<tipo>.tex`. Nenhuma alteração em `UnifeiICTReport.sty`.
-- A capa e a folha de rosto dos seis passam a imprimir o curso de exemplo em vez de "Engenharia de Computação" — mudança de saída, a verificar lendo a página, e não o log.
+- A **folha de rosto** dos seis passa a imprimir o curso de exemplo em vez de "Engenharia de Computação" — mudança de saída, a verificar lendo a página, e não o log. A **capa não muda**: `\@course` é impresso só em `:1235`, dentro do bloco da folha de rosto; a capa (`:1201-1213`) imprime apenas `\@institution` e `\@location`. O mesmo vale para `\@faculty`, que só aparece em `:1233`.
