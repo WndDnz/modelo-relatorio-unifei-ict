@@ -155,5 +155,15 @@
 
   **Um foi tocado, por decisão sua.** `modelo-generico.tex` recebeu o exemplo de múltiplos autores que saiu da capa do manual, como comentário acima do `\author`. É a única alteração, e nenhuma decisão desta change vazou para `add-type-skeletons`: o comentário que já estava ali dizia "Mais de um autor: separe os nomes com `\`" e passou a mostrar a linha completa.
 
-- [ ] 7.1 Sincronizar o delta `## ADDED` para `openspec/specs/usage-guide/spec.md`, que **já existe** — criado por `add-type-skeletons`. Os cinco requisitos novos se somam ao que governa os arquivos de partida, sem substituí-lo. `openspec archive` acrescenta os cinco ao final e preserva a ordem — ver `openspec/config.yaml`, `operations.archive`, para o que fica de mão depois dele.
-- [ ] 7.2 Conferir que o requisito de `add-type-skeletons` sobreviveu intacto ao sync, e que a capability terminou com seis requisitos.
+- [x] 7.1 Sincronizar o delta `## ADDED` para `openspec/specs/usage-guide/spec.md`, que **já existe** — criado por `add-type-skeletons`. Os cinco requisitos novos se somam ao que governa os arquivos de partida, sem substituí-lo. `openspec archive` acrescenta os cinco ao final e preserva a ordem — ver `openspec/config.yaml`, `operations.archive`, para o que fica de mão depois dele.
+
+  **Resultado.** Sincronizado à mão, e não por `openspec archive`: os cinco requisitos `## ADDED` foram acrescentados ao final de `openspec/specs/usage-guide/spec.md`, que passou de um para seis requisitos. Conferido por script, requisito a requisito: os cinco chegaram com o corpo idêntico ao do delta e com os onze cenários — 4, 3, 1, 1 e 2 —, nenhum perdido nem reordenado.
+
+  O Purpose da capability já estava em português, escrito à mão depois do archive de `add-type-skeletons`. Não houve stub em inglês a corrigir desta vez.
+
+- [x] 7.2 Conferir que o requisito de `add-type-skeletons` sobreviveu intacto ao sync, e que a capability terminou com seis requisitos.
+
+
+  **Resultado.** O requisito de `add-type-skeletons` — "Existe um arquivo de partida por tipo de documento, que compila sem edição" — sobreviveu intacto, com os cinco cenários, e continua sendo o **primeiro** da capability. A ordem importa: um requisito reinserido no fim seria indistinguível no diff final e só se revelaria assim.
+
+  A capability terminou com seis requisitos, como previsto.
