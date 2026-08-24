@@ -34,10 +34,10 @@
 %\bibliography{referencias.bib}
 
 % --- Siglas e símbolos ------------------------------------------------
-% Declare aqui as siglas do seu trabalho. Depois de declarar ao menos
-% uma, descomente também o \printglossary correspondente lá embaixo.
-% Sem nenhuma declaração, a lista sairia como uma página de título
-% seguida de nada.
+% Declare aqui as siglas do seu trabalho e descomente o \printglossary
+% correspondente lá embaixo. A lista só sai quando ao menos uma sigla for
+% CITADA no texto com \gls: declarar sem citar não a faz aparecer, e sem
+% nenhuma citação nada é emitido — só um aviso no log.
 %
 %\makeglossaries
 %\newacronym{ict}{ICT}{Instituto de Ciências e Tecnologia}
@@ -109,8 +109,7 @@
 % não é emitida: não sai página nem título, só um aviso no log dizendo
 % qual lista foi pulada. Ficam comentadas aqui só para que a primeira
 % compilação de um trabalho recém-copiado não venha com quatro avisos.
-% Os dois \printglossary abaixo ainda não têm essa guarda: chamados sem
-% nenhuma sigla citada no texto, produzem a página órfã.
+% Os dois \printglossary abaixo seguem a mesma regra.
 %\listoffigures
 %\listoftables
 %\listofquadros

@@ -132,9 +132,14 @@ mais para evitar página em branco --- é para que a primeira compilação de um
 não venha com quatro avisos sobre listas que ninguém ainda pediu. Descomente as que o seu trabalho
 vai usar, quando quiser, sem esperar ter a primeira figura.
 
-Os glossários ainda não seguem esse critério: \verb|\printglossary| sem nenhuma sigla citada no
-texto continua produzindo a página órfã, com o título e nada abaixo. Enquanto for assim, deixe as
-duas chamadas comentadas até citar a primeira sigla.
+O mesmo critério vale para os glossários: \verb|\printglossary| sem nenhuma sigla citada no texto
+não emite página nem título, e deixa no log o mesmo aviso, nomeando a lista pulada. É a mesma
+pergunta feita ao autor nos dois mecanismos, e a resposta é a mesma.
+
+Repare no que o critério mede: não é quantas siglas você \emph{declarou}, é quantas foram
+\emph{citadas} no texto. Uma sigla declarada com \verb|\newacronym| e nunca usada com \verb|\gls|
+não entra na lista --- e se nenhuma for usada, a lista não sai, por mais siglas que o preâmbulo
+declare.
 
 Os títulos das duas listas de glossário também são redefiníveis, no mesmo molde dos nomes tratados
 na \refcomp{}{sec:nomes-personalizaveis}: \texttt{\textbackslash acronymlistname} para a lista de

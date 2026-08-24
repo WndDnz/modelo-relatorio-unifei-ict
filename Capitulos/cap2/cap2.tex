@@ -34,9 +34,19 @@ as referências cruzadas, a bibliografia e os glossários fecharem:
 latexmk modelo-generico.tex
 \end{Verbatim}
 
-O arquivo \texttt{.latexmkrc} deste repositório já traz a configuração do modelo --- XeLaTeX, e a
-saída em \texttt{build/}. Chamar o \texttt{xelatex} à mão também funciona, mas então as passadas
-repetidas e os passos da bibliografia e dos glossários passam a ser sua responsabilidade.
+O arquivo \texttt{.latexmkrc} deste repositório já traz a configuração do modelo --- XeLaTeX, a
+saída em \texttt{build/} e as regras que geram os glossários.
+
+\textbf{Essas regras são a razão de o \texttt{latexmk} não ser opcional aqui.} A lista de
+abreviaturas e siglas e a lista de símbolos exigem um passo de compilação próprio, o
+\texttt{makeglossaries}, entre uma passada do \LaTeX\ e a seguinte. Quem compilar chamando o
+\texttt{xelatex} à mão, ou por um editor com cadeia de compilação própria, obtém um documento
+correto em tudo o mais e sem as duas listas --- e sem erro que o avise, porque um glossário sem
+conteúdo é indistinguível de um glossário que o autor não pediu.
+
+O mesmo vale, por outro caminho, para a bibliografia, que depende do \texttt{biber}. Se você
+precisar sair do \texttt{latexmk}, leia o \texttt{.latexmkrc}: ele é curto, e é a lista exata dos
+passos que passam a ser sua responsabilidade.
 
 \section{Duas formas de organizar os arquivos}\label{sec:estrutura-desenvolvimento}
 

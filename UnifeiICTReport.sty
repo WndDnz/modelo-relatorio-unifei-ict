@@ -386,7 +386,16 @@
 }
 \RequirePackage{setspace}
 \RequirePackage{etoolbox}
-\RequirePackage[acronym, symbols, translate=babel]{glossaries}
+% nomain desliga o glossário 'main', que o pacote carregaria por padrão. Ele
+% nunca foi usado, nunca foi documentado e não tem comando exposto — e era ele
+% que fazia o makeglossaries avisar "File '<jobname>.glo' is empty" em toda
+% compilação. Pela Regra de Platina do projeto, capacidade que existe e não é
+% documentada tem duas saídas, e só duas: virar documentação com exemplo, ou
+% deixar de ser oferecida. O escopo desta correção é fazer o ciclo de
+% compilação rodar, não acrescentar elemento pós-textual, então a saída é
+% desligar — e a ausência do glossário (§4.2.3.2) fica declarada no manual.
+% Ligá-lo de volta é assunto da change add-glossary-backmatter.
+\RequirePackage[acronym, symbols, nomain, translate=babel]{glossaries}
 
 % Hook to capture the width of the last tabular environment automatically
 % so \fonte can align to table left edge as well. Wrapping the tabular
@@ -1256,13 +1265,67 @@
         \ifnum\@nameuse{Unifei@total@#1}>\z@
             #2%
         \else
-            \PackageWarning{UnifeiICTReport}{%
-                Lista de '#1' nao emitida: o documento nao tem nenhum item
-                desse tipo. Insira ao menos um, ou remova a chamada da lista%
-            }%
+            \Unifei@AvisaListaPulada{#1}%
         \fi
     }%
 }
+% Texto único do aviso, usado pelas listas de ilustração e pelos glossários. É a
+% mesma pergunta feita ao autor nos dois mecanismos, e responder diferente em
+% cada um ensinaria uma regra que não vale.
+\newcommand{\Unifei@AvisaListaPulada}[1]{%
+    \PackageWarning{UnifeiICTReport}{%
+        Lista de '#1' nao emitida: o documento nao tem nenhum item
+        desse tipo. Insira ao menos um, ou remova a chamada da lista%
+    }%
+}
+% --- A mesma guarda, para os glossários ---
+% Glossário sem nenhuma entrada citada no texto não é emitido, e o log avisa,
+% pelo mesmo critério das listas de ilustração: o pacote nunca imprime glossário
+% por iniciativa própria, então toda chamada de \printglossary presente no
+% documento foi escrita por alguém.
+%
+% A guarda TEM de ser aqui, e não no latexmk. Medido: apagar o .acr não remove a
+% página em branco — qualquer número de \printglossary sem entrada custa uma
+% página, uma só, com ou sem o arquivo gerado. Ela vem do \null que o
+% \@print@glossary emite quando o arquivo não existe, e do \null de sete bytes
+% que o makeglossaries grava quando ele existe e está vazio.
+%
+% O ponto de entrada é o \@printgloss@checkexists@noignored do glossaries, que
+% o \printglossary aciona depois de o \setkeys já ter resolvido \@glo@type. Isso
+% evita reimplementar o keyval do pacote só para descobrir o tipo, e vale para
+% qualquer forma de chamada — \printglossary[type=...], \printacronyms,
+% \printsymbols.
+\newcounter{Unifei@glosusados}
+\newcommand{\Unifei@TotalGlos}[2]{\global\@namedef{Unifei@glos@#1}{#2}}
+\AtEndDocument{%
+    % Como nas listas: no momento em que \printglossary roda, nos pré-textuais,
+    % nenhuma entrada foi usada ainda — o texto vem depois. O total de entradas
+    % efetivamente citadas vai ao .aux no fim de uma passada e é lido na
+    % seguinte.
+    \forallglossaries{\Unifei@glstipo}{%
+        \setcounter{Unifei@glosusados}{0}%
+        \forglsentries[\Unifei@glstipo]{\Unifei@glsrotulo}{%
+            \ifglsused{\Unifei@glsrotulo}{\stepcounter{Unifei@glosusados}}{}%
+        }%
+        \immediate\write\@auxout{%
+            \string\Unifei@TotalGlos{\Unifei@glstipo}{\the\value{Unifei@glosusados}}%
+        }%
+    }%
+}
+\newcommand{\Unifei@SeGlossarioTemItem}[2]{%
+    \@ifundefined{Unifei@glos@#1}{#2}{%
+        \ifnum\@nameuse{Unifei@glos@#1}>\z@
+            #2%
+        \else
+            \Unifei@AvisaListaPulada{#1}%
+        \fi
+    }%
+}
+\let\Unifei@GlosCheckExistsOrig\@printgloss@checkexists@noignored
+\renewcommand*{\@printgloss@checkexists@noignored}[2]{%
+    \Unifei@GlosCheckExistsOrig{#1}{\Unifei@SeGlossarioTemItem{#1}{#2}}%
+}
+
 % Qual contador a guarda de \listoffigures testa. É 'figure' quando \listoffigures
 % é chamada diretamente; os tipos gerados trocam este valor dentro do grupo do
 % newfloat, via \PrepareListOf (ver \novotipoilustracao abaixo).
