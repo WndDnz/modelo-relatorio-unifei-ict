@@ -1210,6 +1210,64 @@
 % control sequence" — verificado por compilação. Os demais comandos desta
 % seção são internos e mantêm o prefixo \Unifei@.
 %
+% ------------------------------------------------------------------
+% GUARDA DE LISTA VAZIA
+% ------------------------------------------------------------------
+% Lista de ilustrações sem item algum não é emitida: nem título, nem página,
+% nem entrada de sumário. Em lugar disso o log traz um aviso nomeando a lista
+% pulada — o pacote nunca emite lista por iniciativa própria, então toda
+% chamada presente no documento foi escrita por alguém, e calar esconderia um
+% pedido que não pôde ser atendido.
+%
+% A detecção é pelo VALOR DO CONTADOR, gravado no .aux no fim de uma passada e
+% lido na seguinte. Não se testa o conteúdo do arquivo auxiliar: o book.cls
+% grava um \addvspace por capítulo no .lof e no .lot, então "arquivo vazio"
+% nunca é verdade num documento com uma divisão sequer (medido: 20 bytes num
+% documento sem figura alguma). O teste do contador vale para os quatro tipos
+% sem caso especial porque nenhum deles zera ao longo do documento —
+% \counterwithout para figure e table, within=none para os tipos gerados.
+%
+% Como nada é lido de arquivo auxiliar, o $aux_dir = 'build' do .latexmkrc não
+% entra na conta.
+\newcommand{\Unifei@TiposIlustracao}{figure,table}
+\newcommand{\Unifei@RegistraTipoIlustracao}[1]{%
+    \edef\Unifei@TiposIlustracao{\Unifei@TiposIlustracao,#1}%
+}
+% Lido do .aux na passada seguinte.
+\newcommand{\Unifei@TotalItens}[2]{\global\@namedef{Unifei@total@#1}{#2}}
+\AtEndDocument{%
+    % O \clearpage vem antes de propósito: \AtEndDocument roda ANTES do
+    % \clearpage do \enddocument, e float ainda pendente não teve a \caption
+    % executada — o contador estaria abaixo do total. Descarregar aqui é o
+    % mesmo trabalho que o \enddocument faria em seguida, e não muda a saída.
+    \clearpage
+    \@for\Unifei@tmptipo:=\Unifei@TiposIlustracao\do{%
+        \immediate\write\@auxout{%
+            \string\Unifei@TotalItens{\Unifei@tmptipo}{\the\value{\Unifei@tmptipo}}%
+        }%
+    }%
+}
+% #1 = contador do tipo, #2 = o que emitir quando há itens.
+% Sem informação no .aux — primeira passada, documento novo — a lista SAI: na
+% dúvida emite-se, e a passada seguinte corrige. O latexmk rerroda por conta
+% própria, porque pular a lista muda a paginação.
+\newcommand{\Unifei@SeListaTemItem}[2]{%
+    \@ifundefined{Unifei@total@#1}{#2}{%
+        \ifnum\@nameuse{Unifei@total@#1}>\z@
+            #2%
+        \else
+            \PackageWarning{UnifeiICTReport}{%
+                Lista de '#1' nao emitida: o documento nao tem nenhum item
+                desse tipo. Insira ao menos um, ou remova a chamada da lista%
+            }%
+        \fi
+    }%
+}
+% Qual contador a guarda de \listoffigures testa. É 'figure' quando \listoffigures
+% é chamada diretamente; os tipos gerados trocam este valor dentro do grupo do
+% newfloat, via \PrepareListOf (ver \novotipoilustracao abaixo).
+\newcommand{\Unifei@ContadorLista}{figure}
+
 % Só funciona no preâmbulo: \DeclareFloatingEnvironment (do newfloat) é
 % \@onlypreamble.
 \newcommand{\novotipoilustracao}[3]{%
@@ -1235,6 +1293,13 @@
     }%
     \Unifei@DeclareABNTEnv{#1}{#3}%
     \Unifei@GenXref{#1}%
+    % A lista deste tipo é a \listoffigures do modelo, com outro título e outro
+    % arquivo auxiliar: \listof<tipo>s expande para \newfloat@list@of@, que
+    % troca \listfigurename e \ext@figure, roda este gancho e então delega a
+    % \listoffigures. Uma guarda só cobre as quatro listas — o que falta é
+    % dizer, dentro do grupo daquela delegação, qual contador testar.
+    \PrepareListOf{#1}{\def\Unifei@ContadorLista{#1}}%
+    \Unifei@RegistraTipoIlustracao{#1}%
 }
 
 % \Unifei@GenXref{<contador>} gera \ref<contador>/\ref<contador>comp no molde
@@ -1713,21 +1778,35 @@
 }
 
 % Apply same styling to List of Figures
+%
+% O \@starttoc fica FORA da guarda, sempre executado. Pulá-lo fecha o stream de
+% escrita, e \addcontentsline descarta em silêncio com o stream fechado: a
+% lista ficaria desligada para sempre, mesmo depois de o autor inserir a
+% primeira figura. Medido — em documento COM figura, sem \@starttoc o .lof
+% continua ausente na primeira e na segunda passadas; com ele sai já na
+% primeira. Sozinho, sobre auxiliar sem \contentsline, ele não custa página.
+%
+% Esta é também a lista dos tipos gerados por \novotipoilustracao: o newfloat
+% delega todos a \listoffigures. Não reimplemente por tipo.
 \renewcommand{\listoffigures}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listfigurename}\par}
-    \vspace{1em}
+    \expandafter\Unifei@SeListaTemItem\expandafter{\Unifei@ContadorLista}{%
+        \cleardoublepage
+        \thispagestyle{empty}
+        {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listfigurename}\par}
+        \vspace{1em}
+    }%
     \@starttoc{lof}
     \if@openright\cleardoublepage\else\clearpage\fi
 }
 
 % Apply same styling to List of Tables
 \renewcommand{\listoftables}{%
-    \cleardoublepage
-    \thispagestyle{empty}
-    {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listtablename}\par}
-    \vspace{1em}
+    \Unifei@SeListaTemItem{table}{%
+        \cleardoublepage
+        \thispagestyle{empty}
+        {\centering\unifeifont\color{unifeiblue}\large\bfseries\MakeUppercase{\listtablename}\par}
+        \vspace{1em}
+    }%
     \@starttoc{lot}
     \if@openright\cleardoublepage\else\clearpage\fi
 }

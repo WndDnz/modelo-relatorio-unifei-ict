@@ -115,17 +115,26 @@ Quatro listas de ilustrações estão disponíveis, além das listas de abreviat
           Gráfico. Um tipo criado por \verb|\novotipoilustracao| ganha a sua automaticamente.
 \end{itemize}
 
-Todas são elementos \textbf{opcionais}, e devem ser chamadas apenas quando houver o que listar.
+Todas são elementos \textbf{opcionais}, e são chamadas quando houver o que listar.
 
-\textbf{Uma lista vazia não deixa de ser emitida: ela sai como uma página de título seguida de
-nada.} O modelo não verifica se há itens antes de imprimir o cabeçalho. É por isso que, nos
-arquivos de partida, as quatro chamadas vêm comentadas, com a explicação ao lado --- um trabalho
-recém-começado não tem ilustração alguma, e a primeira compilação produziria uma página com o
-título ``LISTA DE FIGURAS'' e o resto em branco.
+\textbf{Lista sem item algum não é emitida.} Se você chamar \verb|\listoffigures| num documento sem
+nenhuma figura, não sai página, nem título, nem entrada de sumário --- em lugar disso, a compilação
+registra no log um aviso deste pacote nomeando a lista que foi pulada. O aviso existe porque o
+modelo nunca chama lista por conta própria: se a chamada está lá, alguém a escreveu, e sumir em
+silêncio deixaria você sem saber por quê.
 
-Descomente cada uma quando o documento passar a ter o elemento correspondente. O mesmo vale para os
-glossários: \verb|\printglossary| sem nenhuma sigla citada no texto produz o mesmo tipo de página
-órfã.
+O aviso é a resposta a essa pergunta, e some sozinho quando a primeira ilustração daquele tipo
+entrar no texto. Não é preciso lembrar de descomentar coisa alguma depois: a lista passa a sair
+quando passa a ter conteúdo.
+
+Nos arquivos de partida as quatro chamadas continuam comentadas, mas agora por outro motivo. Não é
+mais para evitar página em branco --- é para que a primeira compilação de um trabalho recém-copiado
+não venha com quatro avisos sobre listas que ninguém ainda pediu. Descomente as que o seu trabalho
+vai usar, quando quiser, sem esperar ter a primeira figura.
+
+Os glossários ainda não seguem esse critério: \verb|\printglossary| sem nenhuma sigla citada no
+texto continua produzindo a página órfã, com o título e nada abaixo. Enquanto for assim, deixe as
+duas chamadas comentadas até citar a primeira sigla.
 
 Os títulos das duas listas de glossário também são redefiníveis, no mesmo molde dos nomes tratados
 na \refcomp{}{sec:nomes-personalizaveis}: \texttt{\textbackslash acronymlistname} para a lista de
