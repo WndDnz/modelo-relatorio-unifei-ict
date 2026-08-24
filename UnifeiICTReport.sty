@@ -165,6 +165,8 @@
 %   \if@unifei@folhaopc    a folha de aprovação é opcional (só tcc1)
 %   \if@unifei@absobrig    o resumo em língua estrangeira é obrigatório
 %   \if@unifei@areaobrig   a área de concentração é exigida
+%   \if@unifei@orientobrig o orientador é exigido
+%   \if@unifei@campoobrig  o supervisor de campo é exigido
 %   \Unifei@grau           grau pretendido, vazio quando não há
 %   \Unifei@papel          rótulo do papel do professor, singular
 %   \Unifei@papelplural    idem, plural
@@ -175,6 +177,13 @@
 \newif\if@unifei@folhaopc   \@unifei@folhaopcfalse
 \newif\if@unifei@absobrig   \@unifei@absobrigfalse
 \newif\if@unifei@areaobrig  \@unifei@areaobrigfalse
+% O orientador é exigido em cinco dos seis tipos. O generico é o único que o
+% dispensa, porque não é só relatório de disciplina: serve a manual, memorial e
+% outros documentos que diferem no conteúdo mas não na forma, e que não têm
+% professor responsável no sentido usual — o manual.tex deste repositório é o
+% caso vivo disso.
+\newif\if@unifei@orientobrig \@unifei@orientobrigfalse
+\newif\if@unifei@campoobrig  \@unifei@campoobrigfalse
 \def\Unifei@grau{}
 \def\Unifei@papel{Orientador}
 \def\Unifei@papelplural{Orientadores}
@@ -201,9 +210,17 @@
     \def\Unifei@papelplural{Professores}%
 \else\ifx\Unifei@doctype\Unifei@tmpestagio
     \@unifei@relatoriotrue
+    \@unifei@orientobrigtrue
+    % A folha do estágio é assinada por três partes — estagiário, orientador
+    % acadêmico e supervisor de campo. Sem a terceira ela não registra o que
+    % existe para registrar.
+    \@unifei@campoobrigtrue
 \else\ifx\Unifei@doctype\Unifei@tmptccum
     \@unifei@projetotrue
     \@unifei@combancatrue
+    % Exigido mesmo com a folha facultativa (D3): projeto de pesquisa tem
+    % orientador havendo defesa ou não.
+    \@unifei@orientobrigtrue
     % Defesa facultativa, a critério do orientador: sem banca declarada a
     % folha não é emitida (D3).
     \@unifei@folhaopctrue
@@ -221,18 +238,21 @@
     % língua estrangeira como obrigatório sem qualificar por tipo de trabalho:
     % monografia de graduação, dissertação e tese ficam sob o mesmo regime.
     \@unifei@absobrigtrue
+    \@unifei@orientobrigtrue
     \def\Unifei@grau{Bacharel}%
 \else\ifx\Unifei@doctype\Unifei@tmpdissertacao
     \@unifei@monografiatrue
     \@unifei@combancatrue
     \@unifei@absobrigtrue
     \@unifei@areaobrigtrue
+    \@unifei@orientobrigtrue
     \def\Unifei@grau{Mestre}%
 \else\ifx\Unifei@doctype\Unifei@tmptese
     \@unifei@monografiatrue
     \@unifei@combancatrue
     \@unifei@absobrigtrue
     \@unifei@areaobrigtrue
+    \@unifei@orientobrigtrue
     \def\Unifei@grau{Doutor}%
 \fi\fi\fi\fi\fi\fi
 
@@ -892,6 +912,12 @@
 % nomes ainda não forem conhecidos: o resultado é um bloco corretamente
 % formatado, mas vazio, não um erro (a folha é preparada antes da defesa).
 %
+% NÃO "CONSERTE" ISTO. O bloco em branco aqui é deliberado e é a exceção
+% consciente à regra que o resto da folha passou a seguir: orientador e
+% supervisor de campo agora falham em vez de sair em branco, porque são
+% conhecidos quando o documento é escrito. Os membros da banca não são — a
+% defesa acontece depois —, e por isso continuam aceitando campo vazio.
+%
 % O ORIENTADOR NÃO ENTRA AQUI: ele é membro da banca (tipicamente presidente),
 % mas já foi declarado em \supervisor para a capa, e a folha o inclui a partir
 % dali. Declará-lo de novo produziria o nome duplicado.
@@ -924,6 +950,25 @@
                 {O tipo '\Unifei@doctype' exige \string\abstractseclang{...}.
                  A NBR 14724:2024 \string\S 4.2.1.8 torna o resumo em língua
                  estrangeira elemento obrigatório.}%
+        }{}%
+    \fi
+    \if@unifei@orientobrig
+        \if@supervisorpresent\else
+            \PackageError{UnifeiICTReport}%
+                {Falta o orientador}%
+                {O tipo '\Unifei@doctype' exige \string\supervisor{...}.
+                 A folha de aprovação existe para registrar quem aprovou o
+                 trabalho (NBR 14724:2024 \string\S 4.2.1.3); sem o orientador
+                 ela sairia com o rótulo sobre uma linha em branco.}%
+        \fi
+    \fi
+    \if@unifei@campoobrig
+        \ifdefempty{\@empresasupervisor}{%
+            \PackageError{UnifeiICTReport}%
+                {Falta o supervisor de campo}%
+                {O tipo '\Unifei@doctype' exige \string\empresasupervisor{...}.
+                 A folha de aprovação do estágio é assinada por três partes:
+                 estagiário, orientador acadêmico e supervisor de campo.}%
         }{}%
     \fi
 }
@@ -1439,6 +1484,18 @@
     \ifx\Unifei@RPPresto\@empty\else\Unifei@RPPloop#2\@nil\fi
 }
 
+% O coorientador acompanha o orientador na folha de aprovação, quando declarado.
+% Antes disto \cosupervisor só chegava à folha de rosto: metadado declarado pelo
+% autor e descartado em silêncio justamente na página que registra quem aprovou.
+% Continua opcional em todos os tipos — a flag vem de \cosupervisor, não do tipo.
+% Passa pelo mesmo laço do orientador, então a convenção de vários separados por
+% \\ vale igual.
+\newcommand{\Unifei@RegistroCoorientador}{%
+    \if@cosupervisorpresent
+        \Unifei@RegistroPorProfessor{\@cosupervisor}{Coorientador}%
+    \fi
+}
+
 \newcommand{\Unifei@FolhaAprovacaoCabecalho}{%
     \begin{center}
         % Mesmo bloco contínuo da capa, mas em caixa normal — a caixa alta
@@ -1488,6 +1545,9 @@
             % orientador e o supervisor de campo.
             \Unifei@RegistroBloco{\@author}{\Unifei@rotuloestagiario}{}%
             \Unifei@RegistroPorProfessor{\@supervisor}{Orientador acadêmico}%
+            \Unifei@RegistroCoorientador
+            % Sem guarda de presença: \empresasupervisor é exigido no estágio e
+            % o erro do \AtBeginDocument dispara antes de a folha ser composta.
             \Unifei@RegistroBloco{\@empresasupervisor}{Supervisor de campo}{}%
             \vfill
         }{%
@@ -1498,7 +1558,17 @@
             \vfill
             % Disciplina compartilhada tem mais de um professor responsável:
             % um bloco para cada.
-            \Unifei@RegistroPorProfessor{\@supervisor}{\Unifei@papel\ da disciplina}%
+            %
+            % ÚNICO sítio que precisa de guarda de presença. O generico é o
+            % único tipo em que \supervisor é opcional; nos outros cinco o erro
+            % do \AtBeginDocument já impede a folha de ser composta com o
+            % metadado vazio. Sem esta guarda, o rótulo "Professor da
+            % disciplina" saía sobre uma linha em branco — função atribuída a
+            % ninguém, na página que existe para dizer quem aprovou.
+            \if@supervisorpresent
+                \Unifei@RegistroPorProfessor{\@supervisor}{\Unifei@papel\ da disciplina}%
+                \Unifei@RegistroCoorientador
+            \fi
             \vfill
         }%
     \fi
@@ -1535,6 +1605,7 @@
 % entra a partir de \supervisor, sem exigir um \bancamembro que o repita.
 \newcommand{\Unifei@RegistroBanca}{%
     \Unifei@RegistroPorProfessor{\@supervisor}{Orientador}%
+    \Unifei@RegistroCoorientador
     \Unifei@BancaLista
 }
 

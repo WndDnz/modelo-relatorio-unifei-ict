@@ -91,6 +91,34 @@ responsabilidade docente --- e o modelo diz uma coisa ou outra sem que você pre
 Havendo mais de um professor, separe os nomes com \verb|\\| e o rótulo vai para o plural sozinho,
 do mesmo modo que ``Autor'' vira ``Autores''.
 
+O tipo também governa se declarar o professor é obrigatório. Em \texttt{estagio},
+\texttt{tcc1}, \texttt{tcc2}, \texttt{dissertacao} e \texttt{tese}, omitir \verb|\supervisor|
+interrompe a compilação com uma mensagem deste pacote nomeando o metadado que falta --- pelo mesmo
+motivo da área de concentração: a folha de aprovação existe para registrar quem aprovou o trabalho,
+e sem o orientador ela sairia com o rótulo sobre uma linha em branco.
+
+O \texttt{generico} é o único em que o professor é opcional, e por uma razão concreta: ele não
+atende só relatórios de disciplina. Serve também a manual, memorial e outros documentos que diferem
+no conteúdo mas não na forma, e que não têm professor responsável no sentido usual --- este manual
+que você está lendo é um deles. Sem \verb|\supervisor|, a folha simplesmente não traz o bloco, e
+nada de vazio fica no lugar.
+
+No \texttt{estagio}, \verb|\empresasupervisor| é exigido pela mesma razão: a folha é assinada por
+três partes, e sem a terceira ela não registra o que existe para registrar.
+
+\subsection{O coorientador}\label{ssc:coorientador}
+
+\verb|\cosupervisor{}| é opcional em todos os tipos. Declarado, o coorientador aparece na folha de
+rosto e na folha de aprovação, logo abaixo do orientador, com rótulo próprio. Havendo mais de um,
+separe os nomes com \verb|\\|, como em \verb|\supervisor|.
+
+\begin{Verbatim}[fontsize=\small]
+\supervisor{Prof. Dr. Nome do Orientador}
+\cosupervisor{Prof. Dra. Nome da Coorientadora}
+\end{Verbatim}
+
+Não declarado, não deixa rastro em página alguma.
+
 \section{Área de concentração e linha de pesquisa}\label{sec:area-linha}
 
 Dois metadados existem apenas para os tipos de monografia:
@@ -117,6 +145,9 @@ preâmbulo, e não de um parâmetro seu --- é o mesmo tipo que já governou a c
     \item No \texttt{tcc2}, na \texttt{dissertacao}, na \texttt{tese} e no \texttt{tcc1} com banca,
           consta a banca examinadora.
 \end{itemize}
+
+Em qualquer um deles, o coorientador consta logo abaixo do orientador quando declarado por
+\verb|\cosupervisor| (\refcomp{}{ssc:coorientador}).
 
 \subsection{A banca}\label{ssc:banca}
 
