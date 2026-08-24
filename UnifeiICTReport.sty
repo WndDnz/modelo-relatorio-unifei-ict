@@ -1431,7 +1431,12 @@
                 \Unifei@FullTitleBloco{\MakeUppercase}\par}
         \end{minipage}
         \vfill\vfill
-        {\unifeifont\large\parbox{\textwidth}{\centering\MakeUppercase{\@location}\par\the\year}\par}
+        % Local e ano, na forma que o §4.2.1.1.1(f) pede para a capa. A norma
+        % não prescreve a forma do local; a sigla do estado é escolha do modelo
+        % e desambigua cidades homônimas. Abreviada aqui, onde a linha é curta e
+        % composta em versal; a folha de rosto traz o estado por extenso, porque
+        % lá a linha já é corrida e a forma completa não estorva.
+        {\unifeifont\large\parbox{\textwidth}{\centering\MakeUppercase{\@location},~\@stateacronym\par\the\year}\par}
     }
     \if@openright
         \cleardoublepage

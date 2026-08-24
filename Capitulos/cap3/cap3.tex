@@ -54,7 +54,7 @@ Os dois elementos saem do mesmo conjunto de metadados, declarados no preâmbulo,
         \texttt{\textbackslash course\{\}}            & Curso. Padrão: Engenharia de Computação.                \\
         \texttt{\textbackslash location\{\}}          & Cidade. Padrão: Itabira.                                \\
         \texttt{\textbackslash state\{\}}             & Estado por extenso. Padrão: Minas Gerais.               \\
-        \texttt{\textbackslash stateacronym\{\}}      & Sigla do estado. Padrão: MG.                            \\
+        \texttt{\textbackslash stateacronym\{\}}      & Sigla do estado, impressa na capa. Padrão: MG.          \\
         \bottomrule
     \end{tabular}
     \fonte{o próprio autor}
@@ -67,9 +67,21 @@ você não os declarar, o modelo os imprime assim mesmo, sem erro e sem aviso. C
 descrevem o ICT: a Unifei, o Instituto de Ciências Tecnológicas, Itabira, Minas Gerais, MG.
 
 \textbf{O \texttt{\textbackslash course} é a exceção que interessa.} Seu padrão é Engenharia de Computação, que é
-\emph{um} curso entre vários do instituto. Se o seu não é esse, declare-o --- caso contrário a capa
-sai com o curso errado, e esse é um defeito que não chama atenção: a página parece correta para
-quem a folheia.
+\emph{um} curso entre vários do instituto. Se o seu não é esse, declare-o --- caso contrário a
+\textbf{folha de rosto} sai com o curso errado, e esse é um defeito que não chama atenção: a página
+parece correta para quem a folheia. É a folha de rosto, e não a capa: a capa não imprime curso nem
+unidade, só a instituição, o autor, o título e o local.
+
+Por isso os seis arquivos de partida já trazem \verb|\course| declarado com valor de exemplo, ao
+lado dos outros metadados que você precisa trocar, e os cinco restantes comentados, com o padrão
+escrito ao lado. Quem é do ICT lê e segue adiante; quem é de outro campus, ou de outra instituição,
+descomenta o que precisar. Nenhum deles é obrigatório, e é justamente por isso que ficam à vista: um
+metadado com padrão embutido não aparece em erro algum quando está errado.
+
+O local aparece nas duas páginas, em formas diferentes: na capa, cidade e sigla do estado
+(``ITABIRA, MG''); na folha de rosto, cidade e estado por extenso, junto da data. A NBR 14724:2024
+§4.2.1.1.1(f) pede o local da instituição e não prescreve a forma --- a sigla é escolha do modelo,
+para uma linha curta, e desambigua cidades homônimas.
 
 \subsection{O subtítulo e os dois-pontos}\label{ssc:subtitulo}
 
