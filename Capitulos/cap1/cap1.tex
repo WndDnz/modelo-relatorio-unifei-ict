@@ -58,6 +58,55 @@ está tecnicamente errado --- apenas o trabalho está sob a natureza errada. Con
 antes de entregar; é uma linha do preâmbulo, e a \refcomp{}{cap:estrutura} descreve o que cada uma
 produz.
 
+\section{As outras duas opções: \texttt{roman} e \texttt{sans}}\label{sec:opcoes-fonte}
+
+Além de \texttt{tipo=}, o pacote aceita duas opções, e elas fazem a mesma coisa em sentidos
+opostos: escolhem qual família tipográfica compõe o corpo do texto. A outra família vai para as
+legendas de ilustrações e tabelas, sempre --- corpo e legenda são famílias contrárias por
+construção, e nunca as duas na mesma.
+
+\begin{itemize}
+    \item \texttt{roman} --- corpo com serifa, legenda sem serifa. É o padrão, aplicado quando
+          nenhuma das duas é declarada, e é o que este manual usa.
+    \item \texttt{sans} --- corpo sem serifa, legenda com serifa.
+\end{itemize}
+
+\begin{Verbatim}[fontsize=\small]
+\usepackage[tipo=tcc2,sans]{UnifeiICTReport}
+\end{Verbatim}
+
+O efeito das duas, composto nas próprias famílias que cada uma produz:
+
+\begin{center}
+    \begin{tabular}{lll}
+        \toprule
+                                    & \texttt{roman} (padrão)                        & \texttt{sans}                                  \\
+        \midrule
+        Corpo do texto              & \rmfamily Texto corrido do trabalho.           & \sffamily Texto corrido do trabalho.           \\
+        Legenda de ilustração       & \sffamily\small\textbf{Figura 1} -- Legenda.   & \rmfamily\small\textbf{Figura 1} -- Legenda.   \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+A escolha é sua. A ABNT NBR 14724:2024~\cite{nbr14724:2024} não prescreve família tipográfica: o
+§5.1 rege cor, papel e tamanho, e nada diz sobre serifa. As duas opções são, portanto, decisão
+editorial, e nenhuma delas põe o trabalho fora da norma.
+
+Não confunda a opção com a fonte instalada na máquina. A opção decide \emph{onde} a família sem
+serifa é usada; qual fonte sem serifa existe no seu computador é outra coisa, resolvida pelo pacote
+com uma cadeia de alternativas e um aviso na compilação quando nenhuma das preferidas está
+disponível.
+
+\subsection{A opção \texttt{neverindent} foi removida}\label{ssc:neverindent}
+
+Versões anteriores declaravam uma terceira opção, \texttt{neverindent}. Ela nunca teve efeito: usá-la
+interrompia a compilação com um erro interno. Foi retirada, e o pacote agora recusa quem a passe,
+com uma mensagem que explica a remoção em vez do erro antigo.
+
+Não há o que repor no lugar. Trabalhos ABNT têm o parágrafo indentado, inclusive o primeiro de cada
+seção, e nenhuma das normas atendidas por este modelo pede a supressão desse recuo --- nem a citação
+direta longa, que recua o bloco inteiro por outro caminho, descrito na \refcomp{}{cap:texto}.
+
 \section{Qual arquivo copiar}\label{sec:qual-arquivo}
 
 Há um arquivo de partida por tipo, na raiz do repositório. Copie o seu, renomeie-o e escreva o
