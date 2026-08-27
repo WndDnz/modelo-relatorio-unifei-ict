@@ -34,8 +34,8 @@
 
 ## 5. Ao arquivar
 
-- [ ] 5.1 Criar a capability `package-options` em `openspec/specs/` a partir do delta.
-- [ ] 5.2 Conferir que `document-type` continua sendo a dona de `tipo=`, sem sobreposição com a capability nova.
+- [x] 5.1 Criar a capability `package-options` em `openspec/specs/` a partir do delta.
+- [x] 5.2 Conferir que `document-type` continua sendo a dona de `tipo=`, sem sobreposição com a capability nova.
 
 ## Registro de aplicação
 
