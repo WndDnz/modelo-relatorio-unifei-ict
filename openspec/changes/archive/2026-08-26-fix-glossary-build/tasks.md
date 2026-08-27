@@ -29,8 +29,8 @@
 
 ## 5. Ao arquivar
 
-- [ ] 5.1 Confirmar que a capability `abbreviation-symbol-lists` foi criada em `openspec/specs/` com os três cenários do delta.
-- [ ] 5.2 Conferir se `add-empty-list-guard` já decidiu o texto do aviso e se os dois coincidem. Se esta change entrar primeiro, ela fixa o molde; se entrar depois, ela o segue.
+- [x] 5.1 Confirmar que a capability `abbreviation-symbol-lists` foi criada em `openspec/specs/` com os três cenários do delta.
+- [x] 5.2 Conferir se `add-empty-list-guard` já decidiu o texto do aviso e se os dois coincidem. Se esta change entrar primeiro, ela fixa o molde; se entrar depois, ela o segue.
 
 ## Registro de aplicação
 
@@ -51,3 +51,10 @@ Verificação, lendo as páginas:
 - `modelo-generico` com `\makeglossaries`, um `\newacronym` e um `\gls` no texto: 9 páginas contra 8, com a lista impressa — o caminho que os arquivos de partida instruem, e o que entregava a página em branco.
 - `latexmk -c` remove `acn acr alg slo sls slg ist` de `build/`.
 - Os seis arquivos de partida mantêm a paginação.
+
+**5.1, registro:** criada com os três cenários do delta intactos — siglas citadas, documento sem
+sigla alguma, símbolos e siglas juntos. O `Purpose` veio do CLI em inglês e foi reescrito em
+português.
+
+**5.2, registro:** `add-empty-list-guard` entrou primeiro e fixou o molde; esta o segue sem
+esforço, porque a guarda do glossário chama o mesmo `\Unifei@AvisaListaPulada`.
