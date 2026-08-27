@@ -17,8 +17,8 @@
 
 ## 4. Ao arquivar
 
-- [ ] 4.1 Criar a capability `direct-citation` em `openspec/specs/` a partir do delta. Ela é a primeira a governar a NBR 10520:2023 neste repositório; `bibliography-accuracy` cobre a 6023, que é outra coisa.
-- [ ] 4.2 Registrar em change própria a conferência da **natureza do trabalho** e das **referências**, que o §5.2 também excetua do espacejamento 1,5 e que esta change não mediu. A natureza é gerada dentro do pacote; as referências vêm do biblatex.
+- [x] 4.1 Criar a capability `direct-citation` em `openspec/specs/` a partir do delta. Ela é a primeira a governar a NBR 10520:2023 neste repositório; `bibliography-accuracy` cobre a 6023, que é outra coisa.
+- [x] 4.2 Registrar em change própria a conferência da **natureza do trabalho** e das **referências**, que o §5.2 também excetua do espacejamento 1,5 e que esta change não mediu. A natureza é gerada dentro do pacote; as referências vêm do biblatex.
 
 ## Registro de aplicação
 
@@ -39,3 +39,18 @@ Lendo a página: o bloco encolhe e continua recuado da margem esquerda, em letra
 `manual.tex` tem `\quote` no capítulo 4, e a página composta foi lida: o bloco sai visivelmente mais compacto que o texto ao redor. É mudança de saída num documento versionado, e está dita no manual — o parágrafo que apresenta o comando agora nomeia os quatro destaques e o §7.1.1, e avisa que o bloco é compacto de propósito, para que ninguém o "conserte".
 
 Os seis arquivos de partida mantêm a paginação.
+
+**4.1, registro:** criada. O `Purpose` veio do CLI em inglês e foi reescrito em português,
+delimitando a fronteira com `bibliography-accuracy`.
+
+**4.2, registro: a conferência foi feita aqui, e não virou change, porque os dois já estão
+conformes.** A natureza sai em espaço simples nas duas folhas — `\setstretch{1.0}` em
+`UnifeiICTReport.sty:1526` (folha de rosto) e `:1659` (folha de aprovação) —, confirmado lendo a
+página 2 de `modelo-tcc2.pdf`: as três linhas do bloco saem justas contra o 1,5 do corpo. As
+referências saem em espaço simples dentro da entrada e separadas por uma linha em branco entre
+entradas, como o §5.2 pede; confirmado lendo a página 46 de `manual.pdf`. O `style=abnt` do
+biblatex já o faz, e o pacote não precisa intervir.
+
+**Achado colateral:** a mesma leitura mostrou a natureza do tcc2 dizendo "Trabalho de Conclusão de
+Curso **apresentada**" — o particípio é feminino fixo (`:854` e `:1735`), correto para Dissertação
+e Tese e errado para o TCC2, nas duas folhas. Registrado como `fix-natureza-agreement`.
