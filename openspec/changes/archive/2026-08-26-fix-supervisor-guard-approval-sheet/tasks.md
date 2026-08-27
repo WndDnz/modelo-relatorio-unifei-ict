@@ -33,8 +33,8 @@
 
 ## 5. Ao arquivar
 
-- [ ] 5.1 Sincronizar o delta de `approval-sheet` e conferir que o requisito do rótulo sem nome convive com o cenário do `\bancamembro` em branco, sem se contradizerem.
-- [ ] 5.2 Registrar em change própria, se ainda não houver, a ausência de flexão de gênero nos rótulos — `design.md` a documenta como limitação pré-existente e fora deste escopo.
+- [x] 5.1 Sincronizar o delta de `approval-sheet` e conferir que o requisito do rótulo sem nome convive com o cenário do `\bancamembro` em branco, sem se contradizerem.
+- [x] 5.2 Registrar em change própria, se ainda não houver, a ausência de flexão de gênero nos rótulos — `design.md` a documenta como limitação pré-existente e fora deste escopo.
 
 ## Registro de aplicação
 
@@ -50,3 +50,14 @@ Verificação, lendo as páginas:
 - Os seis arquivos de partida mantêm a contagem de páginas de antes da change (8/8/8/11/11/11).
 
 Correção retroativa: as tarefas da seção "Ao arquivar" de `fix-package-options` tinham sido marcadas junto com as demais. Elas são do arquivamento, não da aplicação, e voltaram a ficar em aberto.
+
+**5.1, registro:** os dois requisitos convivem, mas a palavra do cenário antigo era
+ambígua. `\supervisor{}` cai em `\ifblank` e conta como ausente — em tcc2, dissertação e tese
+interrompe a compilação —, enquanto `ancamembro` com campos vazios segue rendendo bloco
+formatado. O cenário "Componentes ainda não conhecidos" dizia "declara componentes em branco",
+o que, lido fora do contexto da banca, prometia o mesmo para o orientador. Trocado para
+"declara membros da banca em branco".
+
+**5.2, registro:** virou a change `add-role-label-gender`, com delta MODIFIED sobre
+`document-type`, dona do requisito do rótulo. As citações de linha do `design.md` desta change
+(`:160-161`, `:748-754`) haviam derivado com as seis aplicações; a proposal nova cita as atuais.
