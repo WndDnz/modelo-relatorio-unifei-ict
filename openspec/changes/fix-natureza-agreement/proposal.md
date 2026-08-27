@@ -28,10 +28,11 @@ O particípio passa a acompanhar o substantivo, nos dois pontos de emissão.
 
 A implementação provável é uma macro por tipo que carregue substantivo e particípio juntos, para
 que os dois não voltem a divergir — hoje eles estão em linhas diferentes do mesmo bloco, que é
-exatamente como divergiram. Decidir no design se o mesmo tratamento vale para os tipos que não são
-monografia: `estagio` e `generico` dizem "Relatório ... apresentado", que concorda, e o projeto de
-pesquisa diz "Projeto de pesquisa apresentado", que também concorda — estão certos por coincidência
-de gênero, não por construção.
+exatamente como divergiram. Os tipos que não são monografia ficam como estão: em `estagio`, `generico` e
+`tcc1` o substantivo e o particípio já estão na mesma cadeia literal — "Relatório de estágio
+supervisionado apresentado", "Projeto de pesquisa apresentado" — e não têm como divergir. Estão
+certos por construção, e é essa construção que falta à monografia (`design.md` D1 registra a
+correção: a primeira versão desta proposal dizia "por coincidência de gênero", e estava errada).
 
 ## Capabilities
 
