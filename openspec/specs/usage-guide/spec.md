@@ -12,6 +12,8 @@ Existe porque a documentação ficou duas changes atrás da implementação: sei
 
 O repositório SHALL conter um arquivo de partida por tipo de documento admitido pela opção `tipo=`, com o tipo já declarado, os metadados exigidos por aquele tipo presentes e preenchidos com valor de exemplo, e os opcionais comentados com a explicação ao lado.
 
+Metadado que o pacote preenche com padrão embutido SHALL aparecer no arquivo de partida, e não ser deixado implícito: preenchido com valor de exemplo quando o padrão estiver errado para a maior parte dos autores que o modelo atende, comentado com o padrão ao lado quando estiver certo. Um padrão silencioso produz saída plausível e errada, que não falha e não avisa.
+
 Cada arquivo de partida SHALL compilar sem edição e sem erro, e SHALL produzir apenas páginas com conteúdo. Nenhum elemento cujo conteúdo dependa do que o autor ainda não escreveu pode ser chamado: listas de ilustrações, listas de tabelas, glossários e bibliografia ficam comentados enquanto não houver o que listar.
 
 Nenhum arquivo de partida SHALL conter conteúdo de demonstração — texto de exemplo, ilustrações de amostra ou referências fictícias — nem apontar para arquivo que o contenha. É ponto de partida, não documento pronto a ser esvaziado.
@@ -27,6 +29,11 @@ Os arquivos de partida não importam arquivos externos: cada um é um documento 
 
 - **WHEN** um tipo exige um metadado que outro não exige
 - **THEN** o arquivo de partida daquele tipo já o traz preenchido com valor de exemplo, e não comentado
+
+#### Scenario: Metadado com padrão embutido no pacote
+
+- **WHEN** o pacote imprime um metadado a partir de um padrão embutido, sem exigir declaração
+- **THEN** o arquivo de partida o traz visível — preenchido se o padrão não serve à maioria, comentado com o padrão ao lado se serve —, para que o autor decida em vez de herdar sem saber
 
 #### Scenario: Bibliografia antes de haver referências
 

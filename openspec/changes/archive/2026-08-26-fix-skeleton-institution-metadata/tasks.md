@@ -28,7 +28,7 @@
 
 ## 5. Ao arquivar
 
-- [ ] 5.1 Sincronizar o delta de `usage-guide`, cujo requisito dos arquivos de partida ganha o caso do metadado com padrão embutido — que não é exigido nem opcional, e por isso escapava da regra.
+- [x] 5.1 Sincronizar o delta de `usage-guide`, cujo requisito dos arquivos de partida ganha o caso do metadado com padrão embutido — que não é exigido nem opcional, e por isso escapava da regra.
 
 ## Registro de aplicação
 
@@ -44,3 +44,8 @@ Verificação, lendo as páginas:
 - Os seis compilam sem edição e mantêm a paginação.
 
 Correção documental da tarefa 4.1: `Capitulos/cap3/cap3.tex` afirmava que sem `\course` "a capa sai com o curso errado". O defeito é real, a página nomeada não — quem sai errada é a folha de rosto. O parágrafo agora diz qual é, e diz também o que a capa imprime, para que a confusão não volte.
+
+**5.1, registro:** delta sincronizado. O requisito dos arquivos de partida passou a cobrir o
+metadado com padrão embutido — nem exigido nem opcional, e por isso fora das duas regras que
+existiam —, com cenário próprio: preenchido quando o padrão não serve à maioria, comentado com o
+padrão ao lado quando serve.
