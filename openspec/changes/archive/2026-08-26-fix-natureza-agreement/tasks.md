@@ -25,8 +25,8 @@
 
 ## 5. Ao arquivar
 
-- [ ] 5.1 Sincronizar o delta de `document-type`, cujo requisito dos três tipos de monografia ganha a exigência de concordância.
-- [ ] 5.2 Conferir que `add-role-label-gender` continua sendo outra coisa: lá o gênero é de uma pessoa e precisa ser declarado; aqui é do substantivo que o tipo escolhe. Se as duas changes convergirem para um mecanismo só, é sinal de que uma delas está resolvendo o problema errado.
+- [x] 5.1 Sincronizar o delta de `document-type`, cujo requisito dos três tipos de monografia ganha a exigência de concordância.
+- [x] 5.2 Conferir que `add-role-label-gender` continua sendo outra coisa: lá o gênero é de uma pessoa e precisa ser declarado; aqui é do substantivo que o tipo escolhe. Se as duas changes convergirem para um mecanismo só, é sinal de que uma delas está resolvendo o problema errado.
 
 ## Registro de aplicação
 
@@ -48,3 +48,13 @@ O `manual.pdf`, 49 páginas, saiu idêntico. A deduplicação não mexeu numa v�
 O `tcc1` não tem folha de aprovação nos arquivos de partida — a folha é facultativa (D3) e o
 esqueleto não declara banca —, então a natureza do projeto de pesquisa foi conferida só na folha de
 rosto. O caminho da folha de aprovação do `tcc1` é o mesmo código dos outros cinco.
+
+**5.1, registro:** delta sincronizado. O requisito dos três tipos de monografia ganhou o cenário
+"Concordância com o nome do trabalho" (`openspec/specs/document-type/spec.md:72`).
+
+**5.2, registro:** continuam sendo coisas diferentes, e o teste é a forma do dado. Aqui o gênero é
+do substantivo que o próprio tipo escolhe: três valores, todos conhecidos em tempo de pacote,
+resolvidos por cadeia literal, sem o autor declarar nada. Em `add-role-label-gender` o gênero é de
+uma pessoa: não é derivável, não é conhecido pelo pacote e tem de ser declarado. Os dois deltas
+tocam `document-type` em requisitos distintos — este o dos três tipos de monografia, aquele o do
+rótulo do papel — e `openspec validate` passa nos dois depois deste arquivamento.
