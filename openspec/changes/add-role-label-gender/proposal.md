@@ -41,14 +41,16 @@ A decidir no design, e não aqui:
 
 ### Modified Capabilities
 
-- `document-type`: é a dona do requisito "O rótulo do papel do professor deriva do tipo", que hoje
-  faz o rótulo variar por tipo e por número. O gênero é a terceira dimensão da mesma variação, e
-  cabe no mesmo requisito.
+- `document-type`: é a única capability que hoje fala em rótulo de pessoa, no requisito "O rótulo do
+  papel do professor deriva do tipo". A flexão entra como requisito próprio, e não dentro daquele:
+  ela alcança também o autor e o supervisor de campo, cujos rótulos não derivam do tipo. Ver a
+  tarefa 5.2, que reabre a questão do dono do rótulo de autor no arquivamento.
 
 ## Fora de escopo
 
-- **Os rótulos que não designam pessoa** — "Autor"/"Autores" tem o mesmo defeito e resolve-se pelo
-  mesmo mecanismo, mas pertence à capa, não ao papel do professor. Decidir no design se entra junto.
+- **Nada.** A pergunta que estava aqui — se "Autor"/"Autores" entrava junto — foi decidida no
+  `design.md` §2: entra. É o rótulo mais lido do documento, tem o mesmo defeito e resolve-se pelo
+  mesmo mecanismo; deixá-lo de fora entregaria meia solução.
 - **Linguagem neutra.** Esta change flexiona em masculino e feminino, que é o que os documentos do
   ICT usam hoje. Terceira forma é decisão institucional, não de modelo.
 
