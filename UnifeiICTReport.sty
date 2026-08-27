@@ -168,6 +168,9 @@
 %   \if@unifei@orientobrig o orientador é exigido
 %   \if@unifei@campoobrig  o supervisor de campo é exigido
 %   \Unifei@grau           grau pretendido, vazio quando não há
+%   \Unifei@trabalhoapresentado
+%                          nome do trabalho seguido do particípio que com ele
+%                          concorda, numa cadeia só; vazio fora das monografias
 %   \Unifei@papel          rótulo do papel do professor, singular
 %   \Unifei@papelplural    idem, plural
 \newif\if@unifei@monografia \@unifei@monografiafalse
@@ -185,6 +188,10 @@
 \newif\if@unifei@orientobrig \@unifei@orientobrigfalse
 \newif\if@unifei@campoobrig  \@unifei@campoobrigfalse
 \def\Unifei@grau{}
+% Substantivo e particípio andam juntos numa cadeia só, e não em linhas
+% separadas: é o que impede "Trabalho de Conclusão de Curso apresentada", que
+% foi como este modelo compôs a natureza de todo TCC2 até esta linha existir.
+\def\Unifei@trabalhoapresentado{}
 \def\Unifei@papel{Orientador}
 \def\Unifei@papelplural{Orientadores}
 
@@ -240,6 +247,7 @@
     \@unifei@absobrigtrue
     \@unifei@orientobrigtrue
     \def\Unifei@grau{Bacharel}%
+    \def\Unifei@trabalhoapresentado{Trabalho de Conclusão de Curso apresentado}%
 \else\ifx\Unifei@doctype\Unifei@tmpdissertacao
     \@unifei@monografiatrue
     \@unifei@combancatrue
@@ -247,6 +255,7 @@
     \@unifei@areaobrigtrue
     \@unifei@orientobrigtrue
     \def\Unifei@grau{Mestre}%
+    \def\Unifei@trabalhoapresentado{Dissertação apresentada}%
 \else\ifx\Unifei@doctype\Unifei@tmptese
     \@unifei@monografiatrue
     \@unifei@combancatrue
@@ -254,6 +263,7 @@
     \@unifei@areaobrigtrue
     \@unifei@orientobrigtrue
     \def\Unifei@grau{Doutor}%
+    \def\Unifei@trabalhoapresentado{Tese apresentada}%
 \fi\fi\fi\fi\fi\fi
 
 % --- Lógica para decidir quais opções de língua passar ao babel ---
@@ -831,9 +841,15 @@
         {\def\Unifei@rotuloestagiario{Aluno estagiário}}%
 }
 
-% Natureza da folha de rosto, por tipo. Mesmo texto que a folha de aprovação
-% usa, mantido em um só lugar para os dois não divergirem com o tempo.
-\newcommand{\Unifei@NaturezaFolhaRosto}{%
+% Natureza do trabalho, por tipo. É o texto que a folha de rosto E a folha de
+% aprovação imprimem, e este é o único lugar onde ele existe.
+%
+% Isso passou a ser verdade agora. Antes o texto estava escrito duas vezes,
+% aqui e dentro de \Unifei@FolhaAprovacaoCorpo, e o comentário que ficava nesta
+% linha afirmava que estava num lugar só. Não estava — e o preço apareceu na
+% natureza da monografia, cuja concordância teve de ser corrigida nas duas
+% cópias. Se precisar mexer no texto, mexa aqui e as duas páginas acompanham.
+\newcommand{\Unifei@Natureza}{%
     \if@unifei@relatorio
         \ifdefstring{\Unifei@doctype}{estagio}%
             {Relatório de estágio supervisionado apresentado como requisito
@@ -842,17 +858,16 @@
              como requisito parcial para aprovação no semestre.}%
     \fi
     \if@unifei@projeto
+        % D4: declara grau, contra o §4.2.1.1(e) da 15287 — o TCC1 do ICT é
+        % requisito parcial para o título, não projeto autônomo.
         Projeto de pesquisa apresentado como requisito parcial para obtenção
         do título de \Unifei@grau\ em \@subject, sendo o cumprimento das duas
         etapas do trabalho de conclusão de curso condição para a titulação.%
         \Unifei@NaturezaComplemento
     \fi
     \if@unifei@monografia
-        \ifdefstring{\Unifei@doctype}{tcc2}{Trabalho de Conclusão de Curso}{%
-            \ifdefstring{\Unifei@doctype}{dissertacao}{Dissertação}{Tese}%
-        }%
-        \ apresentada como requisito parcial para obtenção do título de
-        \Unifei@grau\ em \@subject.%
+        \Unifei@trabalhoapresentado\ como requisito parcial para obtenção do
+        título de \Unifei@grau\ em \@subject.%
         \Unifei@NaturezaComplemento
     \fi
 }
@@ -1525,7 +1540,7 @@
         \begin{parbox}{0.5\textwidth}{
                 \setstretch{1.0}
                 \normalsize
-                \Unifei@NaturezaFolhaRosto
+                \Unifei@Natureza
             }
         \end{parbox}
         \vfill\vfill\vfill%
@@ -1675,12 +1690,13 @@
 
 \newcommand{\Unifei@FolhaAprovacaoCorpo}{%
     \Unifei@FolhaAprovacaoCabecalho
+    % A natureza é a mesma da folha de rosto, e vem de \Unifei@Natureza, que a
+    % seleciona pelo tipo. Uma chamada antes dos ramos, e não uma cópia do texto
+    % dentro de cada um: os ramos abaixo existem pelos blocos de registro, que
+    % são o que de fato difere entre os tipos.
+    \Unifei@FolhaAprovacaoNatureza{\Unifei@Natureza}%
     \if@unifei@relatorio
         \ifdefstring{\Unifei@doctype}{estagio}{%
-            \Unifei@FolhaAprovacaoNatureza{%
-                Relatório de estágio supervisionado apresentado como requisito
-                parcial para aprovação na disciplina de \@subject.%
-            }%
             \vfill
             % Três partes assinam o estágio: o próprio estagiário, o professor
             % orientador e o supervisor de campo.
@@ -1692,10 +1708,6 @@
             \Unifei@RegistroBloco{\@empresasupervisor}{Supervisor de campo}{}%
             \vfill
         }{%
-            \Unifei@FolhaAprovacaoNatureza{%
-                Relatório apresentado ao professor da disciplina de \@subject,
-                como requisito parcial para aprovação no semestre.%
-            }%
             \vfill
             % Disciplina compartilhada tem mais de um professor responsável:
             % um bloco para cada.
@@ -1713,29 +1725,11 @@
             \vfill
         }%
     \fi
-    \if@unifei@projeto
-        % D4: declara grau, contra o §4.2.1.1(e) da 15287 — o TCC1 do ICT é
-        % requisito parcial para o título, não projeto autônomo.
-        \Unifei@FolhaAprovacaoNatureza{%
-            Projeto de pesquisa apresentado como requisito parcial para
-            obtenção do título de \Unifei@grau\ em \@subject, sendo o
-            cumprimento das duas etapas do trabalho de conclusão de curso
-            condição para a titulação.%
-            \Unifei@NaturezaComplemento
-        }%
-        \vfill
-        \Unifei@RegistroBanca
-        \vfill
-    \fi
-    \if@unifei@monografia
-        \Unifei@FolhaAprovacaoNatureza{%
-            \ifdefstring{\Unifei@doctype}{tcc2}{Trabalho de Conclusão de Curso}{%
-                \ifdefstring{\Unifei@doctype}{dissertacao}{Dissertação}{Tese}%
-            }%
-            \ apresentada como requisito parcial para obtenção do título de
-            \Unifei@grau\ em \@subject.%
-            \Unifei@NaturezaComplemento
-        }%
+    % Com a natureza fora dos ramos, os de projeto e de monografia ficaram
+    % idênticos — os dois emitem a banca e nada mais. \if@unifei@combanca é
+    % exatamente a união dos dois, e dizer "traz banca examinadora" é mais
+    % próximo do motivo do que listar dois layouts.
+    \if@unifei@combanca
         \vfill
         \Unifei@RegistroBanca
         \vfill
