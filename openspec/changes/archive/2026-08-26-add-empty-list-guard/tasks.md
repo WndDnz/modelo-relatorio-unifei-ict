@@ -27,8 +27,8 @@
 
 ## 4. Ao arquivar
 
-- [ ] 4.1 Sincronizar o delta de `illustration-types` e resolver onde `\listoftables` (§4.2.1.10) fica governado — hoje nenhuma capability a cobre.
-- [ ] 4.2 Conferir que o texto do aviso coincide com o de `fix-glossary-build`. Quem entrar primeiro fixa o molde.
+- [x] 4.1 Sincronizar o delta de `illustration-types` e resolver onde `\listoftables` (§4.2.1.10) fica governado — hoje nenhuma capability a cobre.
+- [x] 4.2 Conferir que o texto do aviso coincide com o de `fix-glossary-build`. Quem entrar primeiro fixa o molde.
 
 ## Registro de aplicação
 
@@ -48,3 +48,12 @@ Verificação, lendo as páginas:
 - `manual.tex`, que tem figuras e tabelas e chama só essas duas listas: saída idêntica à de antes da change, conferida por comparação do texto extraído contra a compilação do commit anterior. Os seis arquivos de partida mantêm a paginação.
 
 Nota de sequência: o texto do manual e o comentário dos esqueletos dizem, por ora, que os glossários **ainda não** têm essa guarda — o que é verdade neste commit. `fix-glossary-build`, a próxima change desta série, atualiza os dois quando passar a valer o mesmo critério, e é lá que a tarefa 4.2 de alinhar o texto dos dois avisos se resolve.
+
+**4.1, registro:** `\listoftables` (§4.2.1.10) fica em `illustration-types`. A alternativa era
+capability própria, descartada porque a lista de tabelas usa a mesma delegação do `newfloat` e a
+mesma guarda de lista vazia das listas de ilustração — seriam duas capabilities sobre um mecanismo
+só. O `Purpose` da capability passou a dizê-lo, e foi vertido ao português na mesma edição, já que
+metade em inglês e metade em português é pior que qualquer das duas.
+
+**4.2, registro:** coincidem por construção. As duas guardas chamam `\Unifei@AvisaListaPulada`
+(`UnifeiICTReport.sty:1276` e `:1328`), que é um comando só — não há dois textos a manter em dia.

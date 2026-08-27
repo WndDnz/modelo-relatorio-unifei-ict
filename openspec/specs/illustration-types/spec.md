@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Makes the designative word a property of each illustration rather than a hardcoded "Figura", per ABNT NBR 14724:2024 §5.8, with an independent numbering sequence and an optional dedicated list per type (§4.2.1.9) — and holds the boundary between illustration (§5.8) and table (§5.9).
+Faz da palavra designativa uma propriedade de cada ilustração, em vez do "Figura" fixo, conforme a ABNT NBR 14724:2024 §5.8, com sequência de numeração independente e lista própria por tipo (§4.2.1.9) — e guarda a fronteira entre ilustração (§5.8) e tabela (§5.9).
+
+Governa também a **emissão** da lista de tabelas (§4.2.1.10): a lista de tabelas é o mesmo mecanismo das listas de ilustração, atendida pela mesma delegação do `newfloat` e pela mesma guarda de lista vazia, e separá-la numa capability própria dividiria em duas o que o código e a norma tratam junto. O formato da legenda de tabela não é daqui — é de `illustration-caption-format`.
 
 ## Requirements
 
@@ -90,3 +92,24 @@ A cross-reference to an illustration SHALL resolve to that illustration's design
 
 - **WHEN** a document uses the template's existing figure and table cross-reference commands
 - **THEN** they resolve exactly as before this change
+
+### Requirement: Lista opcional sem itens não é emitida
+
+Lista de elementos que a NBR 14724:2024 trata como elemento opcional — lista de ilustrações (§4.2.1.9), lista de tabelas (§4.2.1.10) e as listas por tipo de ilustração (§5.8) — SHALL deixar de ser emitida quando não houver item algum a listar. Não emitir significa não imprimir título, não consumir página e não gerar entrada no sumário.
+
+A ausência de itens SHALL ser detectada pelo próprio pacote, e não delegada ao autor sob a forma de uma chamada que ele precise lembrar de comentar.
+
+#### Scenario: Documento sem nenhuma ilustração do tipo
+
+- **WHEN** o documento chama a lista de um tipo de ilustração e nenhum elemento daquele tipo existe no texto
+- **THEN** nenhuma página é emitida para aquela lista, e o sumário não a menciona
+
+#### Scenario: Ilustrações retiradas na revisão
+
+- **WHEN** um documento que tinha ilustrações passa a não ter nenhuma, sem que a chamada da lista seja removida
+- **THEN** a lista deixa de ser emitida na compilação seguinte, sem exigir edição do arquivo do autor
+
+#### Scenario: Lista com pelo menos um item
+
+- **WHEN** existe ao menos um elemento a listar
+- **THEN** a lista é emitida como hoje, sem alteração de estilo, de cabeçalho ou de posição
