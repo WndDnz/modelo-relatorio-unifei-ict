@@ -1,0 +1,3 @@
+profile: core-opsx
+require_tdd: true
+enforce_coverage: true
