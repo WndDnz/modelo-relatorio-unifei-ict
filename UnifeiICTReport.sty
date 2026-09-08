@@ -172,7 +172,9 @@
 %                          nome do trabalho seguido do particípio que com ele
 %                          concorda, numa cadeia só; vazio fora das monografias
 %   \Unifei@papel          rótulo do papel do professor, singular
+%   \Unifei@papelfem       idem, feminino
 %   \Unifei@papelplural    idem, plural
+%   \Unifei@papelpluralfem idem, plural feminino
 \newif\if@unifei@monografia \@unifei@monografiafalse
 \newif\if@unifei@projeto    \@unifei@projetofalse
 \newif\if@unifei@relatorio  \@unifei@relatoriofalse
@@ -192,8 +194,12 @@
 % separadas: é o que impede "Trabalho de Conclusão de Curso apresentada", que
 % foi como este modelo compôs a natureza de todo TCC2 até esta linha existir.
 \def\Unifei@trabalhoapresentado{}
+% Pares literais, não regra de sufixo: "Aluno estagiário" muda duas palavras e
+% uma regra acertaria cinco casos e erraria o sexto em silêncio (design.md §3).
 \def\Unifei@papel{Orientador}
+\def\Unifei@papelfem{Orientadora}
 \def\Unifei@papelplural{Orientadores}
+\def\Unifei@papelpluralfem{Orientadoras}
 
 % ATENÇÃO aos nomes: SEM DÍGITOS. Nome de sequência de controle em TeX só
 % aceita letras, então um nome como "...tcc1" não é um token — é "...tcc"
@@ -214,7 +220,9 @@
     % No relatório de disciplina não há orientação, há responsabilidade
     % docente — daí o rótulo ser "Professor", e não "Orientador".
     \def\Unifei@papel{Professor}%
+    \def\Unifei@papelfem{Professora}%
     \def\Unifei@papelplural{Professores}%
+    \def\Unifei@papelpluralfem{Professoras}%
 \else\ifx\Unifei@doctype\Unifei@tmpestagio
     \@unifei@relatoriotrue
     \@unifei@orientobrigtrue
@@ -815,9 +823,9 @@
 
 % Rótulo do papel do professor na capa e na folha de rosto. Deriva do tipo
 % (\Unifei@papel/\Unifei@papelplural, resolvidos no topo do arquivo) e vai ao
-% plural quando \supervisor traz mais de um nome — usando exatamente a mesma
-% detecção que a capa já faz para alternar entre "Autor" e "Autores": procurar
-% \\ no valor detokenizado. Não é uma segunda convenção, é a mesma.
+% plural quando \supervisor traz mais de um nome — procurar \\ no valor
+% detokenizado, a mesma convenção que "Autor"/"Autores" usava na capa e que a
+% capa ainda usa para o estagiário. Não é uma segunda convenção, é a mesma.
 %
 % Resolvido de uma vez em \AtBeginDocument, quando \supervisor já foi
 % declarado, deixando \Unifei@papelrotulo como macro simples. Isso NÃO é
@@ -826,19 +834,76 @@
 % dentro trava a compilação em laço infinito — verificado.
 \def\Unifei@papelrotulo{\Unifei@papel}
 \def\Unifei@rotuloestagiario{Aluno estagiário}
+\def\Unifei@autorrotulo{Autor}
+\def\Unifei@coorientadorrotulo{Coorientador}
+\def\Unifei@rotulosupervisorcampo{Supervisor de campo}
 \AtBeginDocument{%
+    % Rótulo do papel na capa e na folha de rosto: o gênero entra aqui, ao
+    % lado do plural que já se resolvia. Coletivo (design.md decisão 6):
+    % singular lê a letra 1 da cadeia; plural só vai ao feminino quando todas
+    % as posições dos nomes são 'f' — grupo misto e nome sem letra declarada
+    % (decisão 5) saem no masculino plural.
     \edef\Unifei@PRdetok{\detokenize\expandafter{\@supervisor}}%
     \IfSubStr{\Unifei@PRdetok}{\string\\}%
-        {\let\Unifei@papelrotulo\Unifei@papelplural}%
-        {\let\Unifei@papelrotulo\Unifei@papel}%
-    % Mesma pluralização para o bloco do estagiário na folha de estágio: o
-    % rótulo é campo de \Unifei@RegistroBloco, que faz \edef no argumento, e
-    % \IfSubStr não sobrevive a \edef — por isso resolvido aqui também, e não
-    % no ponto de uso.
+        {\let\Unifei@papelrotulo\Unifei@papelplural
+         \Unifei@TodasFemininas{\@supervisorgenero}{\Unifei@PRdetok}%
+         \if@unifei@todasf
+             \let\Unifei@papelrotulo\Unifei@papelpluralfem
+         \fi}%
+        {\let\Unifei@papelrotulo\Unifei@papel
+         \Unifei@generoseletor{\@supervisorgenero}{1}%
+         \if f\Unifei@generoletra
+             \let\Unifei@papelrotulo\Unifei@papelfem
+         \fi}%
+    % Rótulo do estagiário na folha de estágio: mesmo dual, plural e gênero.
+    % O rótulo é campo de \Unifei@RegistroBloco, que faz \edef no argumento,
+    % e \IfSubStr não sobrevive a \edef — por isso resolvido aqui também, e
+    % não no ponto de uso.
     \edef\Unifei@PAdetok{\detokenize\expandafter{\@author}}%
     \IfSubStr{\Unifei@PAdetok}{\string\\}%
-        {\def\Unifei@rotuloestagiario{Alunos estagiários}}%
-        {\def\Unifei@rotuloestagiario{Aluno estagiário}}%
+        {\def\Unifei@rotuloestagiario{Alunos estagiários}%
+         \Unifei@TodasFemininas{\@authorgenero}{\Unifei@PAdetok}%
+         \if@unifei@todasf
+             \def\Unifei@rotuloestagiario{Alunas estagiárias}%
+         \fi}%
+        {\def\Unifei@rotuloestagiario{Aluno estagiário}%
+         \Unifei@generoseletor{\@authorgenero}{1}%
+         \if f\Unifei@generoletra
+             \def\Unifei@rotuloestagiario{Aluna estagiária}%
+         \fi}%
+    % Rótulo de autor da folha de rosto. O sítio original fazia a detecção de
+    % plural no próprio ponto de uso; trazer a resolução para cá é o mesmo
+    % desenho do papel acima — o rótulo entra em \unifeismallcaps, que aplica
+    % \MakeUppercase ao argumento.
+    \IfSubStr{\Unifei@PAdetok}{\string\\}%
+        {\def\Unifei@autorrotulo{Autores}%
+         \Unifei@TodasFemininas{\@authorgenero}{\Unifei@PAdetok}%
+         \if@unifei@todasf
+             \def\Unifei@autorrotulo{Autoras}%
+         \fi}%
+        {\def\Unifei@autorrotulo{Autor}%
+         \Unifei@generoseletor{\@authorgenero}{1}%
+         \if f\Unifei@generoletra
+             \def\Unifei@autorrotulo{Autora}%
+         \fi}%
+    % Coorientador da folha de rosto: rótulo singular, flexão só de gênero.
+    % O sítio original nunca pluralizava — documentos sem gênero declarado
+    % (cadeia vazia) saem byte-idênticos aos de antes. Decisão registrada:
+    % sem plural coletivo aqui; se quiser Coorientadores/Coorientadoras um
+    % dia, é mudança documentada em separado. O plural coletivo fica só para
+    % papel e autor, que já tinham plural antes.
+    \def\Unifei@coorientadorrotulo{Coorientador}%
+    \Unifei@generoseletor{\@cosupervisorgenero}{1}%
+    \if f\Unifei@generoletra
+        \def\Unifei@coorientadorrotulo{Coorientadora}%
+    \fi
+    % Supervisor de campo (folha do estágio): sempre uma pessoa, então basta
+    % a letra 1. Mesmo motivo dos demais: campo de \Unifei@RegistroBloco, que
+    % faz \edef no argumento.
+    \Unifei@generoseletor{\@empresasupervisorgenero}{1}%
+    \if f\Unifei@generoletra
+        \def\Unifei@rotulosupervisorcampo{Supervisora de campo}%
+    \fi
 }
 
 % Natureza do trabalho, por tipo. É o texto que a folha de rosto E a folha de
@@ -888,16 +953,96 @@
 \newcommand{\@subject}{}
 \providecommand{\subject}[1]{\renewcommand{\@subject}{#1}}
 \newcommand{\@supervisor}{}
+% Cadeia de letras de gênero do(a) orientador(a), uma por nome (a letra da
+% posição i é o gênero do i-ésimo nome). Vazia = tudo masculino, que é a
+% saída de antes desta capacidade existir (design.md decisões 1 e 5).
+\newcommand{\@supervisorgenero}{}
 % flag indicating whether a supervisor name was provided (non-empty)
 \newif\if@supervisorpresent\@supervisorpresentfalse
-\providecommand{\supervisor}[1]{\renewcommand{\@supervisor}{#1}%
-    \ifblank{#1}{\@supervisorpresentfalse}{\@supervisorpresenttrue}%
+% Argumento opcional: #1 é a cadeia de letras de gênero, #2 os nomes.
+\providecommand{\supervisor}[2][]{\renewcommand{\@supervisorgenero}{#1}%
+    \renewcommand{\@supervisor}{#2}%
+    \ifblank{#2}{\@supervisorpresentfalse}{\@supervisorpresenttrue}%
 }
 \newcommand{\@cosupervisor}{}
+% Idem: cadeia de letras de gênero da coorientação.
+\newcommand{\@cosupervisorgenero}{}
 % flag indicating whether a co-supervisor name was provided (non-empty)
 \newif\if@cosupervisorpresent\@cosupervisorpresentfalse
-\providecommand{\cosupervisor}[1]{\renewcommand{\@cosupervisor}{#1}%
-    \ifblank{#1}{\@cosupervisorpresentfalse}{\@cosupervisorpresenttrue}%
+\providecommand{\cosupervisor}[2][]{\renewcommand{\@cosupervisorgenero}{#1}%
+    \renewcommand{\@cosupervisor}{#2}%
+    \ifblank{#2}{\@cosupervisorpresentfalse}{\@cosupervisorpresenttrue}%
+}
+
+% \author é do book; ganha aqui o mesmo argumento opcional de gênero — a única
+% redefinição de comando do núcleo nesta change (design.md decisão 2). Sem o
+% argumento, o comportamento é o de hoje: obrigatório guarda o valor, igual ao
+% book. \gdef preserva a semântica de \author valer do ponto de declaração em
+% diante, inclusive dentro de grupos.
+\newcommand{\@authorgenero}{}
+\renewcommand{\author}[2][]{\renewcommand{\@authorgenero}{#1}%
+    \gdef\@author{#2}%
+}
+
+% Seletor de gênero (design.md decisão 1). A cadeia de letras #1 tem uma letra
+% por pessoa ('f' ou 'm'), na ordem dos nomes do metadado; #2 é a posição da
+% pessoa corrente no laço que percorre os nomes. Deixa em \Unifei@generoletra a
+% letra daquela pessoa — 'f' quando a posição cai em 'f', 'm' em qualquer outro
+% caso. Posição além do fim da cadeia e cadeia vazia são masculinas, sem erro
+% nem aviso: um nome a mais que letras declaradas é homem, porque declarar o
+% gênero é opcional (decisão 5).
+\newcount\Unifei@genpos
+\newcommand{\Unifei@generoseletor}[2]{%
+    \Unifei@genpos=#2\relax
+    \def\Unifei@generoletra{m}%
+    % Materializa a cadeia: #1 pode chegar por referência de macro
+    % (\@supervisorgenero) ou como letras soltas, e o laço precisa de texto
+    % literal. Cadeia vazia já é masculina por padrão — nada a percorrer, e o
+    % laço abaixo não tolera argumento vazio.
+    \edef\Unifei@gencadeia{#1}%
+    \ifx\Unifei@gencadeia\@empty\else
+        \expandafter\Unifei@genloop\Unifei@gencadeia\@nil
+    \fi
+}
+% Percorre a cadeia uma letra por vez, decrescendo a posição. \@nil marca o fim
+% do resto (#2): quando a posição chega a 1, a letra corrente decide; quando o
+% resto acaba antes, segue o masculino padrão.
+\def\Unifei@genloop#1#2\@nil{%
+    \ifnum\Unifei@genpos=1\relax
+        \def\Unifei@generoletra{#1}%
+    \else
+        \advance\Unifei@genpos by -1\relax
+        \def\Unifei@gennext{#2}%
+        \ifx\Unifei@gennext\@empty\else
+            \Unifei@genloop#2\@nil
+        \fi
+    \fi
+}
+
+% \Unifei@TodasFemininas{<cadeia>}{<detok dos nomes>}: o grupo inteiro é de
+% mulheres? Deixa o veredito em \if@unifei@todasf. Decide o rótulo coletivo
+% plural (design.md decisão 6): grupo misto, e cadeia curta demais para os
+% nomes (decisão 5 — nome sem letra é homem), vão ao masculino plural; só
+% cadeia com 'f' em todas as posições dos nomes produz a forma feminina
+% coletiva. Reusa o mesmo seletor do laço por pessoa, na posição *i*.
+\newif\if@unifei@todasf
+\newcount\Unifei@TFpos
+\newcommand{\Unifei@TodasFemininas}[2]{%
+    \StrCount{#2}{\string\\}[\Unifei@TFseps]%
+    \edef\Unifei@TFnomes{\number\numexpr\Unifei@TFseps+1\relax}%
+    \@unifei@todasftrue
+    \def\Unifei@TFcadeia{#1}%
+    \Unifei@TFpos=1\relax
+    \Unifei@TFloop
+}
+\def\Unifei@TFloop{%
+    \Unifei@generoseletor{\Unifei@TFcadeia}{\Unifei@TFpos}%
+    \if f\Unifei@generoletra
+        \advance\Unifei@TFpos by 1\relax
+        \ifnum\Unifei@TFpos>\Unifei@TFnomes\else\Unifei@TFloop\fi
+    \else
+        \@unifei@todasffalse
+    \fi
 }
 
 %-------------------------------------------------
@@ -914,7 +1059,11 @@
 \providecommand{\notaaprovacao}[1]{\renewcommand{\@notaaprovacao}{#1}}
 
 \newcommand{\@empresasupervisor}{}
-\providecommand{\empresasupervisor}[1]{\renewcommand{\@empresasupervisor}{#1}}
+% Idem: cadeia de letras de gênero do supervisor de campo.
+\newcommand{\@empresasupervisorgenero}{}
+\providecommand{\empresasupervisor}[2][]{\renewcommand{\@empresasupervisorgenero}{#1}%
+    \renewcommand{\@empresasupervisor}{#2}%
+}
 
 % Área de concentração e linha de pesquisa: só fazem sentido na monografia.
 % A área é EXIGIDA em dissertação e tese (o programa sempre tem uma) e apenas
@@ -1502,14 +1651,13 @@
                     \setstretch{1.0}
                     \begin{flushleft}
                         \large
-                        % Determine whether to use 'Autor' or 'Autores'
-                        \begingroup
-                        \edef\UnifeiICTReport@authdetok{\detokenize\expandafter{\@author}}%
-                        \IfSubStr{\UnifeiICTReport@authdetok}{\string\\}{{\color{unifeiblue}\unifeismallcaps{\Large Autores}}}{{\color{unifeiblue}\unifeismallcaps{\Large Autor}}}\\
+                        % Rótulo de autor resolvido no \AtBeginDocument, com o
+                        % plural e o gênero juntos — o ponto de uso é hostil:
+                        % \unifeismallcaps aplica \MakeUppercase ao argumento.
+                        {\color{unifeiblue}\unifeismallcaps{\Large\Unifei@autorrotulo}}\\
                         \vspace{0.25\baselineskip}
                         % print the provided author(s)
                         \large\@author
-                        \endgroup
                     \end{flushleft}
                 \end{minipage}
                 ~
@@ -1526,7 +1674,7 @@
                             \vspace{0.25\baselineskip}
                             \large\@supervisor
                             \if@cosupervisorpresent
-                                \par\vspace{0.5em}{\color{unifeiblue}\unifeismallcaps{\Large Coorientador}}\\
+                                \par\vspace{0.5em}{\color{unifeiblue}\unifeismallcaps{\Large\Unifei@coorientadorrotulo}}\\
                                 \vspace{0.25\baselineskip}
                                 \large\@cosupervisor
                             \fi
@@ -1628,14 +1776,28 @@
 
 % Um bloco por professor, quando \supervisor traz vários separados por \\.
 % Reaproveita a mesma convenção que a capa já usa para vários autores.
-\newcommand{\Unifei@RegistroPorProfessor}[2]{% #1=lista \\ #2=papel
+% O gênero segue a cadeia de letras por pessoa (design.md decisão 1): a letra
+% da posição i decide o par do i-ésimo nome; o laço já percorria os nomes, e
+% passa a consultar o seletor.
+\newcount\Unifei@RPPpos
+\newcommand{\Unifei@RegistroPorProfessor}[4]{% #1=lista \\ #2=papel masc #3=papel fem #4=cadeia de gênero
     \begingroup
     \def\Unifei@RPPpapel{#2}%
+    \def\Unifei@RPPpapelfem{#3}%
+    \def\Unifei@RPPgenero{#4}%
+    \Unifei@RPPpos=1\relax
     \expandafter\Unifei@RPPloop#1\\\@nil
     \endgroup
 }
 \def\Unifei@RPPloop#1\\#2\@nil{%
-    \Unifei@RegistroBloco{#1}{\Unifei@RPPpapel}{}%
+    \Unifei@generoseletor{\Unifei@RPPgenero}{\Unifei@RPPpos}%
+    \if f\Unifei@generoletra
+        \let\Unifei@RPProtulo\Unifei@RPPpapelfem
+    \else
+        \let\Unifei@RPProtulo\Unifei@RPPpapel
+    \fi
+    \Unifei@RegistroBloco{#1}{\Unifei@RPProtulo}{}%
+    \advance\Unifei@RPPpos by 1\relax
     \def\Unifei@RPPresto{#2}%
     \ifx\Unifei@RPPresto\@empty\else\Unifei@RPPloop#2\@nil\fi
 }
@@ -1648,7 +1810,7 @@
 % \\ vale igual.
 \newcommand{\Unifei@RegistroCoorientador}{%
     \if@cosupervisorpresent
-        \Unifei@RegistroPorProfessor{\@cosupervisor}{Coorientador}%
+        \Unifei@RegistroPorProfessor{\@cosupervisor}{Coorientador}{Coorientadora}{\@cosupervisorgenero}%
     \fi
 }
 
@@ -1701,11 +1863,11 @@
             % Três partes assinam o estágio: o próprio estagiário, o professor
             % orientador e o supervisor de campo.
             \Unifei@RegistroBloco{\@author}{\Unifei@rotuloestagiario}{}%
-            \Unifei@RegistroPorProfessor{\@supervisor}{Orientador acadêmico}%
+            \Unifei@RegistroPorProfessor{\@supervisor}{Orientador acadêmico}{Orientadora acadêmica}{\@supervisorgenero}%
             \Unifei@RegistroCoorientador
             % Sem guarda de presença: \empresasupervisor é exigido no estágio e
             % o erro do \AtBeginDocument dispara antes de a folha ser composta.
-            \Unifei@RegistroBloco{\@empresasupervisor}{Supervisor de campo}{}%
+            \Unifei@RegistroBloco{\@empresasupervisor}{\Unifei@rotulosupervisorcampo}{}%
             \vfill
         }{%
             \vfill
@@ -1719,7 +1881,7 @@
             % disciplina" saía sobre uma linha em branco — função atribuída a
             % ninguém, na página que existe para dizer quem aprovou.
             \if@supervisorpresent
-                \Unifei@RegistroPorProfessor{\@supervisor}{\Unifei@papel\ da disciplina}%
+                \Unifei@RegistroPorProfessor{\@supervisor}{\Unifei@papel\ da disciplina}{\Unifei@papelfem\ da disciplina}{\@supervisorgenero}%
                 \Unifei@RegistroCoorientador
             \fi
             \vfill
@@ -1739,7 +1901,7 @@
 % A banca é o orientador MAIS os membros externos declarados. O orientador
 % entra a partir de \supervisor, sem exigir um \bancamembro que o repita.
 \newcommand{\Unifei@RegistroBanca}{%
-    \Unifei@RegistroPorProfessor{\@supervisor}{Orientador}%
+    \Unifei@RegistroPorProfessor{\@supervisor}{Orientador}{Orientadora}{\@supervisorgenero}%
     \Unifei@RegistroCoorientador
     \Unifei@BancaLista
 }

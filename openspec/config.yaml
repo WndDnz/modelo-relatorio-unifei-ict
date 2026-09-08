@@ -69,6 +69,8 @@ context: |
   repositório como root. Ele cobre status, validate e archive; não há comando
   de apply. Ver operations, abaixo, para o que continua sendo trabalho de mão.
 
+  MANDATORY: Invoke the 'openspec-plus-apply' skill immediately when openspec-apply-change is invoked
+
 # Regras por artefato.
 #
 # CUIDADO AO EDITAR: em item de lista, dois-pontos seguido de espaço faz o YAML
@@ -79,15 +81,20 @@ rules:
     - Nomear a norma — e o parágrafo, quando houver — que rege o comportamento proposto.
     - Declarar desvios deliberados da norma na própria proposta, em vez de deixá-los implícitos na implementação.
     - Dizer o que NÃO entra no escopo sempre que a fronteira não for óbvia.
+    - "MANDATORY: Invoke the 'openspec-plus-proposal' skill BEFORE writing the proposal."
+  specs:
+    - "MANDATORY: Invoke the 'openspec-plus-spec' skill BEFORE writing any specification."
   design:
     - Numerar cada desvio da norma (D1, D2, ...), citando o que a norma exige e por que o modelo diverge.
     - Espelhar cada desvio em comentário no ponto correspondente do .sty, para que ninguém "corrija" depois o que está errado de propósito.
     - Registrar as alternativas descartadas junto da evidência que as descartou, e não apenas a escolhida.
+    - "MANDATORY: Invoke the 'openspec-plus-design' skill BEFORE writing the design document."
   tasks:
     - Toda tarefa que altera a saída do documento carrega a própria verificação.
     - A verificação lê a página compilada — rasterizada, ou via pdftotext —, nunca o log; neste projeto os defeitos característicos compilam limpo.
     - Ao concluir uma tarefa, registrar o que foi de fato verificado, não o que foi escrito.
     - Marcar como CRÍTICO o que quebra de forma distante da causa.
+    - "MANDATORY: Invoke the 'openspec-plus-tasks' skill BEFORE writing the tasks file."
 
 # Orientação por operação.
 operations:
